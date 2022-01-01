@@ -1,3 +1,4 @@
+import { throttle } from "lodash";
 import { useEffect } from "react";
 import MonacoEditor from "react-monaco-editor";
 import eventBus from "../eventBus";
@@ -22,12 +23,28 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({code, stderr, onCodeChang
       };
 
 
+       // Mouse move
+       const onMouseMove = (e:any) => {
+        if (e !== null && e.target !== null && e.target.position !== null) {
+          console.log('HOVER', e.target.position.lineNumber);
+          eventBus.dispatch('panesLinkLine', {
+            line: e.target.position.lineNumber
+          });
+//          tryPanesLinkLine(e.target.position.lineNumber, false);
+      }
+      };
+
+      const mouseMoveThrottledFunction = throttle(onMouseMove, 50);
+
+
       // Focus this editor at the beginning
       const editorDidMount = (_editor: any, _monaco: any) => {
         monaco = _monaco;
         editor = _editor;
         editor.focus();
-
+        editor.onMouseMove((e: any) => {
+          mouseMoveThrottledFunction(e);
+        });
 
       }
 
@@ -57,6 +74,15 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({code, stderr, onCodeChang
       monaco.editor.setModelMarkers(editor.getModel(), 'stderr', widgets);
         }, [stderr]);
 
+     
+
+      // Line link
+
+        const onPanesLinkLine = (data: any) => {
+          data.reveal = false;
+          onLineLink(data);
+        };
+
         const onLineLink = (data: any) => {
           console.log('lineLink', data);
           if (!monaco) {return;}
@@ -73,11 +99,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({code, stderr, onCodeChang
                 className: 'linked-code-decoration-line',
             },
         }];
-        console.log(decorations);
-        console.log(prevDecorations);
 
           prevDecorations = editor.deltaDecorations(prevDecorations, decorations);
-          console.log(prevDecorations);
 
 
           if (fadeTimeoutId !== -1) {
@@ -95,9 +118,12 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({code, stderr, onCodeChang
 
         useEffect(() => {
           eventBus.on('lineLink', onLineLink);
+//          eventBus.on('panesLinkLine', onPanesLinkLine);
             return () => {
               // Cleanup
               eventBus.remove('lineLink', onLineLink);
+  //            eventBus.remove('panesLinkLine', onPanesLinkLine);
+
             };
         }, []);
     

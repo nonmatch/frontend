@@ -22,6 +22,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const [compiled, setCompiled] = useState(
         {
             asm: 'The compiled asm of your code will appear here...',
+            lines: [],
             stderr: []
         }
 
@@ -96,8 +97,11 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         console.log(data);
 
         const code = data.asm.map((line: any) => line.text).join('\n')
+
+        console.log('GOT ASM', data.asm);
         setCompiled({
             asm: code,
+            lines: data.asm,
             stderr: data.stderr//data.stderr.map((line: any) => line.text).join('\n')
         })
     }
@@ -162,6 +166,7 @@ if (showOneColumn()) {
   <div className="tab-pane fade" id="diff" role="tabpanel" aria-labelledby="diff-tab" style={{flex:1, overflow:"hidden"}}><DiffEditor
             compiledAsm={compiled.asm}
             originalAsm={originalAsm}
+            lines={compiled.lines}
             onScoreChange={onScoreChange}
         /></div>
 </div>
@@ -211,6 +216,7 @@ if (showOneColumn()) {
             <DiffEditor
             compiledAsm={compiled.asm}
             originalAsm={originalAsm}
+            lines={compiled.lines}
             onScoreChange={onScoreChange}
         />
             </Section>

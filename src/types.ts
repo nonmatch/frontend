@@ -43,3 +43,11 @@ export interface ErrorLine {
         column?: number
     }
 }
+
+export interface AsmLine {
+    text: string,
+    source?: {
+        file?: string,
+        line: number
+    }
+}
