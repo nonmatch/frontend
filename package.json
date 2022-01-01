@@ -1,5 +1,5 @@
 {
-  "name": "react-ts",
+  "name": "nonmatch",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
@@ -19,6 +19,7 @@
     "react-monaco-editor": "^0.43.0",
     "react-router-dom": "^5.2.0",
     "react-scripts": "4.0.3",
+    "react-simple-resizer": "^1.3.0",
     "typescript": "^4.1.2",
     "web-vitals": "^1.0.1"
   },

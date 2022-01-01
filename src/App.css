@@ -1,11 +1,11 @@
-body, .App {
+html, body, .App, #root {
   /*text-align: center;*/
   /*background-color: #282c34;*/
-  background-color: #20212A;
+/*  background-color: #20212A;*/
   height: 100%;
-  color: #eee;
+  width: 100%;
+/*  color: #eee;*/
 }
-
 .label {
   color: #888;
 }
@@ -43,7 +43,7 @@ body, .App {
     transform: rotate(360deg);
   }
 }
-
+/*
 
 input, .btn {
   padding: 16px 32px;
@@ -126,10 +126,9 @@ a .card {
 a:hover .card {
   background-color: #2E2F3C;
 }
-
-nav {
+*/
+/*nav {
   margin: 0 auto;
-  width: 1024px;
   border-bottom: 1px solid #2e2f3b;
 }
 nav ul {
@@ -146,7 +145,7 @@ nav li a:hover {
   background: #2e2f3b;
   color: #ccc;
 }
-
+*/
 td {
   padding: 8px;
 }

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import './App.css'
 import EditorPage from './pages/EditorPage';
@@ -9,8 +9,33 @@ import { NotFoundPage } from './pages/NotFoundPage';
 import { ProjectPage } from './pages/ProjectPage';
 import { Navbar } from './components/Navbar';
 import { LeaderboardPage } from './pages/LeaderboardPage';
+import { API_URL } from './constants';
+import { get } from './api';
+import { FunctionsPage } from './pages/FunctionsPage';
+import { FunctionPage } from './pages/FunctionPage';
+import { Container, Section, Bar } from 'react-simple-resizer';
 
 const App: React.FC = () => {
+
+    const [currentUser, setCurrentUser] = useState(null);
+
+    console.log(window.location.search);
+
+    const loadCurrentUser = async () => {
+      const data = await get(API_URL + 'user');
+      if (data['error'] !== undefined) {
+        console.log('not logged in ', data['error']);
+        setCurrentUser(null);
+      }else {
+        console.log(data);
+        setCurrentUser(data);
+      }
+    };
+
+    useEffect( () => {
+      loadCurrentUser()
+    }, []);
+
     return (
 
       <Router><div 
@@ -18,17 +43,18 @@ const App: React.FC = () => {
         display: "flex",
         flexDirection: "column"
       }}>
-        <Navbar />
+        <Navbar currentUser={currentUser} />
 
       <Switch>
       <Route path="/" exact component={HomePage} />
       <Route path="/login" component={LoginPage} />
       <Route path="/dashboard" component={DashboardPage} />
-      <Route path="/projects/:project/functions/:function" component={EditorPage} />
-      <Route path="/projects/:project" component={ProjectPage} />
-      <Route path="/leaderboard" component={LeaderboardPage} />
+      <Route path="/functions/:function/submissions/:submission" component={EditorPage} />
+      <Route path="/functions/:function" component={FunctionPage} />
+      <Route path="/functions" component={FunctionsPage} />
       <Route component={NotFoundPage} />
       </Switch>
+    
       </div>
       </Router>
     );

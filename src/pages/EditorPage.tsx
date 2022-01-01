@@ -1,14 +1,17 @@
 import debounce from "lodash.debounce";
 import { useCallback, useEffect, useState } from "react";
-import { RouteComponentProps } from "react-router";
+import { RouteComponentProps, useHistory } from "react-router";
+import { Bar, Container, Section } from "react-simple-resizer";
+import { get, post } from "../api";
 import { CodeEditor } from "../components/CodeEditor"
 import { DiffEditor } from "../components/DiffEditor";
+import { ErrorLog } from "../components/ErrorLog";
 import { API_URL, CEXPLORE_URL, COMPILE_DEBOUNCE_TIME } from "../constants";
 import { Func } from "../types";
 
 interface Params {
-    project: string,
-    function: string
+    function: string,
+    submission: string,
 }
 const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
@@ -19,7 +22,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const [compiled, setCompiled] = useState(
         {
             asm: 'The compiled asm of your code will appear here...',
-            stderr: 'Compiler Output will appear here...'
+            stderr: []
         }
 
     )
@@ -27,8 +30,9 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         'original asm'
     )
 
-    const [func, setFunc] = useState<Func>({ id: 0, projectId: 0, name: 'Loading' })
+    const [func, setFunc] = useState<Func |null>(null)
 
+    const [score, setScore] = useState(-1);
 
 
 
@@ -40,6 +44,10 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         setCCode(newValue)
         debouncedCompile(newValue);
     }
+
+    const onScoreChange = (score: number) => {
+        setScore(score);
+    };
 
     const compile = async (nextValue: any) => {
         console.log('compiling', nextValue);
@@ -57,7 +65,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                     source: nextValue,
                     compiler: "tmc_agbcc",
                     options: {
-                        userArguments: '',
+                        userArguments: '-O2', // TODO allow the user to specify this?
                         compilerOptions: {
                             produceGccDump: {},
                             produceCfg: false
@@ -91,39 +99,89 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         const code = data.asm.map((line: any) => line.text).join('\n')
         setCompiled({
             asm: code,
-            stderr: data.stderr.map((line: any) => line.text).join('\n')
+            stderr: data.stderr//data.stderr.map((line: any) => line.text).join('\n')
         })
     }
 
 
-    const loadFunction = async (id: string) => {
-        const res = await fetch(API_URL + 'functions/' + id)
-        const data = await res.json()
+    const loadFunction = async (func: string, submission: string) => {
+        // Fetch asm code from function
+        const res = await fetch(API_URL + 'functions/' + func)
+        let data = await res.json()
         setFunc(data)
-        if (data.cCode !== undefined) {
-            setCCode(data.cCode)
-            debouncedCompile(data.cCode);
+        if (data.asm !== undefined) {
+            setOriginalAsm(data.asm)
         }
-        if (data.asmCode !== undefined) {
-            setOriginalAsm(data.asmCode)
+
+        data = await get(API_URL+'submissions/'+submission)
+        // Fetch c code from submission
+        if (data.code !== undefined) {
+            setCCode(data.code)
+            debouncedCompile(data.code);
         }
+      
     }
 
     useEffect(() => {
-        loadFunction(match.params.function)
-    }, [match.params.function]) // TODO why does it want me to add loadFunction as a dependency here?
+        loadFunction(match.params.function, match.params.submission)
+    }, [match.params.function, match.params.submission]) // TODO why does it want me to add loadFunction as a dependency here?
+
+    const history = useHistory();
+    const submit = async () => {
+        // TODO ask if submitted while not logged in?
+
+        let data = await post(API_URL+'functions/'+match.params.function+'/submissions', {
+            code: cCode,
+            score: score,
+            is_equivalent: false, // TODO
+            parent: match.params.submission
+        })
+        console.log(data)
+        history.push('/functions/' + match.params.function + '/submissions/' + data.id);
+        // TODO show message that the submission was saved with a button to copy the link
+    };
 
 
     return (
         <>
-            <h2 style={{ marginLeft: "50px" }}>{func.name}</h2>
+
+            <Container style={{ overflow:"hidden",flex:1 }}>
+    <Section minSize={100}>
+    <CodeEditor
+                            code={cCode}
+                            stderr={compiled.stderr}
+                            onCodeChange={onCodeChange}
+                        />
+                                </Section>
+    <Bar size={2} style={{ background: '#888888', cursor: 'col-resize' }} />
+    <Section minSize={100}>
+        {
+            true 
+            ?<ErrorLog></ErrorLog> 
+            :     <DiffEditor
+            compiledAsm={compiled.asm}
+            originalAsm={originalAsm}
+            onScoreChange={onScoreChange}
+        />
+        }
+
+        </Section>
+  </Container>
+        <div className="container" style={{display:"flex", padding:"8px", alignItems:"center"}}>
+            <span style={{ marginLeft: "50px" }}>{func?.name}</span>
+            <span style={{flex:1}}></span>
+            <span style={{padding: "0 8px"}}>
+                            Diff Score: {score}
+                    </span>
+            <button className="btn btn-success btn-sm" onClick={submit}>Submit</button>
+        </div>
+{/*
             <div style={{
                 flexDirection: 'row',
                 flex: '1',
                 display: 'flex',
                 flexGrow: 1,
-                padding: '40px',
-                paddingTop: '0px',
+                padding: '0px',
                 boxSizing: 'border-box',
                 overflow: 'hidden',
             }}
@@ -139,12 +197,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                         flexGrow: 1,
                         maxHeight: '70%'
                     }}>
-                        {/* <span className="label">C Code</span> x*/}
 
-                        <CodeEditor
-                            code={cCode}
-                            onCodeChange={onCodeChange}
-                        />
+
 
                     </div>
                     <div style={{
@@ -154,8 +208,6 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                     }}>
                         <div style={{
                             fontFamily: 'monospace',
-                            backgroundColor: '#282932',
-                            color: '#d4d4d4',
                             boxSizing: 'border-box',
                             padding: '20px',
                             height: '100%',
@@ -167,7 +219,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                     </div>
 
                 </div>
-                <div className="spacer" style={{ width: "40px" }} />
+                <div className="spacer" style={{ width: "8px" }} />
                 <div style={{
                     width: "50%",
                     display: "flex",
@@ -179,6 +231,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                         <DiffEditor
                             compiledAsm={compiled.asm}
                             originalAsm={originalAsm}
+                            onScoreChange={onScoreChange}
                         />
                     </div>
                     <div style={{
@@ -188,7 +241,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                         alignItems: "center"
                     }}>
                         <span>
-                            Calculate score server side and show here
+                            Diff Score: {score}
                     </span>
                         <button className="success" style={{
                             color: '#fff',
@@ -198,10 +251,12 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                             marginLeft: "20px",
                             cursor: "pointer",
                             display: "inline-block"
-                        }}>Submit</button>
+                        }}
+                        onClick={submit}>Submit</button>
                     </div>
                 </div>
             </div>
+                    */}
         </>
     )
 }

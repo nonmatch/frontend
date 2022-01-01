@@ -9,7 +9,7 @@ import { monaco } from 'react-monaco-editor';
 import './asm-mode.js';
 
 // Set up custom monaco background color  
-monaco.editor.defineTheme('customTheme', {
+/*monaco.editor.defineTheme('customTheme', {
   base: 'vs-dark',
   inherit: true,
   rules: [
@@ -17,12 +17,14 @@ monaco.editor.defineTheme('customTheme', {
   colors: {
     "editor.background": '#282932'
   }
-});
+});*/
 
 ReactDOM.render(
-  <React.StrictMode>
+  // React strict mode does not work with react-simple-resizer
+  /*  <React.StrictMode>
     <App />
-  </React.StrictMode>,
+  </React.StrictMode>*/
+  <App />,
   document.getElementById('root')
 );
 
