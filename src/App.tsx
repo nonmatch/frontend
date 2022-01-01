@@ -2,18 +2,14 @@ import React, { useEffect, useState } from 'react';
 import {BrowserRouter as Router, Route, Switch} from 'react-router-dom';
 import './App.css'
 import EditorPage from './pages/EditorPage';
-import HomePage from './pages/HomePage';
 import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
 import { NotFoundPage } from './pages/NotFoundPage';
-import { ProjectPage } from './pages/ProjectPage';
 import { Navbar } from './components/Navbar';
-import { LeaderboardPage } from './pages/LeaderboardPage';
 import { API_URL } from './constants';
 import { get } from './api';
 import { FunctionsPage } from './pages/FunctionsPage';
 import { FunctionPage } from './pages/FunctionPage';
-import { Container, Section, Bar } from 'react-simple-resizer';
 
 const App: React.FC = () => {
 
@@ -46,12 +42,11 @@ const App: React.FC = () => {
         <Navbar currentUser={currentUser} />
 
       <Switch>
-      <Route path="/" exact component={HomePage} />
+      <Route path="/" exact component={FunctionsPage} />
       <Route path="/login" component={LoginPage} />
       <Route path="/dashboard" component={DashboardPage} />
       <Route path="/functions/:function/submissions/:submission" component={EditorPage} />
       <Route path="/functions/:function" component={FunctionPage} />
-      <Route path="/functions" component={FunctionsPage} />
       <Route component={NotFoundPage} />
       </Switch>
     

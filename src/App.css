@@ -153,3 +153,37 @@ td {
 .overflowY {
   overflow-y:auto;
 }
+
+
+
+/* monaco decorator */
+.linked-code-decoration-margin {
+  width: 5px !important;
+  left: 3px;
+}
+
+.linked-code-decoration-column {
+  font-weight: 600;
+}
+.linked-code-decoration {
+  background: lightblue;
+}
+
+.linked-code-decoration-inline {
+  background: lightblue;
+}
+
+.linked-code-decoration-line {
+  background: lightblue !important;
+}
+
+.linked-code-decoration-margin {
+  background: lightblue;
+}
+
+.error-line {
+  cursor: pointer;
+}
+.error-line:hover {
+  background: #eefcff;
+}

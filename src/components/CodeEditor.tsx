@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import MonacoEditor from "react-monaco-editor";
+import eventBus from "../eventBus";
 import { ErrorLine } from "../types";
 
 interface CodeEditorProps {
@@ -9,6 +10,8 @@ interface CodeEditorProps {
 }
 let monaco:any;
 let editor:any;
+let prevDecorations:any = [];
+let fadeTimeoutId: any = -1;
 
 export const CodeEditor: React.FC<CodeEditorProps> = ({code, stderr, onCodeChange}) => {
     const options = {
@@ -37,8 +40,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({code, stderr, onCodeChang
           
         var widgets = stderr.flatMap(function (obj) {
           if (!obj.tag) return []; // Nothing
-          var severity = 3; // error
-          if (obj.tag.text.match(/^warning/)) severity = 2;
+          var severity = 8; // error
+          if (obj.tag.text.match(/^warning/)) severity = 4;
           if (obj.tag.text.match(/^note/)) severity = 1;
           return {
               severity: severity,
@@ -54,6 +57,49 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({code, stderr, onCodeChang
       monaco.editor.setModelMarkers(editor.getModel(), 'stderr', widgets);
         }, [stderr]);
 
+        const onLineLink = (data: any) => {
+          console.log('lineLink', data);
+          if (!monaco) {return;}
+
+          if (data.reveal && data.line) {
+            console.log('ref');
+          editor.revealLineInCenter(data.line);
+        } 
+          let decorations = [{
+            range: new monaco.Range(data.line, 1, data.line, 1),
+            options: {
+                isWholeLine: true,
+                linesDecorationsClassName: 'linked-code-decoration-margin',
+                className: 'linked-code-decoration-line',
+            },
+        }];
+        console.log(decorations);
+        console.log(prevDecorations);
+
+          prevDecorations = editor.deltaDecorations(prevDecorations, decorations);
+          console.log(prevDecorations);
+
+
+          if (fadeTimeoutId !== -1) {
+            clearTimeout(fadeTimeoutId);
+        }
+        fadeTimeoutId = setTimeout(() =>{
+            clearLinkedLine();
+            fadeTimeoutId = -1;
+        }, 3000);
+        };
+
+        const clearLinkedLine = () => {
+          prevDecorations = editor.deltaDecorations(prevDecorations, []);
+        };
+
+        useEffect(() => {
+          eventBus.on('lineLink', onLineLink);
+            return () => {
+              // Cleanup
+              eventBus.remove('lineLink', onLineLink);
+            };
+        }, []);
     
 
         return (

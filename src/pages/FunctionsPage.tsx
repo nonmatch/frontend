@@ -11,7 +11,9 @@ export const FunctionsPage: React.FC = () => {
     const fetchFunctions = async() => {
         get(API_URL+'functions').then(
             (data) => {
-                setFunctions(data)
+                setFunctions(data);
+                // Make table sortable
+                (window as any).Sortable.init();
             },
             (error) => {
                 console.error(error)
@@ -22,8 +24,8 @@ export const FunctionsPage: React.FC = () => {
     useEffect(() => {
         fetchFunctions()
     }, []);
-    return (<Container>
-        <h1>NONMATCH Functions</h1>
+    return (<Container centered>
+        <h1 style={{paddingTop:"20px"}}>NONMATCH Functions</h1>
         <table className="sortable-theme-slick" data-sortable>
         <thead>
             <tr><th>File</th><th>Function</th><th>Size</th><th data-sortable="false"></th></tr>

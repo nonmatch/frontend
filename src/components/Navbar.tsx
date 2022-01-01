@@ -18,7 +18,7 @@ export const Navbar: React.FC<NavbarProps> = ({currentUser}) => {
 
                 {currentUser != null && 
                 <li className="nav-item"><Link to="/dashboard" className="nav-link" >Dashboard</Link></li>}
-                <li className="nav-item"><Link to="/functions" className="nav-link">Functions</Link></li>
+                <li className="nav-item"><Link to="/" className="nav-link">Functions</Link></li>
                 {//<li><Link to="/leaderboard">Leaderboard</Link></li>
                 }
                 

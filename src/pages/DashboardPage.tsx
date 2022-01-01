@@ -6,7 +6,8 @@ import { API_URL } from "../constants";
 import { Project } from "../types";
 
 export const DashboardPage: React.FC = () => {
-
+    return (<></>);
+/*
     const [projects, setProjects] = useState<Project[]>([])
 
     const fetchProjects = async () => {
@@ -44,4 +45,5 @@ export const DashboardPage: React.FC = () => {
 
 
     </Container>);
+    */
 }

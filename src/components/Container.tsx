@@ -5,7 +5,11 @@ interface ContainerProps {
 
 export const Container: React.FC<ContainerProps> = ({small = false, centered=false, children}) => {
         return (
-            <div className="container">
+            <div className="container" style={{
+                display: centered? "flex": "block",
+                flexDirection:"column",
+                alignItems:"center"
+            }}>
                 {children}
             </div>
         );

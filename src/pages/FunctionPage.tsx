@@ -17,7 +17,9 @@ export const FunctionPage: React.FC<RouteComponentProps<Params>>  = ({match}) =>
             (data) => {
 
                 // TODO only one submission? -> redirect
-                setSubmissions(data)
+                setSubmissions(data);
+                // Make table sortable
+                (window as any).Sortable.init();
             },
             (error) => {
                 console.error(error)
@@ -28,8 +30,8 @@ export const FunctionPage: React.FC<RouteComponentProps<Params>>  = ({match}) =>
     useEffect(() => {
         fetchSubmissions()
     }, []);
-    return (<Container>
-        <h1>Select Submission for Function [TODO]</h1>
+    return (<Container centered>
+        <h1 style={{paddingTop:"20px"}}>Select Submission for Function [TODO]</h1>
         <table className="sortable-theme-slick" data-sortable>
         <thead>
             <tr><th>Owner</th><th>Score</th><th data-sortable="false"></th></tr>
@@ -48,6 +50,6 @@ export const FunctionPage: React.FC<RouteComponentProps<Params>>  = ({match}) =>
         }
         </tbody>
         </table>
-        <Link to={"/functions/"+match.params.function+"/submissions/0"}>Start with blank slate</Link>
+        <Link to={"/functions/"+match.params.function+"/submissions/0"} className="btn btn-outline-primary" style={{marginTop:"20px"}}>Start with blank slate</Link>
     </Container>)
 }

@@ -1,5 +1,5 @@
 import debounce from "lodash.debounce";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { RouteComponentProps, useHistory } from "react-router";
 import { Bar, Container, Section } from "react-simple-resizer";
 import { get, post } from "../api";
@@ -48,7 +48,6 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const onScoreChange = (score: number) => {
         setScore(score);
     };
-
     const compile = async (nextValue: any) => {
         console.log('compiling', nextValue);
         const res = await fetch(CEXPLORE_URL, {
@@ -141,7 +140,58 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         // TODO show message that the submission was saved with a button to copy the link
     };
 
+    const showOneColumn = () => {
+        console.log(window.innerWidth);
+        return window.innerWidth < 800;
+    };
 
+if (showOneColumn()) {
+    // One column with tabs
+    return (
+        <>    
+<div className="tab-content" id="myTabContent" style={{flex:1, display:"flex"}}>
+  <div className="tab-pane fade show active" id="code" role="tabpanel" aria-labelledby="code-tab" style={{flex:1, overflow:"hidden"}}>
+  <CodeEditor
+                            code={cCode}
+                            stderr={compiled.stderr}
+                            onCodeChange={onCodeChange}
+                            
+                        />
+      </div>
+  <div className="tab-pane fade" id="stderr" role="tabpanel" aria-labelledby="stderr-tab" style={{flex:1, overflow:"hidden"}}>            <ErrorLog stderr={compiled.stderr}></ErrorLog> </div>
+  <div className="tab-pane fade" id="diff" role="tabpanel" aria-labelledby="diff-tab" style={{flex:1, overflow:"hidden"}}><DiffEditor
+            compiledAsm={compiled.asm}
+            originalAsm={originalAsm}
+            onScoreChange={onScoreChange}
+        /></div>
+</div>
+<div style={{ borderTop:"1px solid #888888"}}>
+        <div className="container" style={{display:"flex", alignItems:"center"}}>
+            <span>{func?.name}</span>
+            <ul className="nav nav-pills" id="myTab" role="tablist">
+  <li className="nav-item" role="presentation">
+    <button className="nav-link active" id="code-tab" data-bs-toggle="tab" data-bs-target="#code" type="button" role="tab" aria-controls="code" aria-selected="true">Code</button>
+  </li>
+  <li className="nav-item" role="presentation">
+    <button className="nav-link" id="stderr-tab" data-bs-toggle="tab" data-bs-target="#stderr" type="button" role="tab" aria-controls="stderr" aria-selected="false">Stderr</button>
+  </li>
+  <li className="nav-item" role="presentation">
+    <button className="nav-link" id="diff-tab" data-bs-toggle="tab" data-bs-target="#diff" type="button" role="tab" aria-controls="diff" aria-selected="false">Diff</button>
+  </li>
+</ul>
+            <span style={{flex:1}}></span>
+            <span style={{padding: "0 8px"}}>
+                            Diff Score: {score}
+                    </span>
+            <button className="btn btn-success btn-sm" onClick={submit}>Submit</button>
+        </div>
+        </div>
+</>
+
+);
+
+} else {
+    // Two columns
     return (
         <>
 
@@ -153,27 +203,35 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                             onCodeChange={onCodeChange}
                         />
                                 </Section>
-    <Bar size={2} style={{ background: '#888888', cursor: 'col-resize' }} />
-    <Section minSize={100}>
-        {
-            true 
-            ?<ErrorLog></ErrorLog> 
-            :     <DiffEditor
+    <Bar size={1} style={{ background: '#888888', cursor: 'col-resize' }}
+                expandInteractiveArea={{ left: 2, right: 2 }} />
+    <Section minSize={100} style={{display:"flex"}}>
+        <Container vertical  style={{ overflow:"hidden",flex:1,display:"flex" }}>
+            <Section  minSize={100}>
+            <DiffEditor
             compiledAsm={compiled.asm}
             originalAsm={originalAsm}
             onScoreChange={onScoreChange}
         />
-        }
+            </Section>
+            <Bar size={1} style={{ background: '#888888', cursor: 'col-resize' }} 
+                expandInteractiveArea={{ top: 2, bottom: 2 }}/>
+            <Section minSize={100} defaultSize={200}>
+            <ErrorLog stderr={compiled.stderr}></ErrorLog> 
+            </Section>
+        </Container>
 
         </Section>
   </Container>
+  <div style={{ borderTop:"1px solid #888888"}}>
         <div className="container" style={{display:"flex", padding:"8px", alignItems:"center"}}>
-            <span style={{ marginLeft: "50px" }}>{func?.name}</span>
+            <span>{func?.name}</span>
             <span style={{flex:1}}></span>
             <span style={{padding: "0 8px"}}>
                             Diff Score: {score}
                     </span>
             <button className="btn btn-success btn-sm" onClick={submit}>Submit</button>
+        </div>
         </div>
 {/*
             <div style={{
@@ -259,6 +317,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                     */}
         </>
     )
+}
+
 }
 
 export default EditorPage;

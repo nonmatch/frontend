@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Link, useHistory } from "react-router-dom";
 import { Container } from "../components/Container";
 import { API_URL } from "../constants";
@@ -14,6 +15,10 @@ const loginWithGitHub = async () => {
     const data = await res.json()
     window.location.href = data['redirect'];
 };
+
+useEffect(() => {
+    loginWithGitHub();
+},[]);
         return (<Container small centered>
             <input type="submit" value="Login with GitHub" onClick={loginWithGitHub} />
             {/* 
