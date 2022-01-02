@@ -9,7 +9,7 @@ export const Navbar: React.FC<NavbarProps> = ({currentUser}) => {
         return (
             <nav className="navbar navbar-expand-md navbar-light bg-light">
             <div className="container">
-              <a className="navbar-brand" href="#">NONMATCH</a>
+              <Link className="navbar-brand" to="/">NONMATCH</Link>
               <button className="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
                 <span className="navbar-toggler-icon"></span>
               </button>
@@ -25,18 +25,15 @@ export const Navbar: React.FC<NavbarProps> = ({currentUser}) => {
                 </ul>
 
                 <ul className="navbar-nav ms-auto">{(currentUser == null)
-                ? <li className="nav-item"><Link to="/login" className="btn btn-secondary">
-                <i className="fa fa-github fa-fw"></i>
-                <span>Login with GitHub</span>
-            </Link></li>
+                ? <li className="nav-item"><Link to="/login" className="nav-link">Login</Link></li>
                 :                  <li className="nav-item dropdown">
                 <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   {currentUser.username}
                 </a>
                 <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
-                  <li><a className="dropdown-item" href="#">Settings</a></li>
+                  <li><Link className="dropdown-item" to="/settings">Settings</Link></li>
                   <li><hr className="dropdown-divider"/></li>
-                  <li><a className="dropdown-item" href="#">Logout</a></li>
+                  <li><Link className="dropdown-item" to="/logout">Logout</Link></li>
                 </ul>
               </li>}
             </ul>

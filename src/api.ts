@@ -1,3 +1,4 @@
+
 function findGetParameter(parameterName : string) {
     var result = null,
         tmp = [];
@@ -25,10 +26,12 @@ function getToken() {
 
 let token:string | null = getToken();
 
-
+const verbose = false;
 
 async function get(url: string): Promise<any> {
-    console.log('get request', url)
+    if (verbose) {
+        console.log('GET request', url)
+    }
     let options:any = {};
     if (token != null) {
         options['headers'] = new Headers({
@@ -45,9 +48,11 @@ async function get(url: string): Promise<any> {
         });*/
     }
 }
-async function post(url: string, data:any): Promise<any> {
-    console.log('post request', url)
-    let options:any = {method: 'POST', body: JSON.stringify(data)};
+async function request(url: string, data:any, method: 'POST'|'PUT'): Promise<any> {
+    if (verbose) {
+        console.log(method+' request', url)
+    }
+    let options:any = {method: method, body: JSON.stringify(data)};
     if (token != null) {
         options['headers'] = new Headers({
             'Authorization': 'Basic ' + token,
@@ -65,7 +70,15 @@ async function post(url: string, data:any): Promise<any> {
     }
 }
 
+async function post(url: string, data:any): Promise<any> {
+    return request(url, data, 'POST');
+}
+async function put(url: string, data:any): Promise<any> {
+    return request(url, data, 'PUT');
+}
+
 export {
     get,
-    post
+    post,
+    put
 }

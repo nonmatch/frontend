@@ -56,8 +56,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({code, stderr, onCodeChang
         var widgets = stderr.flatMap(function (obj) {
           if (!obj.tag) return []; // Nothing
           var severity = 8; // error
-          if (obj.tag.text.match(/^warning/)) severity = 4;
-          if (obj.tag.text.match(/^note/)) severity = 1;
+          if (obj.tag.text.match(/^warning/i)) severity = 4;
+          if (obj.tag.text.match(/^note/i)) severity = 1;
           return {
               severity: severity,
               message: obj.tag.text,
@@ -74,12 +74,6 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({code, stderr, onCodeChang
      
 
       // Line link
-
-        const onPanesLinkLine = (data: any) => {
-          data.reveal = false;
-          onLineLink(data);
-        };
-
         const onLineLink = (data: any) => {
           if (!monaco) {return;}
 
@@ -113,12 +107,9 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({code, stderr, onCodeChang
 
         useEffect(() => {
           eventBus.on('lineLink', onLineLink);
-//          eventBus.on('panesLinkLine', onPanesLinkLine);
             return () => {
               // Cleanup
               eventBus.remove('lineLink', onLineLink);
-  //            eventBus.remove('panesLinkLine', onPanesLinkLine);
-
             };
         }, []);
     

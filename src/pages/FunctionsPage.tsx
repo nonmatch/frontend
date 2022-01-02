@@ -13,9 +13,8 @@ export const FunctionsPage: React.FC = () => {
     const fetchFunctions = async() => {
         setIsLoading(true);
         get(API_URL+'functions').then(
-            (data) => {
-                setIsLoading(false);
-                setFunctions(data);
+            async (data) => {
+                setIsLoading(false);                setFunctions(data);
                 // Make table sortable
                 (window as any).Sortable.init();
             },
@@ -30,7 +29,7 @@ export const FunctionsPage: React.FC = () => {
         fetchFunctions()
     }, []);
     return (<Container centered>
-        <h1 style={{paddingTop:"20px"}}>NONMATCH Functions</h1>
+        <h1 className="mt-4 mb-2">NONMATCH Functions</h1>
             <table className="sortable-theme-slick" data-sortable>
             <thead>
                 <tr><th>File</th><th>Function</th><th>Size</th><th data-sortable="false"></th></tr>
@@ -42,7 +41,7 @@ export const FunctionsPage: React.FC = () => {
                 : functions.map((func) => (
                     <tr key={func.id}><td>{func.file}</td><td>{func.name}</td><td>{func.size}</td>
                     <td>
-                        <Link to={"/functions/"+func.id}>
+                        <Link className="btn btn-outline-primary btn-sm" to={"/functions/"+func.id}>
                             Edit
                         </Link>
                     </td>

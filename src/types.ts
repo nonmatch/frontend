@@ -29,6 +29,7 @@ export interface Submission {
     id: number,
     code: string,
     owner: number,
+    ownerName?: string,
     function: number,
     score: number,
     is_equivalent: boolean,

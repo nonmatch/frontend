@@ -10,12 +10,12 @@ export const ErrorLog: React.FC<ErrorLogProps> = ({stderr, isCompiling}) => {
 
     const getLineClass = (line:ErrorLine) => {
         let className = ''
-        if (line.text.match(/ERROR/i)) {
-            className += 'text-danger';
-        } else if (line.text.match(/warning/i)){
+        if (line.text.match(/warning/i)) {
             className += 'text-warning';
+        } else if (line.text.match(/note/i)){
+        } else {
+            className += 'text-danger';
         }
-
         if (line.tag) {
             className +=' error-line';
         }
@@ -57,7 +57,7 @@ export const ErrorLog: React.FC<ErrorLogProps> = ({stderr, isCompiling}) => {
                     }}>
                         {line.text}
                     </div>
-                    :<div key={index} className={getLineClass(line)}>{line.text} {index}
+                    :<div key={index} className={getLineClass(line)}>{line.text}
                     </div>
 }))
             }

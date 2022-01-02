@@ -16,11 +16,18 @@ const loginWithGitHub = async () => {
     window.location.href = data['redirect'];
 };
 
-useEffect(() => {
+/*useEffect(() => {
     loginWithGitHub();
-},[]);
-        return (<Container small centered>
-            <input type="submit" value="Login with GitHub" onClick={loginWithGitHub} />
+},[]);*/
+        return (<Container small>
+            <h1 className="mt-4">Login</h1>
+            <p>To be able to submit Pull Requests using your GitHub account, you need to sign in using that account.<br />It is not possible to request permissions for one repository only, so it will request permissions for all public repositories.<br />
+            Even if you do not log in, you can still add your username and email for the git commit when submitting a matching function.
+            </p>
+            <button className="btn btn-secondary" onClick={loginWithGitHub}>
+                <i className="fa fa-github fa-fw"></i>
+                <span>Login with GitHub</span>
+            </button>
             {/* 
             <input type="text" placeholder="Username" />
             <input type="password" placeholder="Password" />

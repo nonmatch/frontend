@@ -1,9 +1,14 @@
 // https://tobiasahlin.com/spinkit/
 import './LoadingIndicator.css';
 
-export const LoadingIndicator: React.FC = () => {
+interface LoadingIndicatorProps {
+  small?: boolean
+}
+export const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({small = false}) => {
     return (
-<div className="sk-cube-grid">
+<div className="sk-cube-grid" style={
+  small ? {width:'38px', height:'38px'}:{}
+}>
   <div className="sk-cube sk-cube1"></div>
   <div className="sk-cube sk-cube2"></div>
   <div className="sk-cube sk-cube3"></div>
