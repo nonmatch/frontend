@@ -7,7 +7,7 @@ import { CodeEditor } from "../components/CodeEditor"
 import { DiffEditor } from "../components/DiffEditor";
 import { ErrorLog } from "../components/ErrorLog";
 import { API_URL, CEXPLORE_URL, COMPILE_DEBOUNCE_TIME } from "../constants";
-import { Func } from "../types";
+import { AsmLine, ErrorLine, Func } from "../types";
 
 interface Params {
     function: string,
@@ -19,7 +19,12 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const [cCode, setCCode] = useState(
         '// Type your c code here...'
     )
-    const [compiled, setCompiled] = useState(
+
+    const [isCompiling, setIsCompiling] = useState(true);
+    const [compiled, setCompiled] = useState<{
+        asm: string,
+        lines: AsmLine[],
+        stderr: ErrorLine[]}>(
         {
             asm: 'The compiled asm of your code will appear here...',
             lines: [],
@@ -50,7 +55,9 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         setScore(score);
     };
     const compile = async (nextValue: any) => {
-        console.log('compiling', nextValue);
+        setIsCompiling(true);
+//        console.log('compiling', nextValue);
+        try {
         const res = await fetch(CEXPLORE_URL, {
             "headers": {
                 "accept": "application/json, text/javascript, */*; q=0.01",
@@ -94,18 +101,25 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         });
 
         const data = await res.json();
-        console.log(data);
+//        console.log(data);
 
         const code = data.asm.map((line: any) => line.text).join('\n')
 
-        console.log('GOT ASM', data.asm);
+        setIsCompiling(false);
         setCompiled({
             asm: code,
             lines: data.asm,
             stderr: data.stderr//data.stderr.map((line: any) => line.text).join('\n')
         })
+    } catch(e:any) {
+        setIsCompiling(false);
+        setCompiled({
+            asm: '',
+            lines: [],
+            stderr: [{text: 'ERROR: ' + e.message}]
+        })
     }
-
+    }
 
     const loadFunction = async (func: string, submission: string) => {
         // Fetch asm code from function
@@ -139,13 +153,12 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             is_equivalent: false, // TODO
             parent: match.params.submission
         })
-        console.log(data)
+//        console.log(data)
         history.push('/functions/' + match.params.function + '/submissions/' + data.id);
         // TODO show message that the submission was saved with a button to copy the link
     };
 
     const showOneColumn = () => {
-        console.log(window.innerWidth);
         return window.innerWidth < 800;
     };
 
@@ -162,7 +175,7 @@ if (showOneColumn()) {
                             
                         />
       </div>
-  <div className="tab-pane fade" id="stderr" role="tabpanel" aria-labelledby="stderr-tab" style={{flex:1, overflow:"hidden"}}>            <ErrorLog stderr={compiled.stderr}></ErrorLog> </div>
+  <div className="tab-pane fade" id="stderr" role="tabpanel" aria-labelledby="stderr-tab" style={{flex:1, overflow:"hidden"}}>            <ErrorLog stderr={compiled.stderr} isCompiling={isCompiling}></ErrorLog> </div>
   <div className="tab-pane fade" id="diff" role="tabpanel" aria-labelledby="diff-tab" style={{flex:1, overflow:"hidden"}}><DiffEditor
             compiledAsm={compiled.asm}
             originalAsm={originalAsm}
@@ -188,7 +201,11 @@ if (showOneColumn()) {
             <span style={{padding: "0 8px"}}>
                             Diff Score: {score}
                     </span>
-            <button className="btn btn-success btn-sm" onClick={submit}>Submit</button>
+                    {
+                        isCompiling
+                        ? <button className="btn btn-secondary btn-sm" disabled>Submit</button>
+                        : <button className="btn btn-success btn-sm" onClick={submit}>Submit</button>
+                    }
         </div>
         </div>
 </>
@@ -222,8 +239,8 @@ if (showOneColumn()) {
             </Section>
             <Bar size={1} style={{ background: '#888888', cursor: 'col-resize' }} 
                 expandInteractiveArea={{ top: 2, bottom: 2 }}/>
-            <Section minSize={100} defaultSize={200}>
-            <ErrorLog stderr={compiled.stderr}></ErrorLog> 
+            <Section minSize={100} defaultSize={200} style={{display:"flex"}}>
+            <ErrorLog stderr={compiled.stderr} isCompiling={isCompiling}></ErrorLog> 
             </Section>
         </Container>
 
@@ -236,8 +253,13 @@ if (showOneColumn()) {
             <span style={{padding: "0 8px"}}>
                             Diff Score: {score}
                     </span>
-            <button className="btn btn-success btn-sm" onClick={submit}>Submit</button>
-        </div>
+                    {
+                        isCompiling
+                        ? <button className="btn btn-secondary btn-sm" disabled>Submit</button>
+                        : <button className="btn btn-success btn-sm" onClick={submit}>Submit</button>
+                    }
+                    </div>
+
         </div>
 {/*
             <div style={{

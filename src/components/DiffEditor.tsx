@@ -31,7 +31,6 @@ export const DiffEditor: React.FC<DiffEditorProps> = ({ compiledAsm, originalAsm
            // Mouse move
            const onMouseMove = (e:any) => {
             if (e !== null && e.target !== null && e.target.position !== null) {
-              console.log('HOVER', e.target.position.lineNumber);
               
               if (e.target.position.lineNumber -1 >= gLines.length) {
                   return;
@@ -61,8 +60,6 @@ export const DiffEditor: React.FC<DiffEditorProps> = ({ compiledAsm, originalAsm
                 }
             }
             onScoreChange(score);
-            console.log(score);
-            console.log("update diff");
         });
         editor.getOriginalEditor().onMouseMove((e: any) => {
             mouseMoveThrottledFunction(e);

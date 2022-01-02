@@ -26,7 +26,6 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({code, stderr, onCodeChang
        // Mouse move
        const onMouseMove = (e:any) => {
         if (e !== null && e.target !== null && e.target.position !== null) {
-          console.log('HOVER', e.target.position.lineNumber);
           eventBus.dispatch('panesLinkLine', {
             line: e.target.position.lineNumber
           });
@@ -52,7 +51,6 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({code, stderr, onCodeChang
 
       // Draw squiggly lines
         useEffect(() => {
-          console.log('test', monaco);
           if (!monaco) {return;}
           
         var widgets = stderr.flatMap(function (obj) {
@@ -70,7 +68,6 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({code, stderr, onCodeChang
               endColumn: obj.tag.column ? -1 : Infinity,
           };
       });
-      console.log(widgets);
       monaco.editor.setModelMarkers(editor.getModel(), 'stderr', widgets);
         }, [stderr]);
 
@@ -84,11 +81,9 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({code, stderr, onCodeChang
         };
 
         const onLineLink = (data: any) => {
-          console.log('lineLink', data);
           if (!monaco) {return;}
 
           if (data.reveal && data.line) {
-            console.log('ref');
           editor.revealLineInCenter(data.line);
         } 
           let decorations = [{

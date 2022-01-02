@@ -187,3 +187,7 @@ td {
 .error-line:hover {
   background: #eefcff;
 }
+
+.navbar {
+  padding: 2px 0px;
+}
