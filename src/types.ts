@@ -34,6 +34,7 @@ export interface Submission {
     score: number,
     is_equivalent: boolean,
     parent: number,
+    time_created: string
 }
 
 export interface ErrorLine {

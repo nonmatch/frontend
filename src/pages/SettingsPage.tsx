@@ -12,12 +12,15 @@ export const SettingsPage: React.FC = () => {
   const [email, setEmail] = useState('');
 
   const loadCurrentUser = async () => {
-    const user = await getCurrentUser();
+    getCurrentUser().then((user) => {
         setCurrentUser(user);
 if (user){
 setUsername(user.username);
 setEmail(user.email);
 }
+    }, (error) => {
+      console.error(error)
+    });
   };
 
   useEffect( () => {

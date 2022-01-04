@@ -1,0 +1,7 @@
+.tab-error {
+    color: red;
+}
+
+.tab-error:hover {
+    color: rgb(194, 0, 0);
+}
