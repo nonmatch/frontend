@@ -8,6 +8,8 @@ import { CodeEditor } from "../components/CodeEditor"
 import { DiffEditor } from "../components/DiffEditor";
 import { ErrorLog } from "../components/ErrorLog";
 import { LoadingIndicator } from "../components/LoadingIndicator";
+import { SubmitDialog } from "../components/SubmitDialog";
+import { SuccessToast } from "../components/SuccessToast";
 import { API_URL, CEXPLORE_URL, COMPILE_DEBOUNCE_TIME } from "../constants";
 import { getFunction } from "../repositories/function";
 import { AsmLine, ErrorLine, Func } from "../types";
@@ -18,6 +20,12 @@ interface Params {
     function: string,
     submission: string,
 }
+
+
+// Store the id of the submission we just created to display the submission toast.
+let justSubmitted = -1;
+
+
 const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
     // State
@@ -29,12 +37,14 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const [compiled, setCompiled] = useState<{
         asm: string,
         lines: AsmLine[],
-        stderr: ErrorLine[]
+        stderr: ErrorLine[],
+        data: any // raw compile response, so we can pass it on when submitting
     }>(
         {
             asm: 'The compiled asm of your code will appear here...',
             lines: [],
-            stderr: []
+            stderr: [],
+            data: {}
         }
 
     )
@@ -47,6 +57,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const [score, setScore] = useState(-1);
 
     const [error, setError] = useState<Error | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
 
 
@@ -69,7 +80,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         setCompiled({
             asm: code,
             lines: data.asm,
-            stderr: data.stderr//data.stderr.map((line: any) => line.text).join('\n')
+            stderr: data.stderr,//data.stderr.map((line: any) => line.text).join('\n')
+            data:data
         })
     }
     const compile = async (nextValue: any) => {
@@ -128,7 +140,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             setCompiled({
                 asm: '',
                 lines: [],
-                stderr: [{ text: 'ERROR: ' + e.message }]
+                stderr: [{ text: 'ERROR: ' + e.message }],
+                data: {}
             })
         }
     }
@@ -151,6 +164,13 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                         // use the precompiled compile data
                         parseCompileData(JSON.parse(data.compiled))
                     }
+
+                    // If this was just submitted, show the success toast
+                    if (justSubmitted == parseInt(submission)) {
+                        justSubmitted = -1;
+                        new (window as any).bootstrap.Toast(document.getElementById('successToast')).show();
+
+                    }
                 }, setError);
             }
         }, setError);
@@ -163,6 +183,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
     const history = useHistory();
     const submit = async () => {
+        setIsSubmitting(true);
         //let modal = new (window as any).bootstrap.Modal(document.getElementById('modalTest'));
         //modal.show();
         // TODO ask if submitted while not logged in?
@@ -171,12 +192,18 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             code: cCode,
             score: score,
             is_equivalent: false, // TODO
-            parent: match.params.submission
+            parent: match.params.submission,
+            compiled: JSON.stringify(compiled.data)
         }).then(
             (data) => {
+                setIsSubmitting(false);
+                justSubmitted = data.id; // Show the toast on page reload
                 history.push('/functions/' + match.params.function + '/submissions/' + data.id);
             },
-            (error) => { console.error('Submission failed', error) }
+            (error) => {
+                setIsSubmitting(false);
+                setError(error);
+                console.error('Submission failed', error) }
         )
         //        console.log(data)
 
@@ -193,7 +220,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         // TODO indicate a compiler error in one column mode by turning the stderr tab red
         return (
             <>
-
+                <SubmitDialog></SubmitDialog>
+                <SuccessToast score={score}></SuccessToast>
                 <div className="tab-content" id="myTabContent" style={{ flex: 1, display: "flex" }}>
                     <div className="tab-pane fade show active" id="code" role="tabpanel" aria-labelledby="code-tab" style={{ flex: 1, overflow: "hidden" }}>
                         <CodeEditor
@@ -231,7 +259,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                             Diff Score: {score}
                         </span>
                         {
-                            isCompiling
+                            isCompiling || isSubmitting
                                 ? /*<button className="btn btn-secondary btn-sm" disabled>Submit</button>*/
                                 <LoadingIndicator small />
                                 : <button className={
@@ -250,43 +278,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         // Two columns
         return (
             <>
-                {
-                    // modal dialog
-                }
-                <div className="modal fade" id="modalTest" tabIndex={-1} role="dialog">
-                    <div className="modal-dialog modal-dialog-centered" role="document">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title">Submit Function</h5>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true"></span>
-                                </button>
-                            </div>
-                            <div className="modal-body">
-
-                                <div>
-                                    <input type="checkbox" /> Is functionally equivalent
-                                </div>
-                                <hr />
-                                <div>
-                                    <p>Login to claim or add yourself as the author of this commit?</p>
-                                    <Link className="btn btn-secondary btn-sm" to="/login">
-                                        <i className="fa fa-github fa-fw"></i>
-                                        <span>Login with GitHub</span>
-                                    </Link>
-
-                                    <hr />
-                                    <input type="text" placeholder="Username" />
-                                    <input type="text" placeholder="E-Mail" />
-                                </div>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="button" className="btn btn-primary">Save changes</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <SubmitDialog></SubmitDialog>
+                <SuccessToast score={score}></SuccessToast>
 
                 <Container style={{ overflow: "hidden", flex: 1 }}>
                     <Section minSize={100}>
@@ -325,7 +318,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                             Diff Score: {score}
                         </span>
                         {
-                            isCompiling
+                            isCompiling || isSubmitting
                                 ? <button className="btn btn-secondary btn-sm" disabled>Submit</button>
                                 : <button className={
                                     "btn btn-sm" + (score === 0 ?

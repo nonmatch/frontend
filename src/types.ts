@@ -7,22 +7,17 @@ export interface Project {
 
 export interface Func {
     id: number,
-    projectId: number, // TODO remove
     name: string,
     file: string,
-    cCode?: string, // TODO remove
-    asmCode?: string, // TODO remove
-    score?: number // TODO remove
-    size: number
+    size: number,
+    best_score: number
 }
 
 export interface User {
     id: number,
-    name: string, // TODO remove
     username: string,
     email: string,
     avatar: string,
-    points: number // TODO remove
 }
 
 export interface Submission {

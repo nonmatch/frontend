@@ -1,3 +1,4 @@
+import { DateTime } from "luxon";
 import { useEffect, useState } from "react"
 import { Link, RouteComponentProps } from "react-router-dom";
 import { get } from "../api";
@@ -7,7 +8,6 @@ import { API_URL } from "../constants";
 import { getFunction } from "../repositories/function";
 import { getUser } from "../repositories/user";
 import { Func, Submission } from "../types"
-
 interface Params {
     function: string
 }
@@ -38,6 +38,14 @@ export const SubmissionsPage: React.FC<RouteComponentProps<Params>> = ({ match }
 
                     let user = await getUser(data[i].owner);
                     data[i].ownerName = user.username;
+                    data[i].time_created = DateTime.fromISO(data[i].time_created).toLocaleString( {
+                             year: 'numeric',
+                             month: '2-digit',
+                             day: '2-digit',
+                             hour: 'numeric',
+                             minute: '2-digit',
+                             timeZoneName: 'short'
+                           });
                 }
                 // TODO only one submission? -> redirect
                 setIsLoading(false);
