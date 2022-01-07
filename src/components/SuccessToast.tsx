@@ -2,9 +2,10 @@ import { Link } from "react-router-dom";
 
 interface SuccessToastProps {
     score: number;
+    isLoggedIn: boolean
 }
 
-export const SuccessToast: React.FC<SuccessToastProps> = ({ score }) => {
+export const SuccessToast: React.FC<SuccessToastProps> = ({ score, isLoggedIn }) => {
 
     const copyLink = () => {
         navigator.clipboard.writeText(window.location.href);
@@ -17,7 +18,7 @@ export const SuccessToast: React.FC<SuccessToastProps> = ({ score }) => {
                     <div className="toast-body">Successfully submitted code
                     </div>
                     <button className="btn btn-outline-light btn-sm me-2 m-auto" onClick={copyLink}>Copy Link</button>
-                    {score == 0 && <Link className="btn btn-outline-light btn-sm me-2 m-auto" to="/pr">Create PR</Link>}
+                    {score === 0 && isLoggedIn && <Link className="btn btn-outline-light btn-sm me-2 m-auto" to="/pr">Create PR</Link>}
                     <button type="button" className="btn-close btn-close-white me-2" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>

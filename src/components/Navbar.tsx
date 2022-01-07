@@ -23,7 +23,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
             {(currentUser == null)
               ? <li className="nav-item"><Link to="/login" className="nav-link">Login</Link></li>
               : <li className="nav-item dropdown">
-                <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <a className="nav-link dropdown-toggle" id="navbarDropdown" href="/" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                   {currentUser.username}
                 </a>
                 <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">

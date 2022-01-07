@@ -19,50 +19,53 @@ export const SubmissionsPage: React.FC<RouteComponentProps<Params>> = ({ match }
     const [submissions, setSubmissions] = useState<Submission[]>([]);
     const [func, setFunc] = useState<Func | null>(null)
 
-    const fetchSubmissions = async () => {
-        setIsLoading(true);
-        getFunction(parseInt(match.params.function)).then(
-            (func) => {
-                setFunc(func)
-            },
-            (error) => {
-                setIsLoading(false);
-                console.error(error)
-            }
-        )
-
-        get(API_URL + 'functions/' + match.params.function + '/submissions').then(
-            async (data) => {
-                // Load all owners
-                for (let i = 0; i < data.length; i++) {
-
-                    let user = await getUser(data[i].owner);
-                    data[i].ownerName = user.username;
-                    data[i].time_created = DateTime.fromISO(data[i].time_created).toLocaleString( {
-                             year: 'numeric',
-                             month: '2-digit',
-                             day: '2-digit',
-                             hour: 'numeric',
-                             minute: '2-digit',
-                             timeZoneName: 'short'
-                           });
-                }
-                // TODO only one submission? -> redirect
-                setIsLoading(false);
-                setSubmissions(data);
-                // Make table sortable
-                (window as any).Sortable.init();
-            },
-            (error) => {
-                setIsLoading(false);
-                console.error(error)
-            }
-        )
-    }
-
     useEffect(() => {
+        const fetchSubmissions = async () => {
+            setIsLoading(true);
+            getFunction(parseInt(match.params.function)).then(
+                (func) => {
+                    setFunc(func)
+                },
+                (error) => {
+                    setIsLoading(false);
+                    console.error(error)
+                }
+            )
+
+            get(API_URL + 'functions/' + match.params.function + '/submissions').then(
+                async (data) => {
+                    // Load all owners
+                    for (let i = 0; i < data.length; i++) {
+                        if (data[i].owner === null || data[i].owner === 0) {
+                            data[i].ownerName = 'anonymous';
+                        } else {
+                            console.log(data[i].owner);
+                            let user = await getUser(data[i].owner);
+                            data[i].ownerName = user.username;
+                        }
+                        data[i].time_created = DateTime.fromISO(data[i].time_created).toLocaleString({
+                            year: 'numeric',
+                            month: '2-digit',
+                            day: '2-digit',
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            timeZoneName: 'short'
+                        });
+                    }
+                    // TODO only one submission? -> redirect
+                    setIsLoading(false);
+                    setSubmissions(data);
+                    // Make table sortable
+                    (window as any).Sortable.init();
+                },
+                (error) => {
+                    setIsLoading(false);
+                    console.error(error)
+                }
+            )
+        }
         fetchSubmissions()
-    }, []);
+    }, [match.params.function]);
     return (<Container centered>
         <h1 className="mt-4 mb-2">Select Submission{
             func ? ' for Function ' + func.name

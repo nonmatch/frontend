@@ -6,24 +6,24 @@ import { User } from "../types";
 
 export const SettingsPage: React.FC = () => {
 
-  const [currentUser, setCurrentUser] = useState<User|null>(null);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
 
   const loadCurrentUser = async () => {
     getCurrentUser().then((user) => {
-        setCurrentUser(user);
-if (user){
-setUsername(user.username);
-setEmail(user.email);
-}
+      setCurrentUser(user);
+      if (user) {
+        setUsername(user.username);
+        setEmail(user.email);
+      }
     }, (error) => {
       console.error(error)
     });
   };
 
-  useEffect( () => {
+  useEffect(() => {
     loadCurrentUser()
   }, []);
 
@@ -34,7 +34,7 @@ setEmail(user.email);
     }
     user.username = username;
     user.email = email;
-//    setCurrentUser(user);
+    //    setCurrentUser(user);
     await saveCurrentUser(user);
     // TODO somehow trigger the redraw of the App component?
     // maybe pass the component down here through the route?
@@ -45,23 +45,23 @@ setEmail(user.email);
 
 
 
-    // TODO maybe allow to refetch the avatar from GitHub?
-    return (<Container>
-        <h1 className="mt-4">Settings</h1>
-            This username and email are used in the git commit if you submit a matching function.
-  <div className="mb-3 mt-3">
-    <label htmlFor="username">Username</label>
-    <input type="username" className="form-control" id="username" placeholder="Enter username" 
-    value={username} 
-    onChange={(e) => {setUsername(e.target.value)}}
-    />
-  </div>
-  <div className="mb-3">
-    <label htmlFor="email">Email address</label>
-    <input type="email" className="form-control" id="email" placeholder="Enter email"
-    value={email}
-    onChange={(e) => {setEmail(e.target.value)}}/>
-  </div>
-  <button type="submit" className="btn btn-primary" onClick={save}>Save</button>
-    </Container>);
+  // TODO maybe allow to refetch the avatar from GitHub?
+  return (<Container>
+    <h1 className="mt-4">Settings</h1>
+    This username and email are used in the git commit if you submit a matching function.
+    <div className="mb-3 mt-3">
+      <label htmlFor="username">Username</label>
+      <input type="username" className="form-control" id="username" placeholder="Enter username"
+        value={username}
+        onChange={(e) => { setUsername(e.target.value) }}
+      />
+    </div>
+    <div className="mb-3">
+      <label htmlFor="email">Email address</label>
+      <input type="email" className="form-control" id="email" placeholder="Enter email"
+        value={email}
+        onChange={(e) => { setEmail(e.target.value) }} />
+    </div>
+    <button type="submit" className="btn btn-primary" onClick={save}>Save</button>
+  </Container>);
 }

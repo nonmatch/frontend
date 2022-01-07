@@ -1,17 +1,19 @@
 import debounce from "lodash.debounce";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { setUncaughtExceptionCaptureCallback } from "process";
+import { useCallback, useEffect, useState } from "react";
 import { RouteComponentProps, useHistory } from "react-router";
-import { Link } from "react-router-dom";
 import { Bar, Container, Section } from "react-simple-resizer";
 import { get, post } from "../api";
 import { CodeEditor } from "../components/CodeEditor"
 import { DiffEditor } from "../components/DiffEditor";
+import { ErrorAlert } from "../components/ErrorAlert";
 import { ErrorLog } from "../components/ErrorLog";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { SubmitDialog } from "../components/SubmitDialog";
 import { SuccessToast } from "../components/SuccessToast";
 import { API_URL, CEXPLORE_URL, COMPILE_DEBOUNCE_TIME } from "../constants";
 import { getFunction } from "../repositories/function";
+import { getCurrentUser } from "../repositories/user";
 import { AsmLine, ErrorLine, Func } from "../types";
 
 import './EditorPage.css'
@@ -21,10 +23,8 @@ interface Params {
     submission: string,
 }
 
-
 // Store the id of the submission we just created to display the submission toast.
 let justSubmitted = -1;
-
 
 const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
@@ -58,8 +58,10 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
     const [error, setError] = useState<Error | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-
+    const [isEquivalent, setIsEquivalent] = useState(false);
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [username, setUsername] = useState('');
+    const [email, setEmail] = useState('');
 
     const debouncedCompile =
         useCallback(
@@ -81,7 +83,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             asm: code,
             lines: data.asm,
             stderr: data.stderr,//data.stderr.map((line: any) => line.text).join('\n')
-            data:data
+            data: data
         })
     }
     const compile = async (nextValue: any) => {
@@ -146,54 +148,69 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         }
     }
 
-    const loadFunction = async (func: string, submission: string) => {
-        // Fetch asm code from function
-        getFunction(parseInt(func)).then((data) => {
-            setFunc(data)
-            if (data.asm !== undefined) {
-                setOriginalAsm(data.asm)
-            }
 
-            if (parseInt(submission) === 0) {
-                setIsCompiling(false);
-            } else {
-                get(API_URL + 'submissions/' + submission).then((data) => {
-                    // Fetch c code from submission
-                    if (data.code !== undefined) {
-                        setCCode(data.code)
-                        // use the precompiled compile data
-                        parseCompileData(JSON.parse(data.compiled))
-                    }
-
-                    // If this was just submitted, show the success toast
-                    if (justSubmitted == parseInt(submission)) {
-                        justSubmitted = -1;
-                        new (window as any).bootstrap.Toast(document.getElementById('successToast')).show();
-
-                    }
-                }, setError);
-            }
-        }, setError);
-
-    }
 
     useEffect(() => {
+
+        getCurrentUser().then((user) => {
+            setIsLoggedIn(true);
+            setUsername(user?.username ?? '');
+            setEmail(user?.email ?? '');
+        });
+        const loadFunction = async (func: string, submission: string) => {
+            // Fetch asm code from function
+            getFunction(parseInt(func)).then((data) => {
+                setFunc(data)
+                if (data.asm !== undefined) {
+                    setOriginalAsm(data.asm)
+                }
+
+                if (parseInt(submission) === 0) {
+                    setIsEquivalent(false);
+                    setIsCompiling(false);
+                } else {
+                    get(API_URL + 'submissions/' + submission).then((data) => {
+                        // Fetch c code from submission
+                        if (data.code !== undefined) {
+                            setCCode(data.code)
+                            // use the precompiled compile data
+                            if (data.compiled) {
+                                parseCompileData(JSON.parse(data.compiled))
+                            } // TODO else debouncecompile?
+                        }
+                        setIsEquivalent(data.is_equivalent);
+
+                        // If this was just submitted, show the success toast
+                        if (justSubmitted === parseInt(submission)) {
+                            justSubmitted = -1;
+                            new (window as any).bootstrap.Toast(document.getElementById('successToast')).show();
+
+                        }
+                    }, setError);
+                }
+            }, setError);
+
+        }
         loadFunction(match.params.function, match.params.submission)
     }, [match.params.function, match.params.submission]) // TODO why does it want me to add loadFunction as a dependency here?
 
     const history = useHistory();
+
+    const showSubmitDialog = () => {
+        let modal = new (window as any).bootstrap.Modal(document.getElementById('submitDialog'));
+        modal.show();
+    };
+
     const submit = async () => {
         setIsSubmitting(true);
-        //let modal = new (window as any).bootstrap.Modal(document.getElementById('modalTest'));
-        //modal.show();
-        // TODO ask if submitted while not logged in?
-        //return;
         post(API_URL + 'functions/' + match.params.function + '/submissions', {
             code: cCode,
             score: score,
-            is_equivalent: false, // TODO
+            is_equivalent: isEquivalent,
             parent: match.params.submission,
-            compiled: JSON.stringify(compiled.data)
+            compiled: JSON.stringify(compiled.data),
+            username: username,
+            email: email
         }).then(
             (data) => {
                 setIsSubmitting(false);
@@ -203,25 +220,39 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             (error) => {
                 setIsSubmitting(false);
                 setError(error);
-                console.error('Submission failed', error) }
+                console.error('Submission failed', error)
+            }
         )
-        //        console.log(data)
-
-        // TODO show message that the submission was saved with a button to copy the link
     };
 
     const showOneColumn = () => {
         return window.innerWidth < 800;
     };
 
+    const common = (
+        <>
+            <ErrorAlert error={error}></ErrorAlert>
+            <SubmitDialog
+                score={score}
+                setIsEquivalent={setIsEquivalent}
+                isEquivalent={isEquivalent}
+                submit={submit}
+                isLoggedIn={isLoggedIn}
+                username={username}
+                setUsername={setUsername}
+                email={email}
+                setEmail={setEmail}
+            ></SubmitDialog>
+            <SuccessToast score={score} isLoggedIn={isLoggedIn}></SuccessToast>
+        </>
+    );
+
     if (showOneColumn()) {
         // One column with tabs
         // TODO also add a textarea version of the editor to be able to copy and paste code?
-        // TODO indicate a compiler error in one column mode by turning the stderr tab red
         return (
             <>
-                <SubmitDialog></SubmitDialog>
-                <SuccessToast score={score}></SuccessToast>
+                {common}
                 <div className="tab-content" id="myTabContent" style={{ flex: 1, display: "flex" }}>
                     <div className="tab-pane fade show active" id="code" role="tabpanel" aria-labelledby="code-tab" style={{ flex: 1, overflow: "hidden" }}>
                         <CodeEditor
@@ -260,27 +291,23 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                         </span>
                         {
                             isCompiling || isSubmitting
-                                ? /*<button className="btn btn-secondary btn-sm" disabled>Submit</button>*/
-                                <LoadingIndicator small />
+                                ? <LoadingIndicator small />
                                 : <button className={
                                     "btn btn-sm" + (score === 0
                                         ? " btn-success"
                                         : " btn-outline-success")
-                                } onClick={submit}>Submit</button>
+                                } onClick={showSubmitDialog}>Submit</button>
                         }
                     </div>
                 </div>
             </>
-
         );
 
     } else {
         // Two columns
         return (
             <>
-                <SubmitDialog></SubmitDialog>
-                <SuccessToast score={score}></SuccessToast>
-
+                {common}
                 <Container style={{ overflow: "hidden", flex: 1 }}>
                     <Section minSize={100}>
                         <CodeEditor
@@ -307,7 +334,6 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                                 <ErrorLog stderr={compiled.stderr} isCompiling={isCompiling}></ErrorLog>
                             </Section>
                         </Container>
-
                     </Section>
                 </Container>
                 <div style={{ borderTop: "1px solid #eee", backgroundColor: "#f8f9fa", fontSize: "14px" }}>
@@ -321,95 +347,13 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                             isCompiling || isSubmitting
                                 ? <button className="btn btn-secondary btn-sm" disabled>Submit</button>
                                 : <button className={
-                                    "btn btn-sm" + (score === 0 ?
-                                        " btn-success"
-                                        : " btn-outline-success")} onClick={submit}>Submit</button>
+                                    "btn btn-sm" + (score === 0
+                                        ? " btn-success"
+                                        : " btn-outline-success")}
+                                    onClick={showSubmitDialog}>Submit</button>
                         }
                     </div>
-
                 </div>
-                {/*
-            <div style={{
-                flexDirection: 'row',
-                flex: '1',
-                display: 'flex',
-                flexGrow: 1,
-                padding: '0px',
-                boxSizing: 'border-box',
-                overflow: 'hidden',
-            }}
-            >
-
-                <div style={{
-                    flex: 1,
-                    flexDirection: 'column',
-                    display: 'flex'
-                }}>
-
-                    <div style={{
-                        flexGrow: 1,
-                        maxHeight: '70%'
-                    }}>
-
-
-
-                    </div>
-                    <div style={{
-                        flexGrow: 1,
-                        flexBasis: 'auto',
-                        paddingTop: '20px'
-                    }}>
-                        <div style={{
-                            fontFamily: 'monospace',
-                            boxSizing: 'border-box',
-                            padding: '20px',
-                            height: '100%',
-                            whiteSpace: 'pre'
-                        }}>
-
-                            {compiled.stderr}
-                        </div>
-                    </div>
-
-                </div>
-                <div className="spacer" style={{ width: "8px" }} />
-                <div style={{
-                    width: "50%",
-                    display: "flex",
-                    flexDirection: "column"
-                }}>
-                    <div style={{
-                        flexGrow: 1
-                    }}>
-                        <DiffEditor
-                            compiledAsm={compiled.asm}
-                            originalAsm={originalAsm}
-                            onScoreChange={onScoreChange}
-                        />
-                    </div>
-                    <div style={{
-                        marginTop: "20px",
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        alignItems: "center"
-                    }}>
-                        <span>
-                            Diff Score: {score}
-                    </span>
-                        <button className="success" style={{
-                            color: '#fff',
-                            border: "none",
-                            padding: "10px 30px",
-                            borderRadius: "4px",
-                            marginLeft: "20px",
-                            cursor: "pointer",
-                            display: "inline-block"
-                        }}
-                        onClick={submit}>Submit</button>
-                    </div>
-                </div>
-            </div>
-                    */}
             </>
         )
     }

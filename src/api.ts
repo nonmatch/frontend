@@ -26,6 +26,11 @@ function getToken() {
 
 let token:string | null = getToken();
 
+function resetToken() {
+    localStorage.removeItem('token');
+    token = null;
+}
+
 const verbose = false;
 
 async function get(url: string): Promise<any> {
@@ -53,20 +58,19 @@ async function request(url: string, data:any, method: 'POST'|'PUT'): Promise<any
         console.log(method+' request', url)
     }
     let options:any = {method: method, body: JSON.stringify(data)};
+    options['headers'] = new Headers({
+        'Content-Type': 'application/json'
+    });
     if (token != null) {
-        options['headers'] = new Headers({
-            'Authorization': 'Basic ' + token,
-            'Content-Type': 'application/json' // TODO always
-        });
+        options['headers']['Authorization'] = 'Basic ' + token
     }
     const res = await fetch(url, options);
     if (res.ok) {
         return res.json();
     } else {
-        return res.json();
-      /*  return new Promise((resolve, reject) => {
-            reject(res)
-        });*/
+        return new Promise((resolve, reject) => {
+            res.json().then(reject)
+        });
     }
 }
 
@@ -80,5 +84,6 @@ async function put(url: string, data:any): Promise<any> {
 export {
     get,
     post,
-    put
+    put,
+    resetToken
 }

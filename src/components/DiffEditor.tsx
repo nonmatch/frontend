@@ -66,54 +66,51 @@ export const DiffEditor: React.FC<DiffEditorProps> = ({ compiledAsm, originalAsm
         });
     }
 
-
-
-
-    const onPanesLinkLine = (data: any) => {
-        if (!editor) { return };
-        let lineNums: number[] = [];
-        // Find all corresponding asm lines
-        gLines.forEach((line, index) => {
-            if (line.source && line.source.line === data.line) {
-                lineNums.push(index + 1);
-            }
-        });
-
-        if (lineNums.length > 0) {
-            // Also link the corresponding line in the editor
-            const hoverAsm = gLines[lineNums[0] - 1];
-            eventBus.dispatch('lineLink', {
-                line: hoverAsm.source?.line
-            });
-        }
-
-
-        let decorations = lineNums.map((line) => {
-            return {
-                range: new monaco.Range(line, 1, line, 1),
-                options: {
-                    isWholeLine: true,
-                    linesDecorationsClassName: 'linked-code-decoration-margin',
-                    className: 'linked-code-decoration-line',
-                },
-            };
-        });
-        prevDecorations = editor.getOriginalEditor().deltaDecorations(prevDecorations, decorations);
-
-        if (fadeTimeoutId !== -1) {
-            clearTimeout(fadeTimeoutId);
-        }
-        fadeTimeoutId = setTimeout(() => {
-            clearLinkedLine();
-            fadeTimeoutId = -1;
-        }, 3000);
-    };
-
     const clearLinkedLine = () => {
         prevDecorations = editor.getOriginalEditor().deltaDecorations(prevDecorations, []);
     };
 
     useEffect(() => {
+        const onPanesLinkLine = (data: any) => {
+            if (!editor) { return };
+            let lineNums: number[] = [];
+            // Find all corresponding asm lines
+            gLines.forEach((line, index) => {
+                if (line.source && line.source.line === data.line) {
+                    lineNums.push(index + 1);
+                }
+            });
+
+            if (lineNums.length > 0) {
+                // Also link the corresponding line in the editor
+                const hoverAsm = gLines[lineNums[0] - 1];
+                eventBus.dispatch('lineLink', {
+                    line: hoverAsm.source?.line
+                });
+            }
+
+
+            let decorations = lineNums.map((line) => {
+                return {
+                    range: new monaco.Range(line, 1, line, 1),
+                    options: {
+                        isWholeLine: true,
+                        linesDecorationsClassName: 'linked-code-decoration-margin',
+                        className: 'linked-code-decoration-line',
+                    },
+                };
+            });
+            prevDecorations = editor.getOriginalEditor().deltaDecorations(prevDecorations, decorations);
+
+            if (fadeTimeoutId !== -1) {
+                clearTimeout(fadeTimeoutId);
+            }
+            fadeTimeoutId = setTimeout(() => {
+                clearLinkedLine();
+                fadeTimeoutId = -1;
+            }, 3000);
+        };
+
         eventBus.on('panesLinkLine', onPanesLinkLine);
         return () => {
             // Remove listeners

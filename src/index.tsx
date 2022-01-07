@@ -1,9 +1,7 @@
-import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
-import { monaco } from 'react-monaco-editor';
 
 // Use asm syntax highlighting from Compiler Explorer
 import './asm-mode.js';

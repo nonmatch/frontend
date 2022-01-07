@@ -31,7 +31,7 @@ const getCurrentUser = async() => {
 };
 
 const saveCurrentUser = async(user: User) => {
-    const data = await put(API_URL + 'users/'+user.id, user);
+    await put(API_URL + 'users/'+user.id, user);
     currentUser = user;
     // TODO error check
 }

@@ -1,9 +1,4 @@
-import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import { Card } from "../components/Card";
-import { Container } from "../components/Container";
-import { API_URL } from "../constants";
-import { Project } from "../types";
+import React, {  } from "react";
 
 export const DashboardPage: React.FC = () => {
     return (<></>);
