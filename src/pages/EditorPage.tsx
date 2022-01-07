@@ -1,6 +1,6 @@
 import debounce from "lodash.debounce";
 import { useCallback, useEffect, useState } from "react";
-import { RouteComponentProps, useHistory } from "react-router";
+import { Prompt, RouteComponentProps, useHistory } from "react-router";
 import { Bar, Container, Section } from "react-simple-resizer";
 import { get, post } from "../api";
 import { CodeEditor } from "../components/CodeEditor"
@@ -61,6 +61,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
+    const [hasUnsubmittedChanges, setHasUnsubmittedChanges] = useState(false);
 
     const debouncedCompile =
     // eslint-disable-next-line
@@ -68,6 +69,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             debounce(nextValue => compile(nextValue), COMPILE_DEBOUNCE_TIME), []);
 
     const onCodeChange = (newValue: any) => {
+        setHasUnsubmittedChanges(true);
         setCCode(newValue)
         debouncedCompile(newValue);
     }
@@ -214,6 +216,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         }).then(
             (data) => {
                 setIsSubmitting(false);
+                setHasUnsubmittedChanges(false);
                 justSubmitted = data.id; // Show the toast on page reload
                 history.push('/functions/' + match.params.function + '/submissions/' + data.id);
             },
@@ -244,6 +247,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 setEmail={setEmail}
             ></SubmitDialog>
             <SuccessToast score={score} isLoggedIn={isLoggedIn}></SuccessToast>
+            <Prompt when={hasUnsubmittedChanges} message="You have unsubmitted changes, are you sure you want to leave?"></Prompt>
         </>
     );
 
