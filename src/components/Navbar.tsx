@@ -15,7 +15,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-md-0">
-            {currentUser != null && <li className="nav-item"><Link to="/dashboard" className="nav-link" >Dashboard</Link></li>}
+            {/*currentUser != null && <li className="nav-item"><Link to="/dashboard" className="nav-link" >Dashboard</Link></li>*/}
             <li className="nav-item"><Link to="/" className="nav-link">Functions</Link></li>
           </ul>
 

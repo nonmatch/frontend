@@ -58,9 +58,9 @@ async function request(url: string, data:any, method: 'POST'|'PUT'): Promise<any
         console.log(method+' request', url)
     }
     let options:any = {method: method, body: JSON.stringify(data)};
-    options['headers'] = new Headers({
+    options['headers'] = {
         'Content-Type': 'application/json'
-    });
+    };
     if (token != null) {
         options['headers']['Authorization'] = 'Basic ' + token
     }

@@ -3,12 +3,14 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { get, post } from "../api";
 import { Container } from "../components/Container";
+import { ErrorAlert } from "../components/ErrorAlert";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { API_URL } from "../constants";
 import { getUser } from "../repositories/user";
 
 export const PullRequestPage: React.FC = () => {
 
+    // TODO check that the user is logged in
     interface Match {
         name: string,
         size: number,
@@ -25,6 +27,8 @@ export const PullRequestPage: React.FC = () => {
     const [selected, setSelected] = useState<number[]>([]);
     const [title, setTitle] = useState('');
     const [text, setText] = useState('');
+    const [error, setError] = useState<Error | null>(null);
+    const [url, setUrl] = useState<string | null>(null);
 
     useEffect(() => {
         const fetchMatches = () => {
@@ -70,7 +74,7 @@ export const PullRequestPage: React.FC = () => {
             setTitle('Match Functions');
             let text = '';
             for (let index = 0; index < selected.length; index++) {
-                text += (index != 0 ? '\n' : '') + '* Match ' + matches[matches.findIndex((m) => m.submission = selected[index])].name;
+                text += (index !== 0 ? '\n\n' : '') + '* Match ' + matches[matches.findIndex((m) => m.submission = selected[index])].name;
             }
             setText(text);
         }
@@ -79,26 +83,39 @@ export const PullRequestPage: React.FC = () => {
 
     const createPr = () => {
         setIsLoading(true);
+        setError(null);
 
-        post(API_URL+'pr', {
+        post(API_URL + 'pr', {
             title: title,
             text: text,
             selected: selected
         }).then(
             (data) => {
+                setIsLoading(false);
                 console.log(data)
-                // TODO show link to pull request
+                setUrl(data['url']);
             },
             (error) => {
+                setIsLoading(false);
                 console.error(error)
+                setError(error);
             }
+        )
+    }
+
+    if (url != null) {
+        return (
+            <Container>
+                <h1 className="mt-4">Created Pull Request</h1>
+                <a href={url} className="btn btn-success mt-2">View Pull Request</a>
+            </Container>
         )
     }
 
     return (
         <Container>
             <h1 className="mt-4">Create Pull Request</h1>
-
+            <ErrorAlert error={error}></ErrorAlert>
             {!isSecondPage
                 ?
                 <>
@@ -111,39 +128,41 @@ export const PullRequestPage: React.FC = () => {
                             {
                                 isLoading
                                     ? <tr><td colSpan={6}><LoadingIndicator /></td></tr>
-                                    : matches.map((match) => (
-                                        <tr key={match.submission}>
-                                            <td>
-                                                <input type="checkbox" defaultChecked={selected.includes(match.submission)}
-                                                    onChange={
-                                                        (evt) => {
-                                                            if (evt.target.checked) {
-                                                                setSelected([...selected, match.submission]);
-                                                            } else {
-                                                                setSelected(selected.filter((x) => x !== match.submission));
+                                    : matches.length === 0
+                                        ? <tr><td colSpan={6}>No matching functions yet</td></tr>
+                                        : matches.map((match) => (
+                                            <tr key={match.submission}>
+                                                <td>
+                                                    <input type="checkbox" defaultChecked={selected.includes(match.submission)}
+                                                        onChange={
+                                                            (evt) => {
+                                                                if (evt.target.checked) {
+                                                                    setSelected([...selected, match.submission]);
+                                                                } else {
+                                                                    setSelected(selected.filter((x) => x !== match.submission));
+                                                                }
                                                             }
                                                         }
-                                                    }
-                                                />
-                                            </td>
-                                            <td>
-                                                {match.name}
-                                            </td>
-                                            <td>
-                                                {match.size}
-                                            </td>
-                                            <td>
-                                                {match.ownerName}
-                                            </td>
-                                            <td>
-                                                {match.time_created}
-                                            </td>
-                                            <td>
-                                                <Link className="btn btn-outline-primary btn-sm" to={"/functions/" + match.function + "/submissions/" + match.submission}>View</Link>
-                                            </td>
+                                                    />
+                                                </td>
+                                                <td>
+                                                    {match.name}
+                                                </td>
+                                                <td>
+                                                    {match.size}
+                                                </td>
+                                                <td>
+                                                    {match.ownerName}
+                                                </td>
+                                                <td>
+                                                    {match.time_created}
+                                                </td>
+                                                <td>
+                                                    <Link className="btn btn-outline-primary btn-sm" to={"/functions/" + match.function + "/submissions/" + match.submission}>View</Link>
+                                                </td>
 
-                                        </tr>
-                                    ))
+                                            </tr>
+                                        ))
                             }
                         </tbody>
                     </table>
@@ -163,6 +182,7 @@ export const PullRequestPage: React.FC = () => {
                             onChange={(e) => setTitle(e.target.value)}
                         />
                         <textarea placeholder="Text" className="form-control mt-2"
+                            rows={10}
                             value={text}
                             onChange={(e) => setText(e.target.value)} />
                         <button className="btn btn-primary mt-3" onClick={createPr}>Create Pull Request</button>

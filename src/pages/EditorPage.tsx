@@ -1,5 +1,4 @@
 import debounce from "lodash.debounce";
-import { setUncaughtExceptionCaptureCallback } from "process";
 import { useCallback, useEffect, useState } from "react";
 import { RouteComponentProps, useHistory } from "react-router";
 import { Bar, Container, Section } from "react-simple-resizer";
@@ -64,6 +63,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const [email, setEmail] = useState('');
 
     const debouncedCompile =
+    // eslint-disable-next-line
         useCallback(
             debounce(nextValue => compile(nextValue), COMPILE_DEBOUNCE_TIME), []);
 
