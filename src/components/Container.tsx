@@ -1,3 +1,5 @@
+import './Container.css'
+
 interface ContainerProps {
     small?: boolean
     centered?: boolean
@@ -5,10 +7,8 @@ interface ContainerProps {
 
 export const Container: React.FC<ContainerProps> = ({small = false, centered=false, children}) => {
         return (
-            <div className="container" style={{
-                display: centered? "flex": "block",
-                flexDirection:"column",
-                alignItems:"center"
+            <div className="container custom-container" style={{
+                display: centered? "flex": "block"
             }}>
                 {children}
             </div>

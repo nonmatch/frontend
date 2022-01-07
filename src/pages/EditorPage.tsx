@@ -150,10 +150,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         }
     }
 
-
-
     useEffect(() => {
-
         getCurrentUser().then((user) => {
             setIsLoggedIn(true);
             setUsername(user?.username ?? '');
@@ -218,7 +215,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 setIsSubmitting(false);
                 setHasUnsubmittedChanges(false);
                 justSubmitted = data.id; // Show the toast on page reload
-                history.push('/functions/' + match.params.function + '/submissions/' + data.id);
+                history.replace('/functions/' + match.params.function + '/submissions/' + data.id);
             },
             (error) => {
                 setIsSubmitting(false);
