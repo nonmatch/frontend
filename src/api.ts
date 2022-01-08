@@ -16,7 +16,7 @@ function getToken() {
     let param = findGetParameter('token');
     if (param != null) {
         localStorage.setItem('token', param);
-        console.log('get token ', param);
+        window.history.replaceState({}, document.title, window.location.pathname);
         return param;
     }
 
