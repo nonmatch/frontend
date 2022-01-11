@@ -68,13 +68,13 @@ export const PullRequestPage: React.FC = () => {
 
     const goSecondPage = () => {
         if (selected.length === 1) {
-            setTitle('Match ' + matches[matches.findIndex((m) => m.submission = selected[0])].name);
+            setTitle('Match ' + matches[matches.findIndex((m) => m.submission === selected[0])].name);
             setText('');
         } else {
             setTitle('Match Functions');
             let text = '';
             for (let index = 0; index < selected.length; index++) {
-                text += (index !== 0 ? '\n\n' : '') + '* Match ' + matches[matches.findIndex((m) => m.submission = selected[index])].name;
+                text += (index !== 0 ? '\n\n' : '') + '* Match ' + matches[matches.findIndex((m) => m.submission === selected[index])].name;
             }
             setText(text);
         }
