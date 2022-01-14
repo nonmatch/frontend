@@ -27,7 +27,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ code, stderr, onCodeChan
   const onMouseMove = (e: any) => {
     if (e !== null && e.target !== null && e.target.position !== null) {
       eventBus.dispatch('panesLinkLine', {
-        line: e.target.position.lineNumber
+        line: e.target.position.lineNumber,
+        reveal: e.event.ctrlKey
       });
       //          tryPanesLinkLine(e.target.position.lineNumber, false);
     }

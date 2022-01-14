@@ -38,7 +38,9 @@ export const DiffEditor: React.FC<DiffEditorProps> = ({ compiledAsm, originalAsm
             const hoverAsm = gLines[e.target.position.lineNumber - 1];
             if (hoverAsm.source) {
                 eventBus.dispatch('panesLinkLine', {
-                    line: hoverAsm.source.line
+                    line: hoverAsm.source.line,
+                    reveal: e.event.ctrlKey,
+                    fromAsm: true
                 });
             }
             //          tryPanesLinkLine(e.target.position.lineNumber, false);
@@ -85,10 +87,13 @@ export const DiffEditor: React.FC<DiffEditorProps> = ({ compiledAsm, originalAsm
                 // Also link the corresponding line in the editor
                 const hoverAsm = gLines[lineNums[0] - 1];
                 eventBus.dispatch('lineLink', {
-                    line: hoverAsm.source?.line
+                    line: hoverAsm.source?.line,
+                    reveal: data.reveal && data.fromAsm
                 });
+                if (data.reveal && !data.fromAsm) {
+                    editor.getOriginalEditor().revealLineInCenter(lineNums[0]);
+                }
             }
-
 
             let decorations = lineNums.map((line) => {
                 return {
