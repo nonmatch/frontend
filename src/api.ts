@@ -47,10 +47,10 @@ async function get(url: string): Promise<any> {
     if (res.ok) {
         return res.json();
     } else {
-        return res.json();
-      /*  return new Promise((resolve, reject) => {
-            reject(res)
-        });*/
+//        return res.json();
+      return new Promise((resolve, reject) => {
+            res.json().then(reject)
+        });
     }
 }
 async function request(url: string, data:any, method: 'POST'|'PUT'): Promise<any> {

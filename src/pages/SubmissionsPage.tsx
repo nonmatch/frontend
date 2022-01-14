@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { Link, RouteComponentProps } from "react-router-dom";
 import { get } from "../api";
 import { Container } from "../components/Container"
+import { ErrorAlert } from "../components/ErrorAlert";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { API_URL } from "../constants";
 import { getFunction } from "../repositories/function";
@@ -17,7 +18,8 @@ interface Params {
 export const SubmissionsPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [submissions, setSubmissions] = useState<Submission[]>([]);
-    const [func, setFunc] = useState<Func | null>(null)
+    const [func, setFunc] = useState<Func | null>(null);
+    const [error, setError] = useState<Error | null>(null);
 
     useEffect(() => {
         const fetchSubmissions = async () => {
@@ -28,9 +30,9 @@ export const SubmissionsPage: React.FC<RouteComponentProps<Params>> = ({ match }
                 },
                 (error) => {
                     setIsLoading(false);
+                    setError(error);
                     console.error(error)
-                }
-            )
+                });
 
             get(API_URL + 'functions/' + match.params.function + '/submissions').then(
                 async (data) => {
@@ -60,13 +62,15 @@ export const SubmissionsPage: React.FC<RouteComponentProps<Params>> = ({ match }
                 },
                 (error) => {
                     setIsLoading(false);
-                    console.error(error)
+                    setError(error);
+                    console.error(error);
                 }
             )
         }
         fetchSubmissions()
     }, [match.params.function]);
     return (<Container centered>
+        <ErrorAlert error={error}></ErrorAlert>
         <h1 className="mt-4 mb-2">Select Submission{
             func ? ' for Function ' + func.name
                 : ''

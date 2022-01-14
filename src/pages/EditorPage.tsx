@@ -157,8 +157,9 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             setEmail(user?.email ?? '');
         });
         const loadFunction = async (func: string, submission: string) => {
+            const funcId = parseInt(func);
             // Fetch asm code from function
-            getFunction(parseInt(func)).then((data) => {
+            getFunction(funcId).then((data) => {
                 setFunc(data)
                 if (data.asm !== undefined) {
                     setOriginalAsm(data.asm)
@@ -169,6 +170,13 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                     setIsCompiling(false);
                 } else {
                     get(API_URL + 'submissions/' + submission).then((data) => {
+
+                        // Check that submission belongs to function
+                        if (data.function !== funcId) {
+                            setError(new Error('Submission does not belong to function.'));
+                            return;
+                        }
+
                         // Fetch c code from submission
                         if (data.code !== undefined) {
                             setCCode(data.code)

@@ -20,6 +20,7 @@ const getCurrentUser = async() => {
     if (currentUser !== undefined) {
         return currentUser;
     }
+    try {
     const data = await get(API_URL + 'user');
     if (data['error'] !== undefined) {
       currentUser = null;
@@ -28,6 +29,13 @@ const getCurrentUser = async() => {
     }
     if (currentUser === undefined) return null; // TODO remove
     return currentUser;
+} catch(e) {
+    console.log(typeof e);
+    if (e instanceof TypeError) {
+        throw e;
+    }
+    return null;
+}
 };
 
 const saveCurrentUser = async(user: User) => {
