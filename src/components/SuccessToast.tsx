@@ -2,14 +2,12 @@ import { Link } from "react-router-dom";
 
 interface SuccessToastProps {
     score: number;
-    isLoggedIn: boolean
+    isLoggedIn: boolean,
+    copyLink: () => void
 }
 
-export const SuccessToast: React.FC<SuccessToastProps> = ({ score, isLoggedIn }) => {
+export const SuccessToast: React.FC<SuccessToastProps> = ({ score, isLoggedIn, copyLink }) => {
 
-    const copyLink = () => {
-        navigator.clipboard.writeText(window.location.href);
-    };
 
     return (
         <div className="toast-container position-absolute p-3 bottom-0 end-0" id="toastPlacement" style={{ zIndex: 1000 }}>

@@ -1,0 +1,14 @@
+.nav-link {
+    cursor: pointer;
+}
+.indicator {
+    display:inline-block;width:18px;height:18px;border-radius:10px;vertical-align:middle;background: #efdf00;
+    margin-left: 5px;
+}
+
+.error {
+    background: #ec2f19;
+}
+.success {
+    background: #67c52a;
+}

@@ -7,6 +7,7 @@ import { CodeEditor } from "../components/CodeEditor"
 import { DiffEditor } from "../components/DiffEditor";
 import { ErrorAlert } from "../components/ErrorAlert";
 import { ErrorLog } from "../components/ErrorLog";
+import { FuncNameMenu } from "../components/FuncNameMenu";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { SubmitDialog } from "../components/SubmitDialog";
 import { SuccessToast } from "../components/SuccessToast";
@@ -150,6 +151,14 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         }
     }
 
+    const copyLink = () => {
+        // replace /functions/<>/submissions/<> with /z/<>/<>
+        let url = window.location.href;
+        url = url.replace('/functions/', '/z/');
+        url = url.replace('/submissions/', '/');
+        navigator.clipboard.writeText(url);
+    };
+
     useEffect(() => {
         getCurrentUser().then((user) => {
             setIsLoggedIn(true);
@@ -251,7 +260,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 email={email}
                 setEmail={setEmail}
             ></SubmitDialog>
-            <SuccessToast score={score} isLoggedIn={isLoggedIn}></SuccessToast>
+            <SuccessToast score={score} isLoggedIn={isLoggedIn} copyLink={copyLink}></SuccessToast>
             <Prompt when={hasUnsubmittedChanges} message="You have unsubmitted changes, are you sure you want to leave?"></Prompt>
         </>
     );
@@ -281,9 +290,9 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                             onScoreChange={onScoreChange}
                         /></div>
                 </div>
-                <div style={{ borderTop: "1px solid #eee", backgroundColor: "#f8f9fa", fontSize: "14px" }}>
+                <div style={{ borderTop: "1px solid #eee", backgroundColor: "#f8f9fa", fontSize: "14px", whiteSpace:"nowrap", overflowX:"auto", overflowY:"revert", flexShrink:0}}>
                     <div className="container" style={{ display: "flex", alignItems: "center" }}>
-                        <ul className="nav nav-pills" id="myTab" role="tablist">
+                        <ul className="nav nav-pills" id="myTab" role="tablist" style={{flexShrink:0}}>
                             <li className="nav-item" role="presentation">
                                 <button className="nav-link active" id="code-tab" data-bs-toggle="tab" data-bs-target="#code" type="button" role="tab" aria-controls="code" aria-selected="true">Code</button>
                             </li>
@@ -294,7 +303,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                                 <button className="nav-link" id="diff-tab" data-bs-toggle="tab" data-bs-target="#diff" type="button" role="tab" aria-controls="diff" aria-selected="false">Diff</button>
                             </li>
                         </ul>
-                        <span style={{ flex: 1, overflowX: "auto", paddingLeft: "8px" }}>{func?.name}</span>
+                        <FuncNameMenu copyLink={copyLink} name={func?.name}></FuncNameMenu>
+                        <span style={{ flex: 1 }}></span>
                         <span style={{ padding: "0 8px" }}>
                             Diff Score: {score}
                         </span>
@@ -347,7 +357,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 </Container>
                 <div style={{ borderTop: "1px solid #eee", backgroundColor: "#f8f9fa", fontSize: "14px" }}>
                     <div className="container" style={{ display: "flex", padding: "4px", alignItems: "center" }}>
-                        <span>{func?.name}</span>
+                        <FuncNameMenu copyLink={copyLink} name={func?.name}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>
                         <span style={{ padding: "0 8px" }}>
                             Diff Score: {score}

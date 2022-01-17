@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { User } from "../types";
+import { TlhBridge } from "./TlhBridge";
 
 interface NavbarProps {
   currentUser: User | null;
@@ -17,7 +18,11 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
           <ul className="navbar-nav me-auto mb-2 mb-md-0">
             {currentUser != null && <li className="nav-item"><Link to="/dashboard" className="nav-link" >Dashboard</Link></li>}
             <li className="nav-item"><Link to="/" className="nav-link">Functions</Link></li>
+
+{/* 
+            <TlhBridge></TlhBridge>*/}
           </ul>
+
 
           <ul className="navbar-nav ms-auto">
             {(currentUser == null)

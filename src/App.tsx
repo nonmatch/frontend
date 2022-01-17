@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Redirect, Route, Switch } from 'react-router-dom';
 import EditorPage from './pages/EditorPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { LoginPage } from './pages/LoginPage';
@@ -65,6 +65,8 @@ const App: React.FC = () => {
         <Route path="/login" component={LoginPage} />
         <Route path="/dashboard" component={DashboardPage} />
         <Route path="/functions/:function/submissions/:submission" component={EditorPage} />
+        <Redirect from="/z/:function/:submission" to="/functions/:function/submissions/:submission" />
+        <Route path="/z/:function/:submission" component={EditorPage} />{/*TODO redirect to long url?*/}
         <Route path="/functions/:function" component={SubmissionsPage} />
         <Route path="/pr" component={PullRequestPage} />
         <Route path="/settings" component={SettingsPage} />
