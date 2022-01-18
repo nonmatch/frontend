@@ -16,6 +16,7 @@ import eventBus from './eventBus';
 import { PullRequestPage } from './pages/PullRequestPage';
 
 import './App.css'
+import { CExplorePage } from './pages/CExplorePage';
 
 const App: React.FC = () => {
 
@@ -68,9 +69,10 @@ const App: React.FC = () => {
         <Route path="/dashboard" component={DashboardPage} />
         <Route path="/functions/:function/submissions/:submission" component={EditorPage} />
         <Redirect from="/z/:function/:submission" to="/functions/:function/submissions/:submission" />
-        <Route path="/z/:function/:submission" component={EditorPage} />{/*TODO redirect to long url?*/}
+        <Route path="/custom" component={EditorPage} />
         <Route path="/functions/:function" component={SubmissionsPage} />
         <Route path="/pr" component={PullRequestPage} />
+        <Route path="/cexplore" component={CExplorePage} />
         <Route path="/settings" component={SettingsPage} />
         <Route path="/logout" component={LogoutPage} />
         <Route component={NotFoundPage} />

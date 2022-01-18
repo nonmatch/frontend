@@ -1,7 +1,7 @@
 import debounce from "lodash.debounce";
 import { useRef } from "react";
 import { useCallback, useEffect, useState } from "react";
-import { Prompt, RouteComponentProps, useHistory } from "react-router";
+import { Prompt, RouteComponentProps, useHistory, useLocation } from "react-router";
 import { Bar, Container, Section } from "react-simple-resizer";
 import { get, post } from "../api";
 import { CodeEditor } from "../components/CodeEditor"
@@ -17,6 +17,7 @@ import eventBus from "../eventBus";
 import { getFunction } from "../repositories/function";
 import { getCurrentUser } from "../repositories/user";
 import { AsmLine, ErrorLine, Func } from "../types";
+import { useLocalStorage } from "../utils";
 
 import './EditorPage.css'
 
@@ -67,11 +68,15 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const [hasUnsubmittedChanges, setHasUnsubmittedChanges] = useState(false);
     // Is custom code? No longer able to submit
     const [isCustom, setIsCustom] = useState(false);
+    const [customCCode, setCustomCCode] = useLocalStorage('custom_c_code', '// Type your c code here...');
+    const [customAsmCode,] = useLocalStorage('custom_asm_code', '@ Paste the asm code here...');
+    // TODO allow to enter custom asm code
 
     // https://stackoverflow.com/a/60643670
     const cCodeRef = useRef<string>();
     cCodeRef.current = cCode;
 
+    const location = useLocation();
 
 
     const debouncedCompile =
@@ -81,6 +86,9 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
     const onCodeChange = (newValue: any) => {
         setHasUnsubmittedChanges(true);
+        if (isCustom) {
+            setCustomCCode(newValue);
+        }
         setCCode(newValue)
         debouncedCompile(newValue);
     }
@@ -169,7 +177,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         navigator.clipboard.writeText(url);
     };
 
-    useEffect(() => {
+        useEffect(() => {
         getCurrentUser().then((user) => {
             setIsLoggedIn(true);
             setUsername(user?.username ?? '');
@@ -218,7 +226,18 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             }, setError);
 
         }
-        loadFunction(match.params.function, match.params.submission)
+
+        if (location.pathname === '/custom') {
+            // Load the custom code?
+            setIsCustom(true);
+            setOriginalAsm(customAsmCode);
+            setCCode(customCCode);
+            debouncedCompile(customCCode);
+            //setIsCompiling(false);
+        } else {
+            // Load the submission defined via the URL
+            loadFunction(match.params.function, match.params.submission);
+        }
 
         const onCCode = (data: string) => {
             setCCode(data);
@@ -264,7 +283,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             eventBus.remove('extracted_data', onExtractedData);
         };
 
-    }, [match.params.function, match.params.submission, debouncedCompile]) // TODO why does it want me to add loadFunction as a dependency here?
+    // eslint-disable-next-line
+    }, [match.params.function, match.params.submission, debouncedCompile, location.pathname]) // TODO why does it want me to add loadFunction as a dependency here?
 
     const history = useHistory();
 
