@@ -3,6 +3,7 @@ import { Container } from "../components/Container";
 import eventBus from "../eventBus";
 import { getCurrentUser, saveCurrentUser } from "../repositories/user";
 import { User } from "../types";
+import { useLocalStorage } from "../utils";
 
 export const SettingsPage: React.FC = () => {
 
@@ -10,6 +11,7 @@ export const SettingsPage: React.FC = () => {
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [showTlhBridge, setShowTlhBridge] = useLocalStorage('showTlhBridge', false);
 
   const loadCurrentUser = async () => {
     getCurrentUser().then((user) => {
@@ -63,5 +65,11 @@ export const SettingsPage: React.FC = () => {
         onChange={(e) => { setEmail(e.target.value) }} />
     </div>
     <button type="submit" className="btn btn-primary" onClick={save}>Save</button>
+
+
+    <div className="form-check">
+      <input type="checkbox" id="showTlhBridge" className="form-check-input" checked={showTlhBridge} onChange={e => setShowTlhBridge(e.target.checked)} />
+      <label className="form-check-label" htmlFor="showTlhBridge">Show tlh Bridge</label>
+    </div>
   </Container>);
 }

@@ -1,4 +1,5 @@
 import debounce from "lodash.debounce";
+import { useRef } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { Prompt, RouteComponentProps, useHistory } from "react-router";
 import { Bar, Container, Section } from "react-simple-resizer";
@@ -11,7 +12,8 @@ import { FuncNameMenu } from "../components/FuncNameMenu";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { SubmitDialog } from "../components/SubmitDialog";
 import { SuccessToast } from "../components/SuccessToast";
-import { API_URL, CEXPLORE_URL, COMPILE_DEBOUNCE_TIME } from "../constants";
+import { API_URL, CEXPLORE_URL, COMPILE_DEBOUNCE_TIME, PYCAT_URL } from "../constants";
+import eventBus from "../eventBus";
 import { getFunction } from "../repositories/function";
 import { getCurrentUser } from "../repositories/user";
 import { AsmLine, ErrorLine, Func } from "../types";
@@ -63,6 +65,14 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [hasUnsubmittedChanges, setHasUnsubmittedChanges] = useState(false);
+    // Is custom code? No longer able to submit
+    const [isCustom, setIsCustom] = useState(false);
+
+    // https://stackoverflow.com/a/60643670
+    const cCodeRef = useRef<string>();
+    cCodeRef.current = cCode;
+
+
 
     const debouncedCompile =
     // eslint-disable-next-line
@@ -169,7 +179,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             const funcId = parseInt(func);
             // Fetch asm code from function
             getFunction(funcId).then((data) => {
-                setFunc(data)
+                eventBus.dispatch('current-function', data.name);
+                setFunc(data);
                 if (data.asm !== undefined) {
                     setOriginalAsm(data.asm)
                 }
@@ -208,7 +219,52 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
         }
         loadFunction(match.params.function, match.params.submission)
-    }, [match.params.function, match.params.submission]) // TODO why does it want me to add loadFunction as a dependency here?
+
+        const onCCode = (data: string) => {
+            setCCode(data);
+            debouncedCompile(data);
+        };
+        const onAsmCode = (data: string) => {
+            // TODO change url to /custom if it is no longer the same function?
+            // send through pycat
+            fetch(PYCAT_URL, {
+                "method": "POST",
+                "body": data
+            }).then(data=>data.text()).then((data) => {
+                setIsCustom(true);
+                setOriginalAsm(data.trim());
+            }, setError);
+        };
+        const onAddCCode = (data: string) => {
+            const code = cCodeRef.current + data;
+            setCCode(code);
+            debouncedCompile(code);
+        };
+        const onRequestCCode = () => {
+            console.log('request');
+            eventBus.dispatch('send_c_code', cCodeRef.current);
+        };
+        const onExtractedData = () => {
+            console.warn('Not implemented');
+        };
+
+        // Subscriptions
+        eventBus.dispatch('on_editor_page', true);
+        eventBus.on('c_code', onCCode);
+        eventBus.on('asm_code', onAsmCode);
+        eventBus.on('add_c_code', onAddCCode);
+        eventBus.on('request_c_code', onRequestCCode);
+        eventBus.on('extracted_data', onExtractedData);
+        return () => {
+            eventBus.dispatch('on_editor_page', false);
+            eventBus.remove('c_code', onCCode);
+            eventBus.remove('asm_code', onAsmCode);
+            eventBus.remove('add_c_code', onAddCCode);
+            eventBus.remove('request_c_code', onRequestCCode);
+            eventBus.remove('extracted_data', onExtractedData);
+        };
+
+    }, [match.params.function, match.params.submission, debouncedCompile]) // TODO why does it want me to add loadFunction as a dependency here?
 
     const history = useHistory();
 
@@ -303,12 +359,13 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                                 <button className="nav-link" id="diff-tab" data-bs-toggle="tab" data-bs-target="#diff" type="button" role="tab" aria-controls="diff" aria-selected="false">Diff</button>
                             </li>
                         </ul>
-                        <FuncNameMenu copyLink={copyLink} name={func?.name}></FuncNameMenu>
+                        {isCustom ? <span className="btn btn-sm">custom code</span> : <FuncNameMenu copyLink={copyLink} name={func?.name}></FuncNameMenu>}
                         <span style={{ flex: 1 }}></span>
                         <span style={{ padding: "0 8px" }}>
                             Diff Score: {score}
                         </span>
                         {
+                            !isCustom && (
                             isCompiling || isSubmitting
                                 ? <LoadingIndicator small />
                                 : <button className={
@@ -316,6 +373,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                                         ? " btn-success"
                                         : " btn-outline-success")
                                 } onClick={showSubmitDialog}>Submit</button>
+                            )
                         }
                     </div>
                 </div>
@@ -357,12 +415,13 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 </Container>
                 <div style={{ borderTop: "1px solid #eee", backgroundColor: "#f8f9fa", fontSize: "14px" }}>
                     <div className="container" style={{ display: "flex", padding: "4px", alignItems: "center" }}>
-                        <FuncNameMenu copyLink={copyLink} name={func?.name}></FuncNameMenu>
+                        {isCustom ? <span className="btn btn-sm">custom code</span> : <FuncNameMenu copyLink={copyLink} name={func?.name}></FuncNameMenu>}
                         <span style={{ flex: 1 }}></span>
                         <span style={{ padding: "0 8px" }}>
                             Diff Score: {score}
                         </span>
                         {
+                            !isCustom && (
                             isCompiling || isSubmitting
                                 ? <button className="btn btn-secondary btn-sm" disabled>Submit</button>
                                 : <button className={
@@ -370,6 +429,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                                         ? " btn-success"
                                         : " btn-outline-success")}
                                     onClick={showSubmitDialog}>Submit</button>
+                            )
                         }
                     </div>
                 </div>

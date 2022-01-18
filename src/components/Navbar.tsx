@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { User } from "../types";
+import { useLocalStorage } from "../utils";
 import { TlhBridge } from "./TlhBridge";
 
 interface NavbarProps {
@@ -7,6 +8,8 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
+  const [showBridge] = useLocalStorage('showTlhBridge', false);
+
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-light">
       <div className="container">
@@ -18,9 +21,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
           <ul className="navbar-nav me-auto mb-2 mb-md-0">
             {currentUser != null && <li className="nav-item"><Link to="/dashboard" className="nav-link" >Dashboard</Link></li>}
             <li className="nav-item"><Link to="/" className="nav-link">Functions</Link></li>
-
-{/* 
-            <TlhBridge></TlhBridge>*/}
+            {showBridge && <TlhBridge></TlhBridge>}
           </ul>
 
 
