@@ -1,8 +1,8 @@
-const isProd = (process.env.NODE_ENV === 'production');
+export const isProd = (process.env.NODE_ENV === 'production');
 
 export const API_URL = isProd
-    ? "https://1ea8-2a02-8070-1c4-e320-00-14ac.eu.ngrok.io/"
-    : "http://127.0.0.1:5000/";
+    ? "https://1ea8-2a02-8070-1c4-e320-00-14ac.eu.ngrok.io"
+    : "http://127.0.0.1:5000";
 
 const useRemoteCexplore = isProd;
 

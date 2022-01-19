@@ -20,7 +20,7 @@ export const DashboardPage: React.FC = () => {
     useEffect(() => {
         const fetchSubmissions = async () => {
             setIsLoading(true);
-            get(API_URL + 'user/functions').then(
+            get(API_URL + '/user/functions').then(
                 async (data) => {
                     // Load all functions
                     for (let i = 0; i < data.length; i++) {

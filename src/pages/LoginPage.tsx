@@ -1,11 +1,15 @@
 import { Container } from "../components/Container";
-import { API_URL } from "../constants";
+import { API_URL, isProd } from "../constants";
 
 export const LoginPage: React.FC = () => {
     const loginWithGitHub = async () => {
-        const res = await fetch(API_URL + 'oauth/login');
+        const res = await fetch(API_URL + '/oauth/login');
         const data = await res.json()
         window.location.href = data['redirect'];
+    };
+
+    const mockLogin = () => {
+        window.location.href = API_URL + '/generate_token?mock=true';
     };
 
     return (<Container small>
@@ -17,5 +21,11 @@ export const LoginPage: React.FC = () => {
             <i className="fa fa-github fa-fw"></i>
             <span>Login with GitHub</span>
         </button>
+
+        {
+            !isProd && <button className="btn btn-warning ms-4" onClick={mockLogin}>
+                Mock Login
+            </button>
+        }
     </Container>);
 }

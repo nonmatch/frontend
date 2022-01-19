@@ -8,7 +8,7 @@ const getFunction = async (id: number) => {
     if (functions[id] !== undefined) {
         return functions[id];
     }
-    const data = await get(API_URL+'functions/'+id);
+    const data = await get(API_URL+'/functions/'+id);
     // TODO error handling
     functions[id] = data;
     return data;

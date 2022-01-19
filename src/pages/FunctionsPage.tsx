@@ -12,7 +12,7 @@ export const FunctionsPage: React.FC = () => {
 
     const fetchFunctions = async () => {
         setIsLoading(true);
-        get(API_URL + 'functions').then(
+        get(API_URL + '/functions').then(
             async (data) => {
                 setIsLoading(false);
                 setFunctions(data);

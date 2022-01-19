@@ -14,7 +14,7 @@ export const AsmFuncsPage: React.FC = () => {
 
     const fetchFunctions = async () => {
         setIsLoading(true);
-        get(API_URL + 'asm_functions').then(
+        get(API_URL + '/asm_functions').then(
             async (data) => {
                 setIsLoading(false);
                 setFunctions(data);

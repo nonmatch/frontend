@@ -34,7 +34,7 @@ export const SubmissionsPage: React.FC<RouteComponentProps<Params>> = ({ match }
                     console.error(error)
                 });
 
-            get(API_URL + 'functions/' + match.params.function + '/submissions').then(
+            get(API_URL + '/functions/' + match.params.function + '/submissions').then(
                 async (data) => {
                     // Load all owners
                     for (let i = 0; i < data.length; i++) {

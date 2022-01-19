@@ -197,7 +197,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                     setIsEquivalent(false);
                     setIsCompiling(false);
                 } else {
-                    get(API_URL + 'submissions/' + submission).then((data) => {
+                    get(API_URL + '/submissions/' + submission).then((data) => {
 
                         // Check that submission belongs to function
                         if (data.function !== funcId) {
@@ -295,7 +295,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
     const submit = async () => {
         setIsSubmitting(true);
-        post(API_URL + 'functions/' + match.params.function + '/submissions', {
+        post(API_URL + '/functions/' + match.params.function + '/submissions', {
             code: cCode,
             score: score,
             is_equivalent: isEquivalent,

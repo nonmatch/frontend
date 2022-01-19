@@ -32,7 +32,7 @@ export const PullRequestPage: React.FC = () => {
 
     useEffect(() => {
         const fetchMatches = () => {
-            get(API_URL + 'matches').then(
+            get(API_URL + '/matches').then(
                 async (data) => {
                     // Load all owners
                     for (let i = 0; i < data.length; i++) {
@@ -85,7 +85,7 @@ export const PullRequestPage: React.FC = () => {
         setIsLoading(true);
         setError(null);
 
-        post(API_URL + 'pr', {
+        post(API_URL + '/pr', {
             title: title,
             text: text,
             selected: selected
