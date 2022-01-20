@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import { Link } from "react-router-dom";
 import { get } from "../api";
 import { Container } from "../components/Container"
+import { ErrorAlert } from "../components/ErrorAlert";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { API_URL } from "../constants";
 import { Func } from "../types"
@@ -9,6 +10,7 @@ import { Func } from "../types"
 export const FunctionsPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [functions, setFunctions] = useState<Func[]>([]);
+    const [error, setError] = useState<Error | null>(null);
 
     const fetchFunctions = async () => {
         setIsLoading(true);
@@ -21,7 +23,7 @@ export const FunctionsPage: React.FC = () => {
             },
             (error) => {
                 setIsLoading(false);
-                console.error(error)
+                setError(error);
             }
         )
     }
@@ -30,6 +32,7 @@ export const FunctionsPage: React.FC = () => {
         fetchFunctions()
     }, []);
     return (<Container centered>
+        <ErrorAlert error={error}></ErrorAlert>
         <h1 className="mt-4 mb-2">NONMATCH Functions</h1>
         <table className="sortable-theme-slick" data-sortable>
             <thead>

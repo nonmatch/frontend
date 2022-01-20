@@ -18,7 +18,8 @@ export const PullRequestPage: React.FC = () => {
         ownerName: string,
         time_created: string
         submission: number,
-        function: number
+        function: number,
+        file: string
     }
 
     const [isLoading, setIsLoading] = useState(false);
@@ -39,7 +40,6 @@ export const PullRequestPage: React.FC = () => {
                         if (data[i].owner === null || data[i].owner === 0) {
                             data[i].ownerName = 'anonymous';
                         } else {
-                            console.log(data[i].owner);
                             let user = await getUser(data[i].owner);
                             data[i].ownerName = user.username;
                         }
@@ -92,7 +92,6 @@ export const PullRequestPage: React.FC = () => {
         }).then(
             (data) => {
                 setIsLoading(false);
-                console.log(data)
                 setUrl(data['url']);
             },
             (error) => {
@@ -114,7 +113,7 @@ export const PullRequestPage: React.FC = () => {
 
     return (
         <Container>
-            <h1 className="mt-4">Create Pull Request</h1>
+            <h1 className="mt-4">{isLoading ? "Creating Pull Request..." : "Create Pull Request"}</h1>
             <ErrorAlert error={error}></ErrorAlert>
             {!isSecondPage
                 ?
@@ -122,14 +121,14 @@ export const PullRequestPage: React.FC = () => {
                     <p className="mt-4">Select Matching Functions for Pull Request</p>
                     <table className="sortable-theme-slick" data-sortable>
                         <thead>
-                            <tr><th data-sortable="false"></th><th>Function</th><th>Size</th><th>Owner</th><th>Created</th><th data-sortable="false"></th></tr>
+                            <tr><th data-sortable="false"></th><th>File</th><th>Function</th><th>Size</th><th>Owner</th><th>Created</th><th data-sortable="false"></th></tr>
                         </thead>
                         <tbody>
                             {
                                 isLoading
-                                    ? <tr><td colSpan={6}><LoadingIndicator /></td></tr>
+                                    ? <tr><td colSpan={7}><LoadingIndicator /></td></tr>
                                     : matches.length === 0
-                                        ? <tr><td colSpan={6}>No matching functions yet</td></tr>
+                                        ? <tr><td colSpan={7}>No matching functions yet</td></tr>
                                         : matches.map((match) => (
                                             <tr key={match.submission}>
                                                 <td>
@@ -144,6 +143,9 @@ export const PullRequestPage: React.FC = () => {
                                                             }
                                                         }
                                                     />
+                                                </td>
+                                                <td>
+                                                    {match.file}
                                                 </td>
                                                 <td>
                                                     {match.name}

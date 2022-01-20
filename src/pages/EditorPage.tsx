@@ -69,7 +69,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     // Is custom code? No longer able to submit
     const [isCustom, setIsCustom] = useState(false);
     const [customCCode, setCustomCCode] = useLocalStorage('custom_c_code', '// Type your c code here...');
-    const [customAsmCode,] = useLocalStorage('custom_asm_code', '@ Paste the asm code here...');
+    const [customAsmCode, setCustomAsmCode] = useLocalStorage('custom_asm_code', '@ Paste the asm code here...');
     // TODO allow to enter custom asm code
 
     // https://stackoverflow.com/a/60643670
@@ -252,6 +252,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             }).then(data=>data.text()).then((data) => {
                 setIsCustom(true);
                 setOriginalAsm(data.trim());
+                setCustomAsmCode(data.trim());
             }, setError);
         };
         const onAddCCode = (data: string) => {
