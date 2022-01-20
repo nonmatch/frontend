@@ -73,8 +73,16 @@ export const PullRequestPage: React.FC = () => {
         } else {
             setTitle('Match Functions');
             let text = '';
+            let functions = new Set();
             for (let index = 0; index < selected.length; index++) {
-                text += (index !== 0 ? '\n\n' : '') + '* Match ' + matches[matches.findIndex((m) => m.submission === selected[index])].name;
+                let match = matches[matches.findIndex((m) => m.submission === selected[index])];
+                if (functions.has(match.function)) {
+                    setError(Error('Please select only one submission for function ' + match.name + '.'));
+                    return;
+                }
+                functions.add(match.function);
+
+                text += (index !== 0 ? '\n\n' : '') + '* Match ' + match.name;
             }
             setText(text);
         }
