@@ -21,7 +21,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
           <ul className="navbar-nav me-auto mb-2 mb-md-0">
             {currentUser != null && <li className="nav-item"><Link to="/dashboard" className="nav-link" >Dashboard</Link></li>}
             <li className="nav-item"><Link to="/" className="nav-link">Functions</Link></li>
-            {currentUser != null && currentUser.id === 2 && <li className="nav-item"><Link to="/asm_funcs" className="nav-link">ASM_FUNCs</Link></li>}
+            <li className="nav-item"><Link to="/asm_funcs" className="nav-link">ASM_FUNCs</Link></li>
             {showBridge && <TlhBridge></TlhBridge>}
           </ul>
 

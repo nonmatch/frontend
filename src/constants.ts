@@ -18,5 +18,5 @@ export const LINK_RESOLVE_URL = useRemoteCexplore
     ? 'https://cexplore.henny022.eu.ngrok.io/api/shortlinkinfo'
     : 'http://localhost:10240/api/shortlinkinfo';
 
-export const COMPILE_DEBOUNCE_TIME = 500;
+export const COMPILE_DEBOUNCE_TIME = 1000;
 export const TLH_URL = 'http://localhost:10241';

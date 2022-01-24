@@ -67,12 +67,10 @@ export const SettingsPage: React.FC = () => {
     <button type="submit" className="btn btn-primary" onClick={save}>Save</button>
 
 
-    {
-      currentUser?.id === 2 && <div className="form-check">
-        <input type="checkbox" id="showTlhBridge" className="form-check-input" checked={showTlhBridge} onChange={e => setShowTlhBridge(e.target.checked)} />
-        <label className="form-check-label" htmlFor="showTlhBridge">Show tlh Bridge</label>
-      </div>
-    }
+    <div className="form-check mt-4">
+      <input type="checkbox" id="showTlhBridge" className="form-check-input" checked={showTlhBridge} onChange={e => setShowTlhBridge(e.target.checked)} />
+      <label className="form-check-label" htmlFor="showTlhBridge">Show tlh Bridge</label>
+    </div>
 
   </Container>);
 }
