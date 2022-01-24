@@ -86,9 +86,6 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
     const onCodeChange = (newValue: any) => {
         setHasUnsubmittedChanges(true);
-        if (isCustom) {
-            setCustomCCode(newValue);
-        }
         setCCode(newValue)
         debouncedCompile(newValue);
     }
@@ -108,6 +105,11 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         })
     }
     const compile = async (nextValue: any) => {
+        if (isCustom) {
+            // save the c code in local storage
+            setCustomCCode(cCode);
+        }
+
         setIsCompiling(true);
         //        console.log('compiling', nextValue);
         try {
@@ -251,6 +253,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 "body": data
             }).then(data=>data.text()).then((data) => {
                 setIsCustom(true);
+                eventBus.dispatch('on_editor_page', false);
                 setOriginalAsm(data.trim());
                 setCustomAsmCode(data.trim());
             }, setError);
@@ -269,7 +272,9 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         };
 
         // Subscriptions
-        eventBus.dispatch('on_editor_page', true);
+        if (!isCustom) {
+            eventBus.dispatch('on_editor_page', true);
+        }
         eventBus.on('c_code', onCCode);
         eventBus.on('asm_code', onAsmCode);
         eventBus.on('add_c_code', onAddCCode);
