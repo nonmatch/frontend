@@ -5,7 +5,7 @@ const CEXPLORE_URL = 'https://cexplore.henny022.eu.ngrok.io/#'
 //const CEXPLORE_URL = 'http://localhost:10240/#'
 
 const risonQuote = (text: string) => {
-    if (/^[-A-Za-z0-9~!*()_.',:@$\/]*$/.test(text))
+    if (/^[-A-Za-z0-9~!*()_.',:@$/]*$/.test(text))
         return text;
 
     return encodeURIComponent(text)
