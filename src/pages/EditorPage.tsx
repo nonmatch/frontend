@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from "react";
 import { Prompt, RouteComponentProps, useHistory, useLocation } from "react-router";
 import { Bar, Container, Section } from "react-simple-resizer";
 import { get, post } from "../api";
+import { generateCExploreURL } from "../cexplore";
 import { CodeEditor } from "../components/CodeEditor"
 import { DiffEditor } from "../components/DiffEditor";
 import { ErrorAlert } from "../components/ErrorAlert";
@@ -17,7 +18,7 @@ import eventBus from "../eventBus";
 import { getFunction } from "../repositories/function";
 import { getCurrentUser } from "../repositories/user";
 import { AsmLine, ErrorLine, Func } from "../types";
-import { useLocalStorage } from "../utils";
+import { openInNewTab, useLocalStorage } from "../utils";
 
 import './EditorPage.css'
 
@@ -80,7 +81,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
 
     const debouncedCompile =
-    // eslint-disable-next-line
+        // eslint-disable-next-line
         useCallback(
             debounce(nextValue => compile(nextValue), COMPILE_DEBOUNCE_TIME), []);
 
@@ -179,7 +180,11 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         navigator.clipboard.writeText(url);
     };
 
-        useEffect(() => {
+    const exportCExplore = () => {
+        openInNewTab(generateCExploreURL(cCode, originalAsm));
+    };
+
+    useEffect(() => {
         getCurrentUser().then((user) => {
             setIsLoggedIn(true);
             setUsername(user?.username ?? '');
@@ -251,7 +256,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             fetch(PYCAT_URL, {
                 "method": "POST",
                 "body": data
-            }).then(data=>data.text()).then((data) => {
+            }).then(data => data.text()).then((data) => {
                 setIsCustom(true);
                 eventBus.dispatch('on_editor_page', false);
                 setOriginalAsm(data.trim());
@@ -289,7 +294,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             eventBus.remove('extracted_data', onExtractedData);
         };
 
-    // eslint-disable-next-line
+        // eslint-disable-next-line
     }, [match.params.function, match.params.submission, debouncedCompile, location.pathname]) // TODO why does it want me to add loadFunction as a dependency here?
 
     const history = useHistory();
@@ -372,9 +377,9 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                             onScoreChange={onScoreChange}
                         /></div>
                 </div>
-                <div style={{ borderTop: "1px solid #eee", backgroundColor: "#f8f9fa", fontSize: "14px", whiteSpace:"nowrap", overflowX:"auto", overflowY:"revert", flexShrink:0}}>
+                <div style={{ borderTop: "1px solid #eee", backgroundColor: "#f8f9fa", fontSize: "14px", whiteSpace: "nowrap", overflowX: "auto", overflowY: "revert", flexShrink: 0 }}>
                     <div className="container" style={{ display: "flex", alignItems: "center" }}>
-                        <ul className="nav nav-pills" id="myTab" role="tablist" style={{flexShrink:0}}>
+                        <ul className="nav nav-pills" id="myTab" role="tablist" style={{ flexShrink: 0 }}>
                             <li className="nav-item" role="presentation">
                                 <button className="nav-link active" id="code-tab" data-bs-toggle="tab" data-bs-target="#code" type="button" role="tab" aria-controls="code" aria-selected="true">Code</button>
                             </li>
@@ -385,20 +390,20 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                                 <button className="nav-link" id="diff-tab" data-bs-toggle="tab" data-bs-target="#diff" type="button" role="tab" aria-controls="diff" aria-selected="false">Diff</button>
                             </li>
                         </ul>
-                        {isCustom ? <span className="btn btn-sm">custom code</span> : <FuncNameMenu copyLink={copyLink} name={func?.name}></FuncNameMenu>}
+                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>
                         <span style={{ padding: "0 8px" }}>
                             Diff Score: {score}
                         </span>
                         {
                             !isCustom && (
-                            isCompiling || isSubmitting
-                                ? <LoadingIndicator small />
-                                : <button className={
-                                    "btn btn-sm" + (score === 0
-                                        ? " btn-success"
-                                        : " btn-outline-success")
-                                } onClick={showSubmitDialog}>Submit</button>
+                                isCompiling || isSubmitting
+                                    ? <LoadingIndicator small />
+                                    : <button className={
+                                        "btn btn-sm" + (score === 0
+                                            ? " btn-success"
+                                            : " btn-outline-success")
+                                    } onClick={showSubmitDialog}>Submit</button>
                             )
                         }
                     </div>
@@ -441,20 +446,20 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 </Container>
                 <div style={{ borderTop: "1px solid #eee", backgroundColor: "#f8f9fa", fontSize: "14px" }}>
                     <div className="container" style={{ display: "flex", padding: "4px", alignItems: "center" }}>
-                        {isCustom ? <span className="btn btn-sm">custom code</span> : <FuncNameMenu copyLink={copyLink} name={func?.name}></FuncNameMenu>}
+                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>
                         <span style={{ padding: "0 8px" }}>
                             Diff Score: {score}
                         </span>
                         {
                             !isCustom && (
-                            isCompiling || isSubmitting
-                                ? <button className="btn btn-secondary btn-sm" disabled>Submit</button>
-                                : <button className={
-                                    "btn btn-sm" + (score === 0
-                                        ? " btn-success"
-                                        : " btn-outline-success")}
-                                    onClick={showSubmitDialog}>Submit</button>
+                                isCompiling || isSubmitting
+                                    ? <button className="btn btn-secondary btn-sm" disabled>Submit</button>
+                                    : <button className={
+                                        "btn btn-sm" + (score === 0
+                                            ? " btn-success"
+                                            : " btn-outline-success")}
+                                        onClick={showSubmitDialog}>Submit</button>
                             )
                         }
                     </div>
