@@ -36,11 +36,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
                 <ul className="dropdown-menu dropdown-menu-end" aria-labelledby="navbarDropdown">
                   <li><Link className="dropdown-item" to="/pr">Create PR</Link></li>
                   <li><Link className="dropdown-item" to="/custom">Editor for custom code</Link></li>
-                  {
-                    currentUser.id === 2 && <>
-                      <li><Link className="dropdown-item" to="/cexplore">Load from CExplore</Link></li>
-                    </>
-                  }
+                  <li><Link className="dropdown-item" to="/cexplore">Load from CExplore</Link></li>
                   <li><Link className="dropdown-item" to="/settings">Settings</Link></li>
                   <li><hr className="dropdown-divider" /></li>
                   <li><Link className="dropdown-item" to="/logout">Logout</Link></li>
