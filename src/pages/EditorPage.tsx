@@ -70,8 +70,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     // Is custom code? No longer able to submit
     const [isCustom, setIsCustom] = useState(false);
     const [customCCode, setCustomCCode] = useLocalStorage('custom_c_code', '// Type your c code here...');
-    const [customAsmCode, setCustomAsmCode] = useLocalStorage('custom_asm_code', '@ Paste the asm code here...');
-    // TODO allow to enter custom asm code
+    const [customAsmCode, setCustomAsmCode] = useLocalStorage('custom_asm_code', '@ Paste the asm code here...'); // TODO allow to enter custom asm code
+    const [usesTextarea, setUseTextarea] = useLocalStorage('use_textarea', false);
 
     // https://stackoverflow.com/a/60643670
     const cCodeRef = useRef<string>();
@@ -360,12 +360,24 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 {common}
                 <div className="tab-content" id="myTabContent" style={{ flex: 1, display: "flex" }}>
                     <div className="tab-pane fade show active" id="code" role="tabpanel" aria-labelledby="code-tab" style={{ flex: 1, overflow: "hidden" }}>
-                        <CodeEditor
-                            code={cCode}
-                            stderr={compiled.stderr}
-                            onCodeChange={onCodeChange}
-
-                        />
+                        {usesTextarea
+                            ? <textarea onChange={(e) => {onCodeChange(e.target.value)}} value={cCode} style={
+                                {
+                                    border: 'none',
+                                    width: '100%',
+                                    height: '100%',
+                                    padding: '8px',
+                                    fontFamily: 'monospace',
+                                    fontSize: '14px',
+                                    outline: 'none'
+                                }
+                            }></textarea>
+                            : <CodeEditor
+                                code={cCode}
+                                stderr={compiled.stderr}
+                                onCodeChange={onCodeChange}
+                            />
+                        }
                     </div>
                     <div className="tab-pane fade" id="stderr" role="tabpanel" aria-labelledby="stderr-tab" style={{ flex: 1, overflow: "hidden" }}>
                         <ErrorLog stderr={compiled.stderr} isCompiling={isCompiling}></ErrorLog> </div>
@@ -390,7 +402,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                                 <button className="nav-link" id="diff-tab" data-bs-toggle="tab" data-bs-target="#diff" type="button" role="tab" aria-controls="diff" aria-selected="false">Diff</button>
                             </li>
                         </ul>
-                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore}></FuncNameMenu>
+                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} showOneColumn={true} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>
                         <span style={{ padding: "0 8px" }}>
                             Diff Score: {score}
@@ -446,7 +458,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 </Container>
                 <div style={{ borderTop: "1px solid #eee", backgroundColor: "#f8f9fa", fontSize: "14px" }}>
                     <div className="container" style={{ display: "flex", padding: "4px", alignItems: "center" }}>
-                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore}></FuncNameMenu>
+                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} showOneColumn={false} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>
                         <span style={{ padding: "0 8px" }}>
                             Diff Score: {score}
