@@ -5,7 +5,9 @@ import { Container } from "../components/Container"
 import { ErrorAlert } from "../components/ErrorAlert";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { API_URL } from "../constants";
+import { isFileLocked } from "../repositories/trello";
 import { Func } from "../types"
+import { makeSortable, showTooltips } from "../utils";
 
 export const AsmFuncsPage: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
@@ -17,9 +19,14 @@ export const AsmFuncsPage: React.FC = () => {
         get(API_URL + '/asm_functions').then(
             async (data) => {
                 setIsLoading(false);
+                for (let i = 0; i < data.length; i++) {
+                    data[i].locked = await isFileLocked(data[i].file);
+                }
                 setFunctions(data);
                 // Make table sortable
-                (window as any).Sortable.init();
+                makeSortable();
+                // Show tooltips
+                showTooltips();
             },
             (error) => {
                 setIsLoading(false);
@@ -43,7 +50,15 @@ export const AsmFuncsPage: React.FC = () => {
                     ? <tr><td colSpan={5}><LoadingIndicator /></td></tr>
                     : functions.map((func) => (
                         <tr key={func.id}>
-                            <td>{func.file}</td>
+                            <td>
+                                {func.locked
+                                    ?
+                                    func.locked.username === 'wip'
+                                        ? <span data-bs-toggle="tooltip" data-bs-placement="right" title={'This file is marked as WIP in Trello.'} style={{ cursor: 'text' }}><i className="fa fa-pencil fa-fw"></i>{func.file}</span>
+                                        : <span data-bs-toggle="tooltip" data-bs-placement="right" title={func.locked.username + ' is currently working on this file.'} style={{ cursor: 'not-allowed' }}><i className="fa fa-lock fa-lg fa-fw"></i>{func.file}</span>
+                                    : func.file
+                                }
+                            </td>
                             <td>{func.name}</td>
                             <td>{func.size}</td>
                             <td>{func.best_score}</td>

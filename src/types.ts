@@ -10,7 +10,8 @@ export interface Func {
     name: string,
     file: string,
     size: number,
-    best_score: number
+    best_score: number,
+    locked?: TrelloUser
 }
 
 export interface User {
@@ -47,4 +48,10 @@ export interface AsmLine {
         file?: string,
         line: number
     }
+}
+
+export interface TrelloUser {
+    username: string,
+    fullName: string,
+    avatarUrl: string
 }
