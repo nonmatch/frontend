@@ -1,4 +1,6 @@
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import eventBus from "../eventBus";
 import { User } from "../types";
 import { useLocalStorage } from "../utils";
 import { TlhBridge } from "./TlhBridge";
@@ -8,7 +10,21 @@ interface NavbarProps {
 }
 
 export const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
-  const [showBridge] = useLocalStorage('showTlhBridge', false);
+  const [showBridge, setShowTlhBridge] = useLocalStorage('showTlhBridge', false);
+
+  useEffect(() => {
+
+    const onShowBridgeChanged = (value: boolean) => {
+      console.log('CHANGED', value);
+      setShowTlhBridge(value);
+    };
+
+    eventBus.on('show-bridge-changed', onShowBridgeChanged);
+    return () => {
+      eventBus.remove('show-bridge-changed', onShowBridgeChanged);
+    };
+  }, [setShowTlhBridge]);
+
 
   return (
     <nav className="navbar navbar-expand-md navbar-light bg-light">

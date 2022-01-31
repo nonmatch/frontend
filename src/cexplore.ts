@@ -1,8 +1,7 @@
 import LZString from "lz-string";
 import rison from "rison";
+import { CEXPLORE_SHARE_URL } from "./constants";
 
-const CEXPLORE_URL = 'https://cexplore.henny022.eu.ngrok.io/#'
-//const CEXPLORE_URL = 'http://localhost:10240/#'
 
 const risonQuote = (text: string) => {
     if (/^[-A-Za-z0-9~!*()_.',:@$/]*$/.test(text))
@@ -33,5 +32,5 @@ export const generateCExploreURL = (src: string, asm: string) => {
     const newStateObj = {
         'z': LZString.compressToBase64(newState)
     };
-    return CEXPLORE_URL + risonify(newStateObj);
+    return CEXPLORE_SHARE_URL + risonify(newStateObj);
 };

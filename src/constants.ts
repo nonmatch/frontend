@@ -1,22 +1,19 @@
 export const isProd = (process.env.NODE_ENV === 'production');
 
 export const API_URL = isProd
-    ? "https://1ea8-2a02-8070-1c4-e320-00-14ac.eu.ngrok.io"
-    : "http://127.0.0.1:5000";
+    ? 'https://1ea8-2a02-8070-1c4-e320-00-14ac.eu.ngrok.io'
+    : 'http://127.0.0.1:5000';
 
-const useRemoteCexplore = isProd;
 
-export const CEXPLORE_URL = useRemoteCexplore
-    ? "https://cexplore.henny022.eu.ngrok.io/api/compiler/tmc_agbcc/compile"
-    : "http://127.0.0.1:10240/api/compiler/tmc_agbcc/compile";
+export const REMOTE_CEXPLORE_HOST = 'https://cexplore.henny022.eu.ngrok.io';
+export const LOCAL_CEXPLORE_HOST = 'http://127.0.0.1:10240';
 
-export const PYCAT_URL = useRemoteCexplore
-    ? 'https://cexplore.henny022.eu.ngrok.io/api/compiler/pycat/compile'
-    : 'http://127.0.0.1:10240/api/compiler/pycat/compile';
+export const COMPILE_PATH = '/api/compiler/tmc_agbcc/compile';
+export const PYCAT_PATH = '/api/compiler/pycat/compile';
 
-export const LINK_RESOLVE_URL = useRemoteCexplore
-    ? 'https://cexplore.henny022.eu.ngrok.io/api/shortlinkinfo'
-    : 'http://localhost:10240/api/shortlinkinfo';
+// Urls for the global CExplore instance for sharing
+export const LINK_RESOLVE_URL = 'https://cexplore.henny022.eu.ngrok.io/api/shortlinkinfo';
+export const CEXPLORE_SHARE_URL = 'https://cexplore.henny022.eu.ngrok.io/#';
 
 export const COMPILE_DEBOUNCE_TIME = 1000;
 export const TLH_URL = 'http://localhost:10241';

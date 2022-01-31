@@ -13,12 +13,12 @@ import { FuncNameMenu } from "../components/FuncNameMenu";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { SubmitDialog } from "../components/SubmitDialog";
 import { SuccessToast } from "../components/SuccessToast";
-import { API_URL, CEXPLORE_URL, COMPILE_DEBOUNCE_TIME, PYCAT_URL } from "../constants";
+import { API_URL, COMPILE_DEBOUNCE_TIME} from "../constants";
 import eventBus from "../eventBus";
 import { getFunction } from "../repositories/function";
 import { getCurrentUser } from "../repositories/user";
 import { AsmLine, ErrorLine, Func } from "../types";
-import { openInNewTab, useLocalStorage } from "../utils";
+import { getCompileURL, getPyCatURL, openInNewTab, useLocalStorage } from "../utils";
 
 import './EditorPage.css'
 
@@ -114,15 +114,11 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         setIsCompiling(true);
         //        console.log('compiling', nextValue);
         try {
-            const res = await fetch(CEXPLORE_URL, {
+            const res = await fetch(getCompileURL(), {
                 "headers": {
                     "accept": "application/json, text/javascript, */*; q=0.01",
-                    //"accept-language": "en-US,en;q=0.9",
                     "content-type": "application/json",
-                    //"x-requested-with": "XMLHttpRequest"
                 },
-                //      "referrer": "http://cexplore.henny022.de/",
-                //"referrerPolicy": "strict-origin-when-cross-origin",
                 "body":
                     JSON.stringify({
                         source: nextValue,
@@ -253,7 +249,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         const onAsmCode = (data: string) => {
             // TODO change url to /custom if it is no longer the same function?
             // send through pycat
-            fetch(PYCAT_URL, {
+            fetch(getPyCatURL(), {
                 "method": "POST",
                 "body": data
             }).then(data => data.text()).then((data) => {

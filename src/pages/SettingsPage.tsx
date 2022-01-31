@@ -12,6 +12,7 @@ export const SettingsPage: React.FC = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [showTlhBridge, setShowTlhBridge] = useLocalStorage('showTlhBridge', false);
+  const [useLocalCExplore, setUseLocalCExplore] = useLocalStorage('useLocalCExplore', false);
 
   const loadCurrentUser = async () => {
     getCurrentUser().then((user) => {
@@ -50,6 +51,7 @@ export const SettingsPage: React.FC = () => {
   // TODO maybe allow to refetch the avatar from GitHub?
   return (<Container>
     <h1 className="mt-4">Settings</h1>
+    <h2 className="mt-3">Git</h2>
     This username and email are used in the git commit if you submit a matching function.
     <div className="mb-3 mt-3">
       <label htmlFor="username">Username</label>
@@ -66,10 +68,17 @@ export const SettingsPage: React.FC = () => {
     </div>
     <button type="submit" className="btn btn-primary" onClick={save}>Save</button>
 
-
-    <div className="form-check mt-4">
-      <input type="checkbox" id="showTlhBridge" className="form-check-input" checked={showTlhBridge} onChange={e => setShowTlhBridge(e.target.checked)} />
+    <h2 className="mt-4">Configuration</h2>
+    <div className="form-check">
+      <input type="checkbox" id="showTlhBridge" className="form-check-input" checked={showTlhBridge} onChange={e => {
+        setShowTlhBridge(e.target.checked);
+        eventBus.dispatch('show-bridge-changed', e.target.checked);
+      }} />
       <label className="form-check-label" htmlFor="showTlhBridge">Show tlh Bridge</label>
+    </div>
+    <div className="form-check">
+      <input type="checkbox" id="useLocalCExplore" className="form-check-input" checked={useLocalCExplore} onChange={e => setUseLocalCExplore(e.target.checked)} />
+      <label className="form-check-label" htmlFor="useLocalCExplore" title="Use the CExplore instance at http://localhost:10240">Use Local CExplore Instance</label>
     </div>
 
   </Container>);

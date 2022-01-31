@@ -1,6 +1,7 @@
 // Hook
 
 import { useState } from "react";
+import { COMPILE_PATH, LOCAL_CEXPLORE_HOST, PYCAT_PATH, REMOTE_CEXPLORE_HOST } from "./constants";
 
 // https://usehooks.com/useLocalStorage/
 export function useLocalStorage(key: string, initialValue: any) {
@@ -52,3 +53,19 @@ export const showTooltips = () => {
       return new (window as any).bootstrap.Tooltip(tooltipTriggerEl)
   })
 };
+
+const getCExploreHost = () => {
+  if (localStorage.getItem('useLocalCExplore')) {
+    return LOCAL_CEXPLORE_HOST;
+  } else {
+    return REMOTE_CEXPLORE_HOST;
+  }
+}
+
+export const getCompileURL = () => {
+  return getCExploreHost() + COMPILE_PATH;
+}
+
+export const getPyCatURL = () => {
+  return getCExploreHost() + PYCAT_PATH;
+}
