@@ -197,6 +197,9 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 }
 
                 if (parseInt(submission) === 0) {
+                    get(API_URL+'/functions/' + func + '/headers').then((data) => {
+                        setCCode(data.code);
+                    }, setError);
                     setIsEquivalent(false);
                     setIsCompiling(false);
                 } else {
