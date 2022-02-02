@@ -6,7 +6,10 @@ import { Container } from "../components/Container";
 import { ErrorAlert } from "../components/ErrorAlert";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { API_URL } from "../constants";
+import { isFileLocked } from "../repositories/trello";
 import { getUser } from "../repositories/user";
+import { TrelloUser } from "../types";
+import { makeSortable, showTooltips } from "../utils";
 
 export const PullRequestPage: React.FC = () => {
 
@@ -19,7 +22,8 @@ export const PullRequestPage: React.FC = () => {
         time_created: string
         submission: number,
         function: number,
-        file: string
+        file: string,
+        locked?: TrelloUser
     }
 
     const [isLoading, setIsLoading] = useState(false);
@@ -51,11 +55,16 @@ export const PullRequestPage: React.FC = () => {
                             minute: '2-digit',
                             timeZoneName: 'short'
                         });
+                        for (let i = 0; i < data.length; i++) {
+                            data[i].locked = await isFileLocked(data[i].file);
+                        }
                     }
                     setIsLoading(false);
                     setMatches(data);
                     // Make table sortable
-                    (window as any).Sortable.init();
+                    makeSortable();
+                    // Show tooltips
+                    showTooltips();
                 },
                 (error) => {
                     setIsLoading(false);
@@ -153,7 +162,13 @@ export const PullRequestPage: React.FC = () => {
                                                     />
                                                 </td>
                                                 <td>
-                                                    {match.file}
+                                                    {match.locked
+                                                        ?
+                                                        match.locked.username === 'wip'
+                                                            ? <span data-bs-toggle="tooltip" data-bs-placement="right" title={'This file is marked as WIP in Trello.'} style={{ cursor: 'text' }}><i className="fa fa-pencil fa-fw"></i>{match.file}</span>
+                                                            : <span data-bs-toggle="tooltip" data-bs-placement="right" title={match.locked.username + ' is currently working on this file.'} style={{ cursor: 'not-allowed' }}><i className="fa fa-lock fa-lg fa-fw"></i>{match.file}</span>
+                                                        : match.file
+                                                    }
                                                 </td>
                                                 <td>
                                                     {match.name}

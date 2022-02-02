@@ -5,10 +5,11 @@ import { TrelloUser } from "../types";
 let locked: { [id: string]: TrelloUser } = {};
 let loaded = false;
 
-export const isFileLocked = (file: string) => {
+export const isFileLocked = async (file: string) => {
     if (!loaded) {
         loaded = true;
-        fetch(TRELLO_URL).then(async (data) => {
+        try {
+            const data = await fetch(TRELLO_URL);
             if (data.ok) {
                 const json = await data.json();
                 for (const card of json) {
@@ -19,7 +20,9 @@ export const isFileLocked = (file: string) => {
                     }
                 }
             }
-        }, error => console.error(error));
+        } catch(error) {
+            console.error(error);
+        }
     }
 
     if (locked[file] !== undefined) {
