@@ -35,10 +35,10 @@ export const getStatusFromTrello = async () => {
     const data = await fetch(TRELLO_STATUS_URL);
     if (data.ok) {
         const json = await data.json();
-        if (json.length == 0) {
+        if (json.length === 0) {
             return 'The backend could not be reached.';
         }
-        if (json[0].desc == '') {
+        if (json[0].desc === '') {
             return json[0].name;
         } else {
             return json[0].name + '\n' + json[0].desc;
