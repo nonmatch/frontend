@@ -75,8 +75,6 @@ export const TlhBridge: React.FC = () => {
         }
     };
 
-
-
     useEffect(() => {
         const sendCCode = (data: string) => {
             console.log('sendCCode', data);
@@ -111,12 +109,12 @@ export const TlhBridge: React.FC = () => {
             </li>);
     } else if (isConnecting) {
         return (
-        <li className="nav-item">
-            <span className="nav-link">
-                Connecting
-                <span className="indicator"></span>
-            </span>
-        </li>);
+            <li className="nav-item">
+                <span className="nav-link">
+                    Connecting
+                    <span className="indicator"></span>
+                </span>
+            </li>);
     } else if (isConnected) {
         return (
             <li className="nav-item dropdown">
@@ -126,13 +124,13 @@ export const TlhBridge: React.FC = () => {
                 </a>
                 <ul className="dropdown-menu" aria-labelledby="navbarDropdown">
                     {isEditorPage && <>
-                  <li><button className="dropdown-item" onClick={fetchDecompilation}>Fetch Decompilation from Ghidra</button></li>
-                  <li><button className="dropdown-item" onClick={uploadFunction}>Upload Function to Repo</button></li>
-                  <li><hr className="dropdown-divider" /></li>
+                        <li><button className="dropdown-item" onClick={fetchDecompilation}>Fetch Decompilation from Ghidra</button></li>
+                        <li><button className="dropdown-item" onClick={uploadFunction}>Upload Function to Repo</button></li>
+                        <li><hr className="dropdown-divider" /></li>
                     </>}
-                  <li><button className="dropdown-item" onClick={disconnect}>Disconnect</button></li>
+                    <li><button className="dropdown-item" onClick={disconnect}>Disconnect</button></li>
                 </ul>
-              </li>
+            </li>
         );
     } else {
         return (

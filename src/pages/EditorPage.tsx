@@ -455,7 +455,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                         </Container>
                     </Section>
                 </Container>
-                <div style={{ borderTop: "1px solid #eee", backgroundColor: "#f8f9fa", fontSize: "14px" }}>
+                <div style={{ borderTop: "1px solid #eee", backgroundColor: score == 0 ? "#bbed9c" : "#f8f9fa", fontSize: "14px" }}>
                     <div className="container" style={{ display: "flex", padding: "4px", alignItems: "center" }}>
                         <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} showOneColumn={false} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>

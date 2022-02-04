@@ -19,3 +19,4 @@ export const COMPILE_DEBOUNCE_TIME = 1000;
 export const TLH_URL = 'http://localhost:10241';
 
 export const TRELLO_URL = 'https://api.trello.com/1/lists/5ee43e55e7c2e03e4541ff79/cards?members=true';
+export const TRELLO_STATUS_URL = 'https://api.trello.com/1/lists/61fcda0676b887856607e705/cards';
