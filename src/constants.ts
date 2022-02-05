@@ -8,8 +8,11 @@ export const API_URL = isProd
 export const REMOTE_CEXPLORE_HOST = 'https://cexplore.henny022.eu.ngrok.io';
 export const LOCAL_CEXPLORE_HOST = 'http://127.0.0.1:10240';
 
-export const COMPILE_PATH = '/api/compiler/tmc_agbcc/compile';
-export const PYCAT_PATH = '/api/compiler/pycat/compile';
+//https://cexplore.henny022.eu.ngrok.io
+//export const COMPILE_PATH = '/api/compiler/tmc_agbcc/compile';
+export const COMPILE_PATH = '/api/compiler/agbpyccC/compile';
+//export const PYCAT_PATH = '/api/compiler/pycat/compile';
+export const PYCAT_PATH = '/api/compiler/agbpycc/compile';
 
 // Urls for the global CExplore instance for sharing
 export const LINK_RESOLVE_URL = 'https://cexplore.henny022.eu.ngrok.io/api/shortlinkinfo';

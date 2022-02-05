@@ -55,7 +55,7 @@ export const showTooltips = () => {
 };
 
 const getCExploreHost = () => {
-  if (localStorage.getItem('useLocalCExplore')) {
+  if (localStorage.getItem('useLocalCExplore') === 'true') {
     return LOCAL_CEXPLORE_HOST;
   } else {
     return REMOTE_CEXPLORE_HOST;
