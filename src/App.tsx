@@ -6,7 +6,6 @@ import { LoginPage } from './pages/LoginPage';
 import { NotFoundPage } from './pages/NotFoundPage';
 import { Navbar } from './components/Navbar';
 import { FunctionsPage } from './pages/FunctionsPage';
-import { AsmFuncsPage } from './pages/AsmFuncsPage';
 import { SubmissionsPage } from './pages/SubmissionsPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { getCurrentUser } from './repositories/user';
@@ -71,7 +70,7 @@ const App: React.FC = () => {
 
       <Switch>
         <Route path="/" exact component={FunctionsPage} />
-        <Route path="/asm_funcs" component={AsmFuncsPage} />
+        <Route path="/asm_funcs" component={FunctionsPage} />
         <Route path="/login" component={LoginPage} />
         <Route path="/dashboard" component={DashboardPage} />
         <Route path="/functions/:function/submissions/:submission" component={EditorPage} />
