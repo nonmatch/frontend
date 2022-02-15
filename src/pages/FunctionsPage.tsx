@@ -81,8 +81,10 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                 }
             </tbody>
         </table>
-        <div>
-            Found {functions.length} Functions
-        </div>
+        {
+            !isLoading && <div className="mt-3 mb-4 text-secondary">
+                Found {functions.length} Functions
+            </div>
+        }
     </Container>)
 }
