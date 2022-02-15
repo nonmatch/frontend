@@ -108,7 +108,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const compile = async (nextValue: any) => {
         if (isCustom) {
             // save the c code in local storage
-            setCustomCCode(cCode);
+            setCustomCCode(cCodeRef.current);
         }
 
         setIsCompiling(true);
