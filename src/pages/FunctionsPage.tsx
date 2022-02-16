@@ -16,15 +16,27 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
 
     enum Content {
         NONMATCH,
-        ASM_FUNC
+        ASM_FUNC,
+        WITH_CODE,
+        WITHOUT_CODE
     };
 
-    const content = location.pathname === '/asm_funcs' ? Content.ASM_FUNC : Content.NONMATCH;
+    const content = {
+        '/': Content.NONMATCH,
+        '/asm_funcs': Content.ASM_FUNC,
+        '/with_code': Content.WITH_CODE,
+        '/without_code': Content.WITHOUT_CODE,
+    }[location.pathname] || Content.NONMATCH;
 
     useEffect(() => {
         const fetchFunctions = async () => {
             setIsLoading(true);
-            const path = content === Content.NONMATCH ? '/functions' : '/asm_functions';
+            const path = {
+                0: '/functions',
+                1: '/asm_functions',
+                2: '/with_code',
+                3: '/without_code'
+            }[content];
             get(API_URL + path).then(
                 async (data) => {
                     setIsLoading(false);
@@ -49,7 +61,14 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
     }, [location.pathname, content, Content.NONMATCH]);
     return (<Container centered>
         <ErrorAlert error={error}></ErrorAlert>
-        <h1 className="mt-4 mb-2">{content === Content.NONMATCH ? 'NONMATCH' : 'ASM_FUNC'} Functions</h1>
+        <h1 className="mt-4 mb-2">{
+            {
+                0: 'NONMATCH Functions',
+                1: 'ASM_FUNC Functions',
+                2: 'Functions with code',
+                3: 'Functions without code'
+            }[content]
+        }</h1>
         <table className="sortable-theme-slick" data-sortable>
             <thead>
                 <tr><th>File</th><th>Function</th><th>Size</th><th>Best Score</th><th data-sortable="false"></th></tr>
