@@ -14,6 +14,7 @@ import { LoadingIndicator } from "../components/LoadingIndicator";
 import { SubmitDialog } from "../components/SubmitDialog";
 import { SuccessToast } from "../components/SuccessToast";
 import { API_URL, COMPILE_DEBOUNCE_TIME} from "../constants";
+import { generateDecompMeURL } from "../decompme";
 import eventBus from "../eventBus";
 import { getFunction } from "../repositories/function";
 import { getCurrentUser } from "../repositories/user";
@@ -179,6 +180,10 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const exportCExplore = () => {
         openInNewTab(generateCExploreURL(cCode, originalAsm));
     };
+
+    const exportDecompMe = () => {
+        generateDecompMeURL(func?.name ?? 'Untitled', cCode, originalAsm).then(openInNewTab, setError);
+    }
 
     const enterAsm = () => {
         const asm = window.prompt('Enter asm code');
@@ -407,7 +412,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                                 <button className="nav-link" id="diff-tab" data-bs-toggle="tab" data-bs-target="#diff" type="button" role="tab" aria-controls="diff" aria-selected="false">Diff</button>
                             </li>
                         </ul>
-                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} showOneColumn={true} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm}></FuncNameMenu>
+                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={true} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>
                         <span style={{ padding: "0 8px" }}>
                             Diff Score: {score}
@@ -463,7 +468,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 </Container>
                 <div style={{ borderTop: "1px solid #eee", backgroundColor: score === 0 ? "#bbed9c" : "#f8f9fa", fontSize: "14px" }}>
                     <div className="container" style={{ display: "flex", padding: "4px", alignItems: "center" }}>
-                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} showOneColumn={false} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm}></FuncNameMenu>
+                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={false} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>
                         <span style={{ padding: "0 8px" }}>
                             Diff Score: {score}
