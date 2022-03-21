@@ -4,7 +4,7 @@ import { get } from "../api";
 import { Container } from "../components/Container"
 import { ErrorAlert } from "../components/ErrorAlert";
 import { LoadingIndicator } from "../components/LoadingIndicator";
-import { API_URL } from "../constants";
+import { API_URL, DECOMP_ME_FRONTEND } from "../constants";
 import { isFileLocked } from "../repositories/trello";
 import { Func } from "../types"
 import { makeSortable, showTooltips } from "../utils";
@@ -84,7 +84,11 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                                     func.locked.username === 'wip'
                                         ? <span data-bs-toggle="tooltip" data-bs-placement="right" title={'This file is marked as WIP in Trello.'} style={{ cursor: 'text' }}><i className="fa fa-pencil fa-fw"></i>{func.file}</span>
                                         : <span data-bs-toggle="tooltip" data-bs-placement="right" title={func.locked.username + ' is currently working on this file.'} style={{ cursor: 'not-allowed' }}><i className="fa fa-lock fa-lg fa-fw"></i>{func.file}</span>
-                                    : func.file
+                                    : (
+                                        func.decomp_me_matched ?
+                                        <a href={DECOMP_ME_FRONTEND+'/scratch/' + func.decomp_me_scratch} className="decompMe" data-bs-toggle="tooltip" data-bs-placement="right" title={'This file has been matched over on decomp.me.'}><i className="fa fa-check-circle fa-fw"></i>{func.file}</a>
+                                        : func.name
+                                    )
                                 }
                             </td>
                             <td>{func.name}</td>

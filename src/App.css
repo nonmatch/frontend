@@ -191,3 +191,8 @@ td {
 .navbar {
   padding: 2px 0px;
 }
+
+a.decompMe {
+  color: #951fd9;
+  text-decoration: none;
+}

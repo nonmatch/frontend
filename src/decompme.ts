@@ -1,4 +1,4 @@
-import { API_URL, DECOMP_ME_BACKEND, DECOMP_ME_FRONTEND} from "./constants";
+import { API_URL, DECOMP_ME_BACKEND } from "./constants";
 
 const convertToUnifiedSyntax = (asm: string) => {
     return asm
@@ -92,8 +92,7 @@ export const generateDecompMeURL = async (name: string, src: string, asm: string
     console.log(convertToUnifiedSyntax(asm))
     //throw Error('test')
     let data = await createScratch(name, convertToUnifiedSyntax(asm), removeIncludes(src));
-    const scratchSlug = data.slug;
-    return DECOMP_ME_FRONTEND + '/scratch/' + scratchSlug;
+    return data.slug;
 }
 
 

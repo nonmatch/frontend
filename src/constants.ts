@@ -8,10 +8,10 @@ export const API_URL = isProd
 export const REMOTE_CEXPLORE_HOST = 'https://cexplore.henny022.eu.ngrok.io';
 export const LOCAL_CEXPLORE_HOST = 'http://127.0.0.1:10240';
 
-export const DECOMP_ME_FRONTEND = 'https://decomp.me';
-export const DECOMP_ME_BACKEND = 'https://decomp.me/api';
-// export const DECOMP_ME_FRONTEND = 'http://127.0.0.1:8080';
-// export const DECOMP_ME_BACKEND = 'http://127.0.0.1:8000/api';
+// export const DECOMP_ME_FRONTEND = 'https://decomp.me';
+// export const DECOMP_ME_BACKEND = 'https://decomp.me/api';
+export const DECOMP_ME_FRONTEND = 'http://127.0.0.1:8080';
+export const DECOMP_ME_BACKEND = 'http://127.0.0.1:8000/api';
 
 //https://cexplore.henny022.eu.ngrok.io
 //export const COMPILE_PATH = '/api/compiler/tmc_agbcc/compile';

@@ -13,7 +13,7 @@ import { FuncNameMenu } from "../components/FuncNameMenu";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { SubmitDialog } from "../components/SubmitDialog";
 import { SuccessToast } from "../components/SuccessToast";
-import { API_URL, COMPILE_DEBOUNCE_TIME} from "../constants";
+import { API_URL, COMPILE_DEBOUNCE_TIME, DECOMP_ME_FRONTEND} from "../constants";
 import { generateDecompMeURL } from "../decompme";
 import eventBus from "../eventBus";
 import { getFunction } from "../repositories/function";
@@ -182,7 +182,20 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     };
 
     const exportDecompMe = () => {
-        generateDecompMeURL(func?.name ?? 'Untitled', cCode, originalAsm).then(openInNewTab, setError);
+        if (func != null) {
+            if (func.decomp_me_scratch) {
+                // Function has already been added to decomp.me
+                openInNewTab(DECOMP_ME_FRONTEND + '/scratch/' + func.decomp_me_scratch);
+                return;
+            }
+        }
+        generateDecompMeURL(func?.name ?? 'Untitled', cCode, originalAsm).then((slug) => {
+            if (func != null) {
+                // Save slug to database
+                post(API_URL + '/functions/' + func.id + '/decompMe', {'slug': slug});
+            }
+            openInNewTab(DECOMP_ME_FRONTEND + '/scratch/' +slug);
+        }, setError);
     }
 
     const enterAsm = () => {
