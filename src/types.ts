@@ -11,6 +11,7 @@ export interface Func {
     file: string,
     size: number,
     best_score: number,
+    lockedByName?: string,
     locked?: TrelloUser,
     decomp_me_scratch?: string,
     decomp_me_matched: boolean
