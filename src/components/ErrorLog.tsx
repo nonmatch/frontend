@@ -30,7 +30,8 @@ export const ErrorLog: React.FC<ErrorLogProps> = ({stderr, isCompiling}) => {
             padding:"8px",
             flex:1,
             display:"flex",
-            flexDirection:"column"
+            flexDirection:"column",
+            overflowY:"auto"
         }}>
             {
                 isCompiling ?
