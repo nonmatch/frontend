@@ -9,6 +9,7 @@ import { API_URL } from "../constants";
 import { getFunction } from "../repositories/function";
 import { getUser } from "../repositories/user";
 import { Func, Submission } from "../types"
+import { useTitle } from "../utils";
 interface Params {
     function: string
 }
@@ -20,6 +21,8 @@ export const SubmissionsPage: React.FC<RouteComponentProps<Params>> = ({ match }
     const [submissions, setSubmissions] = useState<Submission[]>([]);
     const [func, setFunc] = useState<Func | null>(null);
     const [error, setError] = useState<Error | null>(null);
+
+    useTitle('Submissions for ' + func?.name);
 
     useEffect(() => {
         const fetchSubmissions = async () => {

@@ -9,7 +9,7 @@ import { API_URL } from "../constants";
 import { isFileLocked } from "../repositories/trello";
 import { getUser } from "../repositories/user";
 import { TrelloUser } from "../types";
-import { makeSortable, showTooltips } from "../utils";
+import { makeSortable, showTooltips, useTitle } from "../utils";
 
 export const PullRequestPage: React.FC = () => {
 
@@ -34,6 +34,8 @@ export const PullRequestPage: React.FC = () => {
     const [text, setText] = useState('');
     const [error, setError] = useState<Error | null>(null);
     const [url, setUrl] = useState<string | null>(null);
+
+    useTitle('Create Pull Request');
 
     useEffect(() => {
         const fetchMatches = () => {

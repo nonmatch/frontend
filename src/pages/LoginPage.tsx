@@ -1,5 +1,6 @@
 import { Container } from "../components/Container";
 import { API_URL, isProd } from "../constants";
+import { useTitle } from "../utils";
 
 export const LoginPage: React.FC = () => {
     const loginWithGitHub = async () => {
@@ -11,6 +12,8 @@ export const LoginPage: React.FC = () => {
     const mockLogin = () => {
         window.location.href = API_URL + '/generate_token?mock=true';
     };
+
+    useTitle('NONMATCH Login');
 
     return (<Container small>
         <h1 className="mt-4">Login</h1>

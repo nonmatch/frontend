@@ -1,6 +1,6 @@
 // Hook
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { COMPILE_PATH, LOCAL_CEXPLORE_HOST, PYCAT_PATH, REMOTE_CEXPLORE_HOST } from "./constants";
 
 // https://usehooks.com/useLocalStorage/
@@ -68,4 +68,16 @@ export const getCompileURL = () => {
 
 export const getPyCatURL = () => {
   return getCExploreHost() + PYCAT_PATH;
+}
+
+
+// https://stackoverflow.com/a/64352116
+export function useTitle(title: string) {
+  useEffect(() => {
+    const prevTitle = document.title
+    document.title = title
+    return () => {
+      document.title = prevTitle
+    }
+  })
 }

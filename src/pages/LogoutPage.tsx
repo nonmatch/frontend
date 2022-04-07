@@ -5,10 +5,13 @@ import { ErrorAlert } from "../components/ErrorAlert";
 import { API_URL } from "../constants";
 import eventBus from "../eventBus";
 import { resetCurrentUser } from "../repositories/user";
+import { useTitle } from "../utils";
 
 export const LogoutPage: React.FC = () => {
     const [loggedOut, setLoggedOut] = useState(false);
     const [error, setError] = useState<Error | null>(null);
+
+    useTitle('NONMATCH Logout');
 
     const logout = () => {
         post(API_URL + '/oauth/logout', {}).then(

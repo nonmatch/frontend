@@ -3,7 +3,7 @@ import { Container } from "../components/Container";
 import eventBus from "../eventBus";
 import { getCurrentUser, saveCurrentUser } from "../repositories/user";
 import { User } from "../types";
-import { useLocalStorage } from "../utils";
+import { useLocalStorage, useTitle } from "../utils";
 
 export const SettingsPage: React.FC = () => {
 
@@ -29,6 +29,8 @@ export const SettingsPage: React.FC = () => {
   useEffect(() => {
     loadCurrentUser()
   }, []);
+
+  useTitle('NONMATCH Settings');
 
   const save = async () => {
     const user = currentUser;

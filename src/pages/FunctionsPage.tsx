@@ -8,13 +8,20 @@ import { API_URL, DECOMP_ME_FRONTEND } from "../constants";
 import { isFileLocked } from "../repositories/trello";
 import { getCurrentUser, getUser } from "../repositories/user";
 import { Func, User } from "../types"
-import { makeSortable, showTooltips } from "../utils";
+import { makeSortable, showTooltips, useTitle } from "../utils";
 
 export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [functions, setFunctions] = useState<Func[]>([]);
     const [error, setError] = useState<Error | null>(null);
     const [currentUser, setCurrentUser] = useState<User | null>(null);
+
+    const titles = {
+        0: 'NONMATCH Functions',
+        1: 'ASM_FUNC Functions',
+        2: 'Functions with code',
+        3: 'Functions without code'
+    };
 
     enum Content {
         NONMATCH,
@@ -29,6 +36,8 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
         '/with_code': Content.WITH_CODE,
         '/without_code': Content.WITHOUT_CODE,
     }[location.pathname] || Content.NONMATCH;
+
+    useTitle(titles[content]);
 
     const lockFunction = (id: number) => {
         post(API_URL+'/functions/' + id+'/lock', {}).then(() => {
@@ -86,12 +95,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
     return (<Container centered>
         <ErrorAlert error={error}></ErrorAlert>
         <h1 className="mt-4 mb-2">{
-            {
-                0: 'NONMATCH Functions',
-                1: 'ASM_FUNC Functions',
-                2: 'Functions with code',
-                3: 'Functions without code'
-            }[content]
+            titles[content]
         }</h1>
         <table className="sortable-theme-slick" data-sortable>
             <thead>

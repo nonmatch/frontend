@@ -19,7 +19,7 @@ import eventBus from "../eventBus";
 import { getFunction } from "../repositories/function";
 import { getCurrentUser } from "../repositories/user";
 import { AsmLine, ErrorLine, Func } from "../types";
-import { getCompileURL, getPyCatURL, openInNewTab, useLocalStorage } from "../utils";
+import { getCompileURL, getPyCatURL, openInNewTab, useLocalStorage, useTitle } from "../utils";
 
 import './EditorPage.css'
 
@@ -79,7 +79,6 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     cCodeRef.current = cCode;
 
     const location = useLocation();
-
 
     const debouncedCompile =
         // eslint-disable-next-line
@@ -203,6 +202,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         eventBus.dispatch('asm_code', asm);
     };
 
+    useTitle(isCustom ? 'CUSTOM editor' : func?.name ?? '');
 
     useEffect(() => {
         getCurrentUser().then((user) => {
