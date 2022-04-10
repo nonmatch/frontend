@@ -8,13 +8,14 @@ import { API_URL, DECOMP_ME_FRONTEND } from "../constants";
 import { isFileLocked } from "../repositories/trello";
 import { getCurrentUser, getUser } from "../repositories/user";
 import { Func, User } from "../types"
-import { makeSortable, showTooltips, useTitle } from "../utils";
+import { makeSortable, showTooltips, useLocalStorage, useTitle } from "../utils";
 
 export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [functions, setFunctions] = useState<Func[]>([]);
     const [error, setError] = useState<Error | null>(null);
     const [currentUser, setCurrentUser] = useState<User | null>(null);
+    const [hiddenFunctions, setHiddenFunctions] = useLocalStorage('hiddenFunctions', []);
 
     const titles = {
         0: 'NONMATCH Functions',
@@ -92,6 +93,11 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
         fetchFunctions(true);
         // eslint-disable-next-line
     }, [location.pathname, content, Content.NONMATCH]);
+
+    const hideFunction = (id: number) => {
+        setHiddenFunctions([...hiddenFunctions,id]);
+    };
+
     return (<Container centered>
         <ErrorAlert error={error}></ErrorAlert>
         <h1 className="mt-4 mb-2">{
@@ -104,7 +110,9 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
             <tbody>
                 {isLoading
                     ? <tr><td colSpan={5}><LoadingIndicator /></td></tr>
-                    : functions.map((func) => (
+                    :
+                    
+                    functions.filter((func) => !hiddenFunctions.includes(func.id)).map((func) => (
                         <tr key={func.id}>
                             <td>
                                 {func.locked
@@ -126,7 +134,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                                 }
                             </td>
                             <td>{func.size}</td>
-                            <td>{func.best_score}</td>
+                            <td onContextMenu={(e) => {e.preventDefault();hideFunction(func.id)}}>{func.best_score}</td>
                             <td>
                                 <Link className="btn btn-outline-primary btn-sm" to={"/functions/" + func.id}>
                                     Edit
