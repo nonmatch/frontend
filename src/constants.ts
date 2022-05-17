@@ -1,9 +1,8 @@
 export const isProd = (process.env.NODE_ENV === 'production');
 
 export const API_URL = isProd
-    ? 'https://1ea8-2a02-8070-1c4-e320-00-14ac.eu.ngrok.io'
+    ? 'https://b256-2a02-8070-1ca-f0e0-00-f7d4.eu.ngrok.io'
     : 'http://127.0.0.1:5000';
-
 
 export const REMOTE_CEXPLORE_HOST = 'https://cexplore.henny022.eu.ngrok.io';
 export const LOCAL_CEXPLORE_HOST = 'http://127.0.0.1:10240';
