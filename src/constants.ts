@@ -4,7 +4,8 @@ export const API_URL = isProd
     ? 'https://b256-2a02-8070-1ca-f0e0-00-f7d4.eu.ngrok.io'
     : 'http://127.0.0.1:5000';
 
-export const REMOTE_CEXPLORE_HOST = 'https://cexplore.henny022.eu.ngrok.io';
+//export const REMOTE_CEXPLORE_HOST = 'https://cexplore.henny022.eu.ngrok.io';
+export const REMOTE_CEXPLORE_HOST = 'https://b256-2a02-8070-1ca-f0e0-00-f7d4.eu.ngrok.io';
 export const LOCAL_CEXPLORE_HOST = 'http://127.0.0.1:10240';
 
 export const DECOMP_ME_FRONTEND = 'https://decomp.me';
