@@ -19,7 +19,7 @@ import eventBus from "../eventBus";
 import { getFunction } from "../repositories/function";
 import { getCurrentUser } from "../repositories/user";
 import { AsmLine, ErrorLine, Func } from "../types";
-import { getCompileURL, getPyCatURL, openInNewTab, useLocalStorage, useTitle } from "../utils";
+import { getCompileURL, getCatURL, openInNewTab, useLocalStorage, useTitle } from "../utils";
 
 import './EditorPage.css'
 
@@ -115,14 +115,14 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         //        console.log('compiling', nextValue);
         try {
             const res = await fetch(getCompileURL(), {
-                "headers": {
-                    "accept": "application/json, text/javascript, */*; q=0.01",
-                    "content-type": "application/json",
+                'headers': {
+                    'accept': 'application/json, text/javascript, */*; q=0.01',
+                    'content-type': 'application/json',
                 },
-                "body":
+                'body':
                     JSON.stringify({
                         source: nextValue,
-                        compiler: "tmc_agbcc",
+                        compiler: 'agbcc',
                         options: {
                             userArguments: '-O2', // TODO allow the user to specify this?
                             compilerOptions: {
@@ -141,7 +141,12 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                                 trim: false
                             },
                             tools: [],
-                            libraries: []
+                            libraries: [
+                                {
+                                    id: 'tmc',
+                                    version: 'master'
+                                }
+                            ]
                         },
                         lang: "c",
                         allowStoreCodeDebug: true
@@ -276,7 +281,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         const onAsmCode = (data: string) => {
             // TODO change url to /custom if it is no longer the same function?
             // send through pycat
-            fetch(getPyCatURL(), {
+            fetch(getCatURL(), {
                 "method": "POST",
                 "body": data
             }).then(data => data.text()).then((data) => {

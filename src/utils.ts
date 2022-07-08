@@ -1,7 +1,7 @@
 // Hook
 
 import { useEffect, useState } from "react";
-import { COMPILE_PATH, LOCAL_CEXPLORE_HOST, PYCAT_PATH, REMOTE_CEXPLORE_HOST } from "./constants";
+import { COMPILE_PATH, LOCAL_CEXPLORE_HOST, CAT_PATH, REMOTE_CEXPLORE_HOST } from "./constants";
 
 // https://usehooks.com/useLocalStorage/
 export function useLocalStorage(key: string, initialValue: any) {
@@ -66,8 +66,8 @@ export const getCompileURL = () => {
   return getCExploreHost() + COMPILE_PATH;
 }
 
-export const getPyCatURL = () => {
-  return getCExploreHost() + PYCAT_PATH;
+export const getCatURL = () => {
+  return getCExploreHost() + CAT_PATH;
 }
 
 

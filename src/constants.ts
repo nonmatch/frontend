@@ -4,8 +4,9 @@ export const API_URL = isProd
     ? 'https://b256-2a02-8070-1ca-f0e0-00-f7d4.eu.ngrok.io'
     : 'http://127.0.0.1:5000';
 
-//export const REMOTE_CEXPLORE_HOST = 'https://cexplore.henny022.eu.ngrok.io';
-export const REMOTE_CEXPLORE_HOST = 'https://b256-2a02-8070-1ca-f0e0-00-f7d4.eu.ngrok.io';
+export const REMOTE_CEXPLORE_HOST = 'https://cexplore.henny022.eu.ngrok.io';
+//export const REMOTE_CEXPLORE_HOST = 'https://b256-2a02-8070-1ca-f0e0-00-f7d4.eu.ngrok.io';
+//export const REMOTE_CEXPLORE_HOST = 'http://127.0.0.1:5000';
 export const LOCAL_CEXPLORE_HOST = 'http://127.0.0.1:10240';
 
 export const DECOMP_ME_FRONTEND = 'https://decomp.me';
@@ -15,9 +16,11 @@ export const DECOMP_ME_BACKEND = 'https://decomp.me/api';
 
 //https://cexplore.henny022.eu.ngrok.io
 //export const COMPILE_PATH = '/api/compiler/tmc_agbcc/compile';
-export const COMPILE_PATH = '/api/compiler/agbpyccC/compile';
+//export const COMPILE_PATH = '/api/compiler/agbpyccC/compile';
+export const COMPILE_PATH = '/api/compiler/agbcc/compile';
 //export const PYCAT_PATH = '/api/compiler/pycat/compile';
-export const PYCAT_PATH = '/api/compiler/agbpycc/compile';
+//export const PYCAT_PATH = '/api/compiler/agbpycc/compile';
+export const CAT_PATH = '/api/compiler/cat/compile';
 
 // Urls for the global CExplore instance for sharing
 export const LINK_RESOLVE_URL = 'https://cexplore.henny022.eu.ngrok.io/api/shortlinkinfo';

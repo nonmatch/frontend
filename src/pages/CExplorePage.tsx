@@ -3,7 +3,7 @@ import { useHistory } from "react-router-dom";
 import { Container } from "../components/Container";
 import { ErrorAlert } from "../components/ErrorAlert";
 import { LINK_RESOLVE_URL } from "../constants";
-import { getPyCatURL, useLocalStorage } from "../utils";
+import { getCatURL, useLocalStorage } from "../utils";
 
 export const CExplorePage: React.FC = () => {
 
@@ -39,7 +39,7 @@ export const CExplorePage: React.FC = () => {
 
                 const cCode = data.sessions[0].source;
 
-                fetch(getPyCatURL(), {
+                fetch(getCatURL(), {
                     "method": "POST",
                     "body": data.sessions[1].source
                 }).then(data=>data.text()).then((asmCode) => {
