@@ -30,7 +30,6 @@ const getCurrentUser = async () => {
         if (currentUser === undefined) return null; // TODO remove
         return currentUser;
     } catch (e) {
-        console.log(typeof e);
         if (e instanceof TypeError) {
             throw e;
         }

@@ -18,7 +18,7 @@ import { generateDecompMeURL } from "../decompme";
 import eventBus from "../eventBus";
 import { getFunction } from "../repositories/function";
 import { getCurrentUser } from "../repositories/user";
-import { AsmLine, ErrorLine, Func } from "../types";
+import { AsmLine, Comment, ErrorLine, Func } from "../types";
 import { getCompileURL, getCatURL, openInNewTab, useLocalStorage, useTitle } from "../utils";
 
 import './EditorPage.css'
@@ -56,6 +56,9 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const [originalAsm, setOriginalAsm] = useState(
         'original asm'
     )
+    const [comments, setComments] = useState<Comment[]>(
+        []
+    );
 
     const [func, setFunc] = useState<Func | null>(null)
 
@@ -250,6 +253,10 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                         }
                         setIsEquivalent(data.is_equivalent);
 
+                        if (data.comments !== null) {
+                            setComments(JSON.parse(data.comments));
+                        }
+
                         // If this was just submitted, show the success toast
                         if (justSubmitted === parseInt(submission)) {
                             justSubmitted = -1;
@@ -341,7 +348,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             parent: match.params.submission,
             compiled: JSON.stringify(compiled.data),
             username: username,
-            email: email
+            email: email,
+            comments: JSON.stringify(comments)
         }).then(
             (data) => {
                 setIsSubmitting(false);
@@ -414,6 +422,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                             compiledAsm={compiled.asm}
                             originalAsm={originalAsm}
                             lines={compiled.lines}
+                            comments={comments}
+                            setComments={setComments}
                             onScoreChange={onScoreChange}
                         /></div>
                 </div>
@@ -473,6 +483,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                                     compiledAsm={compiled.asm}
                                     originalAsm={originalAsm}
                                     lines={compiled.lines}
+                                    comments={comments}
+                                    setComments={setComments}
                                     onScoreChange={onScoreChange}
                                 />
                             </Section>

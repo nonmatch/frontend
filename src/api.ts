@@ -1,13 +1,14 @@
+const verbose = false;
 
-function findGetParameter(parameterName : string) {
+function findGetParameter(parameterName: string) {
     var result = null,
         tmp = [];
     window.location.search
         .substring(1)
         .split("&")
         .forEach(function (item) {
-          tmp = item.split("=");
-          if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
+            tmp = item.split("=");
+            if (tmp[0] === parameterName) result = decodeURIComponent(tmp[1]);
         });
     return result;
 }
@@ -20,24 +21,25 @@ function getToken() {
         return param;
     }
 
-    console.log('store token ', localStorage.getItem('token'));
+    if (verbose) {
+        console.log('store token ', localStorage.getItem('token'));
+    }
     return localStorage.getItem('token');
 }
 
-let token:string | null = getToken();
+let token: string | null = getToken();
 
 function resetToken() {
     localStorage.removeItem('token');
     token = null;
 }
 
-const verbose = false;
 
 async function get(url: string): Promise<any> {
     if (verbose) {
         console.log('GET request', url)
     }
-    let options:any = {};
+    let options: any = {};
     if (token != null) {
         options['headers'] = new Headers({
             'Authorization': 'Basic ' + token
@@ -47,17 +49,17 @@ async function get(url: string): Promise<any> {
     if (res.ok) {
         return res.json();
     } else {
-//        return res.json();
-      return new Promise((resolve, reject) => {
+        //        return res.json();
+        return new Promise((resolve, reject) => {
             res.json().then(reject)
         });
     }
 }
-async function request(url: string, data:any, method: 'POST'|'PUT'): Promise<any> {
+async function request(url: string, data: any, method: 'POST' | 'PUT'): Promise<any> {
     if (verbose) {
-        console.log(method+' request', url)
+        console.log(method + ' request', url)
     }
-    let options:any = {method: method, body: JSON.stringify(data)};
+    let options: any = { method: method, body: JSON.stringify(data) };
     options['headers'] = {
         'Content-Type': 'application/json'
     };
@@ -74,10 +76,10 @@ async function request(url: string, data:any, method: 'POST'|'PUT'): Promise<any
     }
 }
 
-async function post(url: string, data:any): Promise<any> {
+async function post(url: string, data: any): Promise<any> {
     return request(url, data, 'POST');
 }
-async function put(url: string, data:any): Promise<any> {
+async function put(url: string, data: any): Promise<any> {
     return request(url, data, 'PUT');
 }
 

@@ -58,3 +58,8 @@ export interface TrelloUser {
     fullName: string,
     avatarUrl: string
 }
+
+export interface Comment {
+    line: number,
+    text: string
+}

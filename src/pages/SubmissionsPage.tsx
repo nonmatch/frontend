@@ -44,7 +44,6 @@ export const SubmissionsPage: React.FC<RouteComponentProps<Params>> = ({ match }
                         if (data[i].owner === null || data[i].owner === 0) {
                             data[i].ownerName = 'anonymous';
                         } else {
-                            console.log(data[i].owner);
                             let user = await getUser(data[i].owner);
                             data[i].ownerName = user.username;
                         }
