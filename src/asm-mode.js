@@ -41,13 +41,13 @@ function definition() {
                 // Error document
                 [/^<.*>$/, {token: 'annotation'}],
                 // Label definition
-                [/^[.a-zA-Z0-9_$?@].*:/, {token: 'type.identifier'}],
+                [/^[.a-zA-Z0-9_$?].*:/, {token: 'type.identifier'}],
                 // Label definition (ARM style)
                 [/^\s*[|][^|]*[|]/, {token: 'type.identifier'}],
                 // Label definition (CL style)
                 [/^\s*[.a-zA-Z0-9_$|]*\s*(PROC|ENDP|DB|DD)/, {token: 'type.identifier'}],
                 // Constant definition
-                [/^[.a-zA-Z0-9_$?@][^=]*=/, {token: 'type.identifier'}],
+                [/^[.a-zA-Z0-9_$?][^=]*=/, {token: 'type.identifier'}],
                 // opcode
                 [/[.a-zA-Z_][.a-zA-Z_0-9]*/, {token: 'keyword', next: '@rest'}],
                 // braces and parentheses at the start of the line (e.g. nvcc output)
@@ -89,7 +89,7 @@ function definition() {
                 [/'/, 'string.invalid'],
 
                 // Assume anything else is a label reference
-                [/%?[.?_$a-zA-Z@][.?_$a-zA-Z0-9@]*/, 'type.identifier'],
+                [/%?[.?_$a-zA-Z][.?_$a-zA-Z0-9]*/, 'type.identifier'],
 
                 // whitespace
                 {include: '@whitespace'},
@@ -113,6 +113,7 @@ function definition() {
                 [/[ \t\r\n]+/, 'white'],
                 [/\/\*/, 'comment', '@comment'],
                 [/\/\/.*$/, 'comment'],
+                [/@.*$/, 'comment'],
                 [/[#;\\@].*$/, 'comment'],
             ],
         },

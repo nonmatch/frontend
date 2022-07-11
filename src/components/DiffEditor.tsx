@@ -128,7 +128,7 @@ export const DiffEditor: React.FC<DiffEditorProps> = ({ compiledAsm, originalAsm
                         options: {
                             isWholeLine: true,
                             after: {
-                                content: comment.text,
+                                content: '    ' + comment.text,
                                 inlineClassName: 'diff-comment',
                             }
                         }

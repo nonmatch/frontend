@@ -201,11 +201,16 @@ a.decompMe {
 .diff-comment {
   /*font-family: sans-serif;*/
   font-weight: 200;
-  padding-left: 32px;
+  /*padding-left: 32px;*/
   color: #444 !important;
   user-select: none;
 }
 /* No padding on later diffs in the line when a comment with spaces is selected https://stackoverflow.com/a/6447072*/
-.diff-comment ~ .diff-comment {
+/*.diff-comment ~ .diff-comment {
   padding: 0;
+}*/
+
+/* hack to change comments color */
+.mtk8 {
+  color: #676767 !important;
 }
