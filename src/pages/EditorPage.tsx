@@ -81,6 +81,9 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const cCodeRef = useRef<string>();
     cCodeRef.current = cCode;
 
+    const funcRef = useRef<Func | null>();
+    funcRef.current = func;
+
     const location = useLocation();
 
     const debouncedCompile =
@@ -117,6 +120,13 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         setIsCompiling(true);
         //        console.log('compiling', nextValue);
         try {
+            let compileFlags = '-O2';
+            if (funcRef.current?.compile_flags) {
+                compileFlags += ' ' + funcRef.current?.compile_flags;
+            }
+
+            console.log(compileFlags, funcRef.current?.compile_flags)
+
             const res = await fetch(getCompileURL(), {
                 'headers': {
                     'accept': 'application/json, text/javascript, */*; q=0.01',
@@ -127,7 +137,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                         source: nextValue,
                         compiler: 'agbcc',
                         options: {
-                            userArguments: '-O2', // TODO allow the user to specify this?
+                            userArguments: compileFlags, // TODO allow the user to specify this?
                             compilerOptions: {
                                 produceGccDump: {},
                                 produceCfg: false

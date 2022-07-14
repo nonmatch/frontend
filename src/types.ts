@@ -15,6 +15,7 @@ export interface Func {
     locked?: TrelloUser,
     decomp_me_scratch?: string,
     decomp_me_matched: boolean
+    compile_flags?: string
 }
 
 export interface User {
