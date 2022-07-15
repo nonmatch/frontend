@@ -13,6 +13,7 @@ import { User } from './types';
 import { LogoutPage } from './pages/LogoutPage';
 import eventBus from './eventBus';
 import { PullRequestPage } from './pages/PullRequestPage';
+import { StatsPage } from './pages/StatsPage';
 
 import './App.css'
 import { CExplorePage } from './pages/CExplorePage';
@@ -81,6 +82,7 @@ const App: React.FC = () => {
         <Route path="/functions/:function" component={SubmissionsPage} />
         <Route path="/pr" component={PullRequestPage} />
         <Route path="/cexplore" component={CExplorePage} />
+        <Route path="/stats" component={StatsPage} />
         <Route path="/settings" component={SettingsPage} />
         <Route path="/logout" component={LogoutPage} />
         <Route component={NotFoundPage} />
