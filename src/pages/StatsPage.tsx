@@ -20,7 +20,6 @@ export const StatsPage: React.FC = () => {
         get(API_URL+'/all_functions').then(
             async (data) => {
                 setIsLoading(false);
-                console.log(data);
                 data.sort((a:any, b:any) => b.size - a.size);
                 setChartData(data.map((func:any) => {
                     return {name: func.name, value: func.size};
@@ -28,7 +27,6 @@ export const StatsPage: React.FC = () => {
 
                 let byFile: Map<string, any> = new Map<string, any>();
                 for (const func of data) {
-                    
                     if (!byFile.has(func.file)) {
                         byFile.set(func.file, {name: func.file, value:0, funcs: []});
                     }
@@ -50,7 +48,6 @@ export const StatsPage: React.FC = () => {
                     index++;
                 }
                 setChartDataFunctions(funcList);
-                console.log(byFile);
             }
         );
     };
@@ -70,13 +67,16 @@ export const StatsPage: React.FC = () => {
 {        isLoading ?
         <LoadingIndicator />:
         <ResponsiveContainer width="100%" height={300}>
-            <PieChart width={400} height={400}>
+            <PieChart width={400} height={400} >
+                <text x={150} y={15} fill="black" textAnchor="middle">
+                    Open Functions by Size
+                </text>
                 <Pie
                     dataKey="value"
                     data={chartData}
                     cx={150}
                     cy={150}
-                    outerRadius={100}
+                    outerRadius={120}
                     innerRadius={40}
                     startAngle={450}
                     endAngle={90}
@@ -88,11 +88,18 @@ export const StatsPage: React.FC = () => {
                     ))}
                 </Pie>
 
+
+                <text x={450} y={15} fill="black" textAnchor="middle">
+                    Open Files by Size
+                </text>
+                <text x={450} y={30} fill="gray" textAnchor="middle" fontSize={10}>
+                    Outer Ring: Functions in that File
+                </text>
                 <Pie
                     dataKey="value"
-                    cx={400}
+                    cx={450}
                     cy={150}
-                    outerRadius={80}
+                    outerRadius={90}
                     innerRadius={40}
                     startAngle={450}
                     endAngle={90}
@@ -107,10 +114,10 @@ export const StatsPage: React.FC = () => {
 
                 <Pie
                     dataKey="value"
-                    cx={400}
+                    cx={450}
                     cy={150}
-                    outerRadius={100}
-                    innerRadius={80}
+                    outerRadius={120}
+                    innerRadius={90}
                     startAngle={450}
                     endAngle={90}
                     isAnimationActive={false}
