@@ -18,7 +18,7 @@ import { generateDecompMeURL } from "../decompme";
 import eventBus from "../eventBus";
 import { getFunction } from "../repositories/function";
 import { getCurrentUser } from "../repositories/user";
-import { AsmLine, Comment, ErrorLine, Func } from "../types";
+import { AsmLine, Comment, ErrorLine, Func, Submission } from "../types";
 import { getCompileURL, getCatURL, openInNewTab, useLocalStorage, useTitle } from "../utils";
 
 import './EditorPage.css'
@@ -60,7 +60,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         []
     );
 
-    const [func, setFunc] = useState<Func | null>(null)
+    const [func, setFunc] = useState<Func | null>(null);
+    const [submission, setSubmission] = useState<Submission | null>(null);
 
     const [score, setScore] = useState(-1);
 
@@ -253,6 +254,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                             return;
                         }
 
+                        setSubmission(data);
                         // Fetch c code from submission
                         if (data.code !== undefined) {
                             setCCode(data.code)
@@ -395,6 +397,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             ></SubmitDialog>
             <SuccessToast score={score} isLoggedIn={isLoggedIn} copyLink={copyLink}></SuccessToast>
             <Prompt when={hasUnsubmittedChanges} message="You have unsubmitted changes, are you sure you want to leave?"></Prompt>
+            {func && func.best_score === 0 && submission && submission.score !== 0 && <div style={{backgroundColor: '#bbed9c', padding:8, display:'flex', alignItems:'center', justifyContent:'center', gap:'20px'}}>This function has already been matched. <a href={'/functions/' + func.id} className='btn btn-success ml-8'>Go to submissions for this function</a></div>}
+            {func && func.best_score !== 0 && func.decomp_me_matched && <div style={{backgroundColor: '#951fd9', color:'white', padding:8, display:'flex', alignItems:'center', justifyContent:'center', gap:'20px'}}>This function has been matched over on decomp.me. <a href={DECOMP_ME_FRONTEND + '/scratch/' + func.decomp_me_scratch} className='btn btn-outline-light ml-8'>Go to decomp.me</a></div>}
         </>
     );
 

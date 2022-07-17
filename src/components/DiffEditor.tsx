@@ -115,6 +115,17 @@ export const DiffEditor: React.FC<DiffEditorProps> = ({ compiledAsm, originalAsm
         editor.getModifiedEditor().addCommand(monaco.KeyCode.KEY_B, () => {
             editor.getModifiedEditor().getAction('editor.action.nextSelectionMatchFindAction').run();
         });
+
+        // Same actions for compiled asm to move around. Need to be different keys, else the actions in the modified editor do not work anymore.
+        editor.getOriginalEditor().addCommand(monaco.KeyCode.KEY_S, () => {
+            editor.getOriginalEditor().getAction('editor.action.selectHighlights').run();
+        });
+        editor.getOriginalEditor().addCommand(monaco.KeyCode.KEY_D, () => {
+            editor.getOriginalEditor().getAction('editor.action.previousSelectionMatchFindAction').run();
+        });
+        editor.getOriginalEditor().addCommand(monaco.KeyCode.KEY_F, () => {
+            editor.getOriginalEditor().getAction('editor.action.nextSelectionMatchFindAction').run();
+        });
     }
 
 
