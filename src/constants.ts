@@ -1,5 +1,7 @@
 export const isProd = (process.env.NODE_ENV === 'production');
 
+// !!! When changing the prod url, it also needs to be changed in the GitHub application itself
+// https://github.com/settings/applications/1798345
 export const API_URL = isProd
     ? 'https://b256-2a02-8070-1ca-f0e0-00-f7d4.eu.ngrok.io'
     : 'http://127.0.0.1:5000';

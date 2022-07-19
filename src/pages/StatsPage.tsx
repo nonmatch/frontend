@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { API_URL } from "../constants";
 import { get } from "../api";
-
+import {Func} from "../types";
 
 
 export const StatsPage: React.FC = () => {
@@ -28,43 +28,16 @@ export const StatsPage: React.FC = () => {
         get(API_URL + '/all_functions').then(
             async (data) => {
                 setIsLoading(false);
-                data.sort((a: any, b: any) => b.size - a.size);
-                setChartData(data.map((func: any) => {
-                    return { name: func.name, value: func.size };
-                }));
-
-                let byFile: Map<string, any> = new Map<string, any>();
-                for (const func of data) {
-                    if (!byFile.has(func.file)) {
-                        byFile.set(func.file, { name: func.file, value: 0, funcs: [] });
-                    }
-                    byFile.get(func.file).value += func.size;
-                    byFile.get(func.file).funcs.push({ name: func.name, value: func.size });
-                }
-                let byFileList: any = Array.from(byFile.values());
-                byFileList.sort((a: any, b: any) => b.value - a.value);
-                setChartDataFiles(byFileList);
-
-                let funcList: any = [];
-                let index = 0;
-                for (const entry of byFileList) {
-                    entry.funcs.sort((a: any, b: any) => b.size - a.size);
-                    for (const func of entry.funcs) {
-                        func.colorIndex = index;
-                        funcList.push(func);
-                    }
-                    index++;
-                }
-                setChartDataFunctions(funcList);
-
+                let remainingData: Func[] = [];
 
                 let asmSize = 0;
                 let nonmatchSize = 0;
                 let matchedSize = 0;
                 for (const entry of data) {
-                    if (entry.is_matched) {
+                    if (entry.is_matched || entry.decomp_me_matched) {
                         matchedSize += entry.size;
                     } else {
+                        remainingData.push(entry);
                         if (entry.is_asm_func) {
                             asmSize += entry.size;
                         } else {
@@ -94,6 +67,38 @@ export const StatsPage: React.FC = () => {
                         color: '#34a853'
                     },
                 ] as any)
+
+                remainingData.sort((a: any, b: any) => b.size - a.size);
+                setChartData(remainingData.map((func: Func) => {
+                    return { name: func.name, value: func.size };
+                }) as any);
+
+                let byFile: Map<string, any> = new Map<string, any>();
+                for (const func of remainingData) {
+                    if (!byFile.has(func.file)) {
+                        byFile.set(func.file, { name: func.file, value: 0, funcs: [] });
+                    }
+                    byFile.get(func.file).value += func.size;
+                    byFile.get(func.file).funcs.push({ name: func.name, value: func.size });
+                }
+                let byFileList: any = Array.from(byFile.values());
+                byFileList.sort((a: any, b: any) => b.value - a.value);
+                setChartDataFiles(byFileList);
+
+                let funcList: any = [];
+                let index = 0;
+                for (const entry of byFileList) {
+                    entry.funcs.sort((a: any, b: any) => b.size - a.size);
+                    for (const func of entry.funcs) {
+                        func.colorIndex = index;
+                        funcList.push(func);
+                    }
+                    index++;
+                }
+                setChartDataFunctions(funcList);
+
+
+               
             }
         );
     };
