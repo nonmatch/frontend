@@ -20,6 +20,7 @@ import { getFunction } from "../repositories/function";
 import { getCurrentUser } from "../repositories/user";
 import { AsmLine, Comment, ErrorLine, Func, Submission } from "../types";
 import { getCompileURL, getCatURL, openInNewTab, useLocalStorage, useTitle } from "../utils";
+import { useBeforeunload } from "react-beforeunload";
 
 import './EditorPage.css'
 
@@ -376,6 +377,13 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             }
         )
     };
+
+    useBeforeunload ((event) => {
+        if (hasUnsubmittedChanges) {
+          event.preventDefault();
+          return 'You have unsubmitted changes, are you sure you want to leave?';
+        }
+      });
 
     const showOneColumn = () => {
         return window.innerWidth < 800;
