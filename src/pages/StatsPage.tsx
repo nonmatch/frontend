@@ -5,6 +5,7 @@ import { LoadingIndicator } from "../components/LoadingIndicator";
 import { API_URL } from "../constants";
 import { get } from "../api";
 import {Func} from "../types";
+import { useHistory } from "react-router";
 
 
 export const StatsPage: React.FC = () => {
@@ -21,6 +22,8 @@ export const StatsPage: React.FC = () => {
         minimumFractionDigits: 2,
         maximumFractionDigits: 2,
     });
+
+    const history = useHistory();
 
     const fetchFunctions = async () => {
         setIsLoading(true);
@@ -70,7 +73,7 @@ export const StatsPage: React.FC = () => {
 
                 remainingData.sort((a: any, b: any) => b.size - a.size);
                 setChartData(remainingData.map((func: Func) => {
-                    return { name: func.name, value: func.size };
+                    return { name: func.name, value: func.size, id: func.id };
                 }) as any);
 
                 let byFile: Map<string, any> = new Map<string, any>();
@@ -79,7 +82,7 @@ export const StatsPage: React.FC = () => {
                         byFile.set(func.file, { name: func.file, value: 0, funcs: [] });
                     }
                     byFile.get(func.file).value += func.size;
-                    byFile.get(func.file).funcs.push({ name: func.name, value: func.size });
+                    byFile.get(func.file).funcs.push({ name: func.name, value: func.size, id: func.id });
                 }
                 let byFileList: any = Array.from(byFile.values());
                 byFileList.sort((a: any, b: any) => b.value - a.value);
@@ -101,6 +104,10 @@ export const StatsPage: React.FC = () => {
                
             }
         );
+    };
+
+    const onFunctionClick = (index: any, data: any) => {
+        history.push('/functions/' + index.payload.id);
     };
 
     useEffect(() => {
@@ -125,7 +132,6 @@ export const StatsPage: React.FC = () => {
                     flexWrap: 'wrap'
                 }
             }>
-
                 <PieChart width={250} height={280} >
                     <text x={120} y={25} fill="black" textAnchor="middle">
                         Total Progress
@@ -166,6 +172,7 @@ export const StatsPage: React.FC = () => {
                         endAngle={90}
                         isAnimationActive={false}
                         legendType='line'
+                        onDoubleClick={onFunctionClick}
                     >
                         {chartData.map((entry, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -212,6 +219,7 @@ export const StatsPage: React.FC = () => {
                         isAnimationActive={false}
                         legendType='line'
                         data={chartDataFunctions}
+                        onDoubleClick={onFunctionClick}
                     >
                         {chartDataFunctions.map((entry: any, index) => (
                             <Cell key={`cell-${index}`} fill={COLORS[entry.colorIndex % COLORS.length]} />
@@ -224,5 +232,6 @@ export const StatsPage: React.FC = () => {
                 </PieChart>
             </div>
         }
+        <p style={{color: "#777"}}>Double click on pie chart sections to go to that function.</p>
     </Container>);
 }

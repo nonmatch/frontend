@@ -222,6 +222,12 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         eventBus.dispatch('asm_code', asm);
     };
 
+    const viewSubmissions = () => {
+        if (func)  {
+            history.push('/functions/' + func.id);
+        }
+    };
+
     useTitle(isCustom ? 'CUSTOM editor' : func?.name ?? '');
 
     useEffect(() => {
@@ -462,7 +468,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                                 <button className="nav-link" id="diff-tab" data-bs-toggle="tab" data-bs-target="#diff" type="button" role="tab" aria-controls="diff" aria-selected="false">Diff</button>
                             </li>
                         </ul>
-                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={true} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm}></FuncNameMenu>
+                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={true} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm} viewSubmissions={viewSubmissions}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>
                         <span style={{ padding: "0 8px" }}>
                             Diff Score: {score}
@@ -520,7 +526,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 </Container>
                 <div style={{ borderTop: "1px solid #eee", backgroundColor: score === 0 ? "#bbed9c" : "#f8f9fa", fontSize: "14px" }}>
                     <div className="container" style={{ display: "flex", padding: "4px", alignItems: "center" }}>
-                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={false} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm}></FuncNameMenu>
+                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={false} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm} viewSubmissions={viewSubmissions}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>
                         <span style={{ padding: "0 8px" }}>
                             Diff Score: {score}
