@@ -14,6 +14,7 @@ export const StatsPage: React.FC = () => {
     const [chartDataFiles, setChartDataFiles] = useState([]);
     const [chartDataFunctions, setChartDataFunctions] = useState([]);
     const [chartDataGeneral, setChartDataGeneral] = useState([]);
+    const [generalStats, setGeneralStats] = useState({count:0, size:0, percent:0});
 
     const TOTAL_BYTES = 649372;
 
@@ -101,7 +102,19 @@ export const StatsPage: React.FC = () => {
                 setChartDataFunctions(funcList);
 
 
-               
+                // Calculate general stats.
+                let count = 0;
+                let size = 0;
+                for (const func of remainingData) {
+                    count++;
+                    size += func.size;
+                }
+                let percent = size / TOTAL_BYTES;
+                setGeneralStats({
+                    count,
+                    size,
+                    percent
+                });
             }
         );
     };
@@ -124,6 +137,8 @@ export const StatsPage: React.FC = () => {
         <h1 className="mt-4">Stats</h1>
         {isLoading ?
             <LoadingIndicator /> :
+            <>
+            <p>There are {generalStats.count} functions left with a size of {generalStats.size} bytes accounting for {percentFormatter.format(generalStats.percent)}.</p>
             <div style={
                 {
                     display: 'flex',
@@ -231,7 +246,8 @@ export const StatsPage: React.FC = () => {
                     }}/>
                 </PieChart>
             </div>
+            <p style={{color: "#777"}}>Double click on pie chart sections to go to that function.</p>
+            </>
         }
-        <p style={{color: "#777"}}>Double click on pie chart sections to go to that function.</p>
     </Container>);
 }
