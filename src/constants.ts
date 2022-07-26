@@ -3,12 +3,13 @@ export const isProd = (process.env.NODE_ENV === 'production');
 // !!! When changing the prod url, it also needs to be changed in the GitHub application itself
 // https://github.com/settings/applications/1798345
 export const API_URL = isProd
-    ? 'http://d42f-2a02-8070-18e-cc80-1e81-9393-1e36-c692.eu.ngrok.io'
+    ? 'https://d42f-2a02-8070-18e-cc80-1e81-9393-1e36-c692.eu.ngrok.io'
     : 'http://127.0.0.1:5000';
 
 //export const REMOTE_CEXPLORE_HOST = 'https://cexplore.henny022.eu.ngrok.io';
-export const REMOTE_CEXPLORE_HOST = 'http://d42f-2a02-8070-18e-cc80-1e81-9393-1e36-c692.eu.ngrok.io';
+export const REMOTE_CEXPLORE_HOST = 'https://d42f-2a02-8070-18e-cc80-1e81-9393-1e36-c692.eu.ngrok.io';
 //export const REMOTE_CEXPLORE_HOST = 'http://127.0.0.1:5000';
+//export const REMOTE_CEXPLORE_HOST = 'http://192.168.0.3:5000';
 export const LOCAL_CEXPLORE_HOST = 'http://127.0.0.1:10240';
 
 export const DECOMP_ME_FRONTEND = 'https://decomp.me';
