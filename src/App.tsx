@@ -18,6 +18,7 @@ import { StatsPage } from './pages/StatsPage';
 import './App.css'
 import { CExplorePage } from './pages/CExplorePage';
 import { getStatusFromTrello } from './repositories/trello';
+import { LatestPage } from './pages/LatestPage';
 
 const App: React.FC = () => {
 
@@ -82,6 +83,7 @@ const App: React.FC = () => {
         <Route path="/functions/:function" component={SubmissionsPage} />
         <Route path="/pr" component={PullRequestPage} />
         <Route path="/cexplore" component={CExplorePage} />
+        <Route path="/latest" component={LatestPage} />
         <Route path="/stats" component={StatsPage} />
         <Route path="/settings" component={SettingsPage} />
         <Route path="/logout" component={LogoutPage} />

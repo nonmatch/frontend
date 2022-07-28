@@ -6,6 +6,7 @@ import { API_URL } from "../constants";
 import { get } from "../api";
 import {Func} from "../types";
 import { useHistory } from "react-router";
+import { useTitle } from "../utils";
 
 
 export const StatsPage: React.FC = () => {
@@ -127,6 +128,9 @@ export const StatsPage: React.FC = () => {
         fetchFunctions();
         // eslint-disable-next-line
     }, []);
+
+    useTitle('NONMATCH Stats');
+
     const COLORS = [
         '#4285f4', '#ea4335', '#fbbc04', '#34a853', '#ff6d01',
         '#46bdc6', '#7baaf7', '#f07b72', '#fcd04f', '#71c287',
