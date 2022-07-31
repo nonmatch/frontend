@@ -60,7 +60,7 @@ export const DashboardPage: React.FC = () => {
             <tbody>
                 {
                     isLoading
-                        ? <tr><td colSpan={4}><LoadingIndicator /></td></tr>
+                        ? <tr><td colSpan={5}><LoadingIndicator /></td></tr>
                         :
                         submissions.map((submission) => (
                             <tr key={submission.id}>
