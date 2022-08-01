@@ -103,6 +103,16 @@ export const DiffEditor: React.FC<DiffEditorProps> = ({ compiledAsm, originalAsm
             }
         });
 
+        editor.getModifiedEditor().addAction({
+            id: 'delete-all-comments-action',
+            label: 'Delete all comments',
+            run(editor, ...args) {
+                if (window.confirm('Do you really want to delete all comments?')) {
+                    setComments(comments => []);
+                }
+            },
+        })
+
         // Add some simpler shortcuts for some actions.
         editor.getModifiedEditor().addCommand(monaco.KeyCode.KEY_X, () => {
             //let actions = editor.getModifiedEditor().getSupportedActions().map((a) => a.label + ' => ' + a.id);
