@@ -19,7 +19,7 @@ import eventBus from "../eventBus";
 import { getFunction } from "../repositories/function";
 import { getCurrentUser } from "../repositories/user";
 import { AsmLine, Comment, ErrorLine, Func, Submission } from "../types";
-import { getCompileURL, getCatURL, openInNewTab, useLocalStorage, useTitle } from "../utils";
+import { getCompileURL, getCatURL, openInNewTab, useLocalStorage, useTitle, getFormatterURL } from "../utils";
 import { useBeforeunload } from "react-beforeunload";
 
 import './EditorPage.css'
@@ -384,6 +384,17 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         )
     };
 
+    const formatDocument = () => {
+        setIsCompiling(true);
+        fetch(getFormatterURL(), {
+            "method": "POST",
+            "body": cCodeRef.current
+        }).then(data => data.text()).then((data) => {
+            setCCode(data);
+            setIsCompiling(false);
+        }, setError);
+    };
+
     useBeforeunload ((event) => {
         if (hasUnsubmittedChanges) {
           event.preventDefault();
@@ -440,6 +451,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                                 code={cCode}
                                 stderr={compiled.stderr}
                                 onCodeChange={onCodeChange}
+                                formatDocument={formatDocument}
                             />
                         }
                     </div>
@@ -500,6 +512,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                             code={cCode}
                             stderr={compiled.stderr}
                             onCodeChange={onCodeChange}
+                            formatDocument={formatDocument}
                         />
                     </Section>
                     <Bar size={1} style={{ background: '#eee', cursor: 'col-resize' }}

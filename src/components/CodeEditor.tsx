@@ -1,20 +1,20 @@
 import { throttle } from "lodash";
 import { useEffect } from "react";
-import MonacoEditor from "react-monaco-editor";
+import MonacoEditor, { monaco } from "react-monaco-editor";
 import eventBus from "../eventBus";
 import { ErrorLine } from "../types";
 
 interface CodeEditorProps {
   code: string,
   stderr: ErrorLine[],
-  onCodeChange: (text: string) => void
+  onCodeChange: (text: string) => void,
+  formatDocument: () => void,
 }
-let monaco: any;
 let editor: any;
 let prevDecorations: any = [];
 let fadeTimeoutId: any = -1;
 
-export const CodeEditor: React.FC<CodeEditorProps> = ({ code, stderr, onCodeChange }) => {
+export const CodeEditor: React.FC<CodeEditorProps> = ({ code, stderr, onCodeChange, formatDocument }) => {
   const options = {
     automaticLayout: true,
     minimap: {
@@ -39,13 +39,26 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ code, stderr, onCodeChan
 
   // Focus this editor at the beginning
   const editorDidMount = (_editor: any, _monaco: any) => {
-    monaco = _monaco;
     editor = _editor;
     editor.focus();
     editor.onMouseMove((e: any) => {
       mouseMoveThrottledFunction(e);
     });
 
+    editor.addAction({
+      id: 'format-document-action',
+      label: 'Format Document',
+      keybindings: [
+        monaco.KeyMod.chord(
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_K,
+          monaco.KeyMod.CtrlCmd | monaco.KeyCode.KEY_F
+        )
+      ],
+    
+      run() {
+        formatDocument();
+      }
+    });
   }
 
 

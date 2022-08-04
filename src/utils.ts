@@ -1,7 +1,7 @@
 // Hook
 
 import { useEffect, useState } from "react";
-import { COMPILE_PATH, LOCAL_CEXPLORE_HOST, CAT_PATH, REMOTE_CEXPLORE_HOST } from "./constants";
+import { COMPILE_PATH, LOCAL_CEXPLORE_HOST, CAT_PATH, REMOTE_CEXPLORE_HOST, FORMATTER_HOST, FORMATTER_PATH } from "./constants";
 
 // https://usehooks.com/useLocalStorage/
 export function useLocalStorage(key: string, initialValue: any) {
@@ -68,6 +68,10 @@ export const getCompileURL = () => {
 
 export const getCatURL = () => {
   return getCExploreHost() + CAT_PATH;
+}
+
+export const getFormatterURL = () => {
+  return FORMATTER_HOST + FORMATTER_PATH;
 }
 
 
