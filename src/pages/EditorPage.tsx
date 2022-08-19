@@ -19,7 +19,7 @@ import eventBus from "../eventBus";
 import { getFunction } from "../repositories/function";
 import { getCurrentUser } from "../repositories/user";
 import { AsmLine, Comment, ErrorLine, Func, Submission } from "../types";
-import { getCompileURL, getCatURL, openInNewTab, useLocalStorage, useTitle, getFormatterURL } from "../utils";
+import { getCompileURL, getCatURL, openInNewTab, useLocalStorage, useTitle, getFormatterURL, setDescription } from "../utils";
 import { useBeforeunload } from "react-beforeunload";
 
 import './EditorPage.css'
@@ -127,7 +127,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 compileFlags += ' ' + funcRef.current?.compile_flags;
             }
 
-            console.log(compileFlags, funcRef.current?.compile_flags)
+            const startTime = performance.now();
 
             const res = await fetch(getCompileURL(), {
                 'headers': {
@@ -174,6 +174,9 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
             const data = await res.json();
             //        console.log(data);
+
+            const compileTime = performance.now() - startTime;
+            console.log('Compiling took ' + compileTime.toFixed(2) + ' ms.');
 
             parseCompileData(data);
 
@@ -260,6 +263,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                             setError(new Error('Submission does not belong to function.'));
                             return;
                         }
+
+                        setDescription('Score: ' + data.score);
 
                         setSubmission(data);
                         // Fetch c code from submission

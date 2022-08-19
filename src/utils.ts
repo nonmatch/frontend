@@ -85,3 +85,7 @@ export function useTitle(title: string) {
     }
   })
 }
+
+export function setDescription(description: string) {
+  document.querySelector('meta[name="description"]')?.setAttribute("content", description);
+}
