@@ -245,7 +245,9 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             getFunction(funcId).then((data) => {
                 eventBus.dispatch('current-function', data.name);
                 setFunc(data);
+                let asmCode = '';
                 if (data.asm !== undefined) {
+                    asmCode = data.asm;
                     setOriginalAsm(data.asm)
                 }
 
@@ -264,7 +266,9 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                             return;
                         }
 
-                        setDescription('Score: ' + data.score);
+                        const lines = (asmCode.match(/\n/g) || '').length + 1;
+                        const percent = 1 - (data.score / lines);
+                        setDescription('Score: ' + data.score + ' (' + percent.toLocaleString(undefined,{style: 'percent', minimumFractionDigits:1}) + ')');
 
                         setSubmission(data);
                         // Fetch c code from submission
