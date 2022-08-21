@@ -9,7 +9,7 @@ import { API_URL } from "../constants";
 import { getFunction } from "../repositories/function";
 import { getUser } from "../repositories/user";
 import { Func, Submission } from "../types"
-import { useTitle } from "../utils";
+import { makeSortable, showTooltips, useTitle } from "../utils";
 interface Params {
     function: string
 }
@@ -60,7 +60,9 @@ export const SubmissionsPage: React.FC<RouteComponentProps<Params>> = ({ match }
                     setIsLoading(false);
                     setSubmissions(data);
                     // Make table sortable
-                    (window as any).Sortable.init();
+                    makeSortable();
+                    // Show tooltips
+                    showTooltips();
                 },
                 (error) => {
                     setIsLoading(false);
@@ -89,7 +91,7 @@ export const SubmissionsPage: React.FC<RouteComponentProps<Params>> = ({ match }
                         submissions.map((submission) => (
                             <tr key={submission.id}>
                                 <td>{submission.ownerName}</td>
-                                <td>{submission.score}</td>
+                                <td>{submission.score} {submission.is_equivalent && <span data-bs-toggle="tooltip" data-bs-placement="right" title={'This submission is marked as functionally equivalent. This code should behave the same way as the original asm code.'}><span className="badge rounded-pill bg-success ms-1">equivalent</span></span>}</td>
                                 <td>{submission.time_created}</td>{/*Format to users timezone*/}
                                 <td>
                                     <Link className="btn btn-outline-primary btn-sm" to={"/functions/" + submission.function + "/submissions/" + submission.id}>

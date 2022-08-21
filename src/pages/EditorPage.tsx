@@ -231,6 +231,19 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         }
     };
 
+    const toggleEquivalent = () => {
+        if (submission) {
+            if (window.confirm(isEquivalent
+                ? 'Do you really want to mark this submission as non-equivalent? This means that the C code does not produce code that behaves the same as the original asm code.'
+                : 'Do you really want to mark this submission as equivalent? This means that the C code behaves the same as the original asm code.'
+            )) {
+                const equiv = !isEquivalent
+                setIsEquivalent(equiv);
+                post(API_URL + '/submissions/' +submission.id + '/equivalent' , {'is_equivalent': equiv ? 'true': 'false'});
+            }
+        }
+    }
+
     useTitle(isCustom ? 'CUSTOM editor' : func?.name ?? '');
 
     useEffect(() => {
@@ -281,7 +294,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                         }
                         setIsEquivalent(data.is_equivalent);
 
-                        if (data.comments !== null) {
+                        if (data.comments !== null && data.comments !== '') {
                             setComments(JSON.parse(data.comments));
                         }
 
@@ -489,7 +502,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                                 <button className="nav-link" id="diff-tab" data-bs-toggle="tab" data-bs-target="#diff" type="button" role="tab" aria-controls="diff" aria-selected="false">Diff</button>
                             </li>
                         </ul>
-                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={true} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm} viewSubmissions={viewSubmissions}></FuncNameMenu>
+                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={true} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm} viewSubmissions={viewSubmissions} isLoggedIn={isLoggedIn} isEquivalent={isEquivalent} toggleEquivalent={toggleEquivalent} hasUnsubmittedChanged={hasUnsubmittedChanges}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>
                         <span style={{ padding: "0 8px" }}>
                             Diff Score: {score}
@@ -548,7 +561,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 </Container>
                 <div style={{ borderTop: "1px solid #eee", backgroundColor: score === 0 ? "#bbed9c" : "#f8f9fa", fontSize: "14px" }}>
                     <div className="container" style={{ display: "flex", padding: "4px", alignItems: "center" }}>
-                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={false} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm} viewSubmissions={viewSubmissions}></FuncNameMenu>
+                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={false} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm} viewSubmissions={viewSubmissions} isLoggedIn={isLoggedIn} isEquivalent={isEquivalent} toggleEquivalent={toggleEquivalent} hasUnsubmittedChanged={hasUnsubmittedChanges}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>
                         <span style={{ padding: "0 8px" }}>
                             Diff Score: {score}
