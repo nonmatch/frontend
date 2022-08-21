@@ -75,6 +75,9 @@ const App: React.FC = () => {
         <Route path="/asm_funcs" component={FunctionsPage} />
         <Route path="/with_code" component={FunctionsPage} />
         <Route path="/without_code" component={FunctionsPage} />
+        <Route path="/equivalent" component={FunctionsPage} />
+        <Route path="/non_equivalent" component={FunctionsPage} />
+        <Route path="/all" component={FunctionsPage} />
         <Route path="/login" component={LoginPage} />
         <Route path="/dashboard" component={DashboardPage} />
         <Route path="/functions/:function/submissions/:submission" component={EditorPage} />

@@ -21,14 +21,20 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
         0: 'NONMATCH Functions',
         1: 'ASM_FUNC Functions',
         2: 'Functions with code',
-        3: 'Functions without code'
+        3: 'Functions without code',
+        4: 'Equivalent Functions',
+        5: 'Non-Equivalent Functions',
+        6: 'All Functions'
     };
 
     enum Content {
         NONMATCH,
         ASM_FUNC,
         WITH_CODE,
-        WITHOUT_CODE
+        WITHOUT_CODE,
+        EQUIVALENT,
+        NON_EQUIVALENT,
+        ALL
     };
 
     const content = {
@@ -36,6 +42,9 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
         '/asm_funcs': Content.ASM_FUNC,
         '/with_code': Content.WITH_CODE,
         '/without_code': Content.WITHOUT_CODE,
+        '/equivalent': Content.EQUIVALENT,
+        '/non_equivalent': Content.NON_EQUIVALENT,
+        '/all': Content.ALL
     }[location.pathname] || Content.NONMATCH;
 
     useTitle(titles[content]);
@@ -60,7 +69,10 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
             0: '/functions',
             1: '/asm_functions',
             2: '/with_code',
-            3: '/without_code'
+            3: '/without_code',
+            4: '/equivalent',
+            5: '/non_equivalent',
+            6: '/all_functions'
         }[content];
         get(API_URL + path).then(
             async (data) => {
