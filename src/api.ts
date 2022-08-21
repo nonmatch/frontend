@@ -55,7 +55,7 @@ async function get(url: string): Promise<any> {
         });
     }
 }
-async function request(url: string, data: any, method: 'POST' | 'PUT'): Promise<any> {
+async function request(url: string, data: any, method: 'POST' | 'PUT' | 'DELETE'): Promise<any> {
     if (verbose) {
         console.log(method + ' request', url)
     }
@@ -82,10 +82,14 @@ async function post(url: string, data: any): Promise<any> {
 async function put(url: string, data: any): Promise<any> {
     return request(url, data, 'PUT');
 }
+async function sendDelete(url: string, data: any): Promise<any> {
+    return request(url, data, 'DELETE');
+}
 
 export {
     get,
     post,
     put,
+    sendDelete,
     resetToken
 }

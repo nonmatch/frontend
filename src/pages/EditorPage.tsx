@@ -3,7 +3,7 @@ import { useRef } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { Prompt, RouteComponentProps, useHistory, useLocation } from "react-router";
 import { Bar, Container, Section } from "react-simple-resizer";
-import { get, post } from "../api";
+import { get, post, sendDelete } from "../api";
 import { generateCExploreURL } from "../cexplore";
 import { CodeEditor } from "../components/CodeEditor"
 import { DiffEditor } from "../components/DiffEditor";
@@ -72,12 +72,15 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
+    const [userId, setUserId] = useState(-1);
     const [hasUnsubmittedChanges, setHasUnsubmittedChanges] = useState(false);
     // Is custom code? No longer able to submit
     const [isCustom, setIsCustom] = useState(false);
     const [customCCode, setCustomCCode] = useLocalStorage('custom_c_code', '// Type your c code here...');
     const [customAsmCode, setCustomAsmCode] = useLocalStorage('custom_asm_code', '@ Paste the asm code here...'); // TODO allow to enter custom asm code
     const [usesTextarea, setUseTextarea] = useLocalStorage('use_textarea', false);
+
+    const isOwnedByUser = userId === (submission?.owner ?? -2);
 
     // https://stackoverflow.com/a/60643670
     const cCodeRef = useRef<string>();
@@ -242,7 +245,16 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 post(API_URL + '/submissions/' +submission.id + '/equivalent' , {'is_equivalent': equiv ? 'true': 'false'});
             }
         }
-    }
+    };
+
+    const deleteSubmission = () => {
+        if (submission) {
+            if (window.confirm('Do you really want to delete this submission?')) {
+                sendDelete(API_URL +'/submissions/' + submission.id, {});
+                history.goBack();
+            }
+        }
+    };
 
     useTitle(isCustom ? 'CUSTOM editor' : func?.name ?? '');
 
@@ -251,6 +263,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             setIsLoggedIn(true);
             setUsername(user?.username ?? '');
             setEmail(user?.email ?? '');
+            setUserId(user?.id ?? -1);
         });
         const loadFunction = async (func: string, submission: string) => {
             const funcId = parseInt(func);
@@ -382,10 +395,11 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
     const submit = async () => {
         setIsSubmitting(true);
+
         post(API_URL + '/functions/' + match.params.function + '/submissions', {
             code: cCode,
             score: score,
-            is_equivalent: isEquivalent,
+            is_equivalent: isEquivalent || score === 0,
             parent: match.params.submission,
             compiled: JSON.stringify(compiled.data),
             username: username,
@@ -502,7 +516,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                                 <button className="nav-link" id="diff-tab" data-bs-toggle="tab" data-bs-target="#diff" type="button" role="tab" aria-controls="diff" aria-selected="false">Diff</button>
                             </li>
                         </ul>
-                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={true} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm} viewSubmissions={viewSubmissions} isLoggedIn={isLoggedIn} isEquivalent={isEquivalent} toggleEquivalent={toggleEquivalent} hasUnsubmittedChanged={hasUnsubmittedChanges}></FuncNameMenu>
+                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={true} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm} viewSubmissions={viewSubmissions} isLoggedIn={isLoggedIn} isEquivalent={isEquivalent} toggleEquivalent={toggleEquivalent} hasUnsubmittedChanged={hasUnsubmittedChanges} isOwnedByUser={isOwnedByUser} deleteSubmission={deleteSubmission}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>
                         <span style={{ padding: "0 8px" }}>
                             Diff Score: {score}
@@ -561,7 +575,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 </Container>
                 <div style={{ borderTop: "1px solid #eee", backgroundColor: score === 0 ? "#bbed9c" : "#f8f9fa", fontSize: "14px" }}>
                     <div className="container" style={{ display: "flex", padding: "4px", alignItems: "center" }}>
-                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={false} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm} viewSubmissions={viewSubmissions} isLoggedIn={isLoggedIn} isEquivalent={isEquivalent} toggleEquivalent={toggleEquivalent} hasUnsubmittedChanged={hasUnsubmittedChanges}></FuncNameMenu>
+                        <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={false} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm} viewSubmissions={viewSubmissions} isLoggedIn={isLoggedIn} isEquivalent={isEquivalent} toggleEquivalent={toggleEquivalent} hasUnsubmittedChanged={hasUnsubmittedChanges} isOwnedByUser={isOwnedByUser} deleteSubmission={deleteSubmission}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>
                         <span style={{ padding: "0 8px" }}>
                             Diff Score: {score}
