@@ -264,7 +264,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             setUsername(user?.username ?? '');
             setEmail(user?.email ?? '');
             setUserId(user?.id ?? -1);
-        });
+        }, (error) => {});
         const loadFunction = async (func: string, submission: string) => {
             const funcId = parseInt(func);
             // Fetch asm code from function

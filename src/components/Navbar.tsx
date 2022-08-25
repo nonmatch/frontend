@@ -15,7 +15,6 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
   useEffect(() => {
 
     const onShowBridgeChanged = (value: boolean) => {
-      console.log('CHANGED', value);
       setShowTlhBridge(value);
     };
 
@@ -36,7 +35,9 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav me-auto mb-2 mb-md-0">
             {currentUser != null && <li className="nav-item"><Link to="/dashboard" className="nav-link" >Dashboard</Link></li>}
-            <li className="nav-item dropdown">
+
+            <li className="nav-item"><Link to="/" className="nav-link" >Functions</Link></li>
+            {/*<li className="nav-item dropdown">
             <a className="nav-link dropdown-toggle" id="navbarDropdownFunctions" href="/" role="button" data-bs-toggle="dropdown" aria-expanded="false">
               Functions
             </a>
@@ -47,7 +48,7 @@ export const Navbar: React.FC<NavbarProps> = ({ currentUser }) => {
               <li><Link to="/non_equivalent" className="dropdown-item">Non-Equivalent Functions</Link></li>
               <li><Link to="/all" className="dropdown-item">All Functions</Link></li>
             </ul>
-            </li>
+            </li>*/}
             {showBridge && <TlhBridge></TlhBridge>}
           </ul>
 

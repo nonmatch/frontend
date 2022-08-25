@@ -30,7 +30,7 @@ export const StatsPage: React.FC = () => {
     const fetchFunctions = async () => {
         setIsLoading(true);
 
-        get(API_URL + '/all_functions').then(
+        get(API_URL + '/func_stats').then(
             async (data) => {
                 setIsLoading(false);
                 let remainingData: Func[] = [];

@@ -43,10 +43,6 @@ export const openInNewTab = (url: string): void => {
   if (newWindow) newWindow.opener = null
 }
 
-export const makeSortable = () => {
-  (window as any).Sortable.init();
-};
-
 export const showTooltips = () => {
   var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
   tooltipTriggerList.map(function (tooltipTriggerEl) {

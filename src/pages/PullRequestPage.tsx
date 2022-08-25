@@ -5,11 +5,13 @@ import { get, post } from "../api";
 import { Container } from "../components/Container";
 import { ErrorAlert } from "../components/ErrorAlert";
 import { LoadingIndicator } from "../components/LoadingIndicator";
+import { Column, TableHead } from "../components/TableHead";
 import { API_URL } from "../constants";
 import { isFileLocked } from "../repositories/trello";
 import { getUser } from "../repositories/user";
 import { TrelloUser } from "../types";
-import { makeSortable, showTooltips, useTitle } from "../utils";
+import { showTooltips, useTitle } from "../utils";
+import { useSortableTable } from "../utils/sortableTable";
 
 export const PullRequestPage: React.FC = () => {
 
@@ -63,8 +65,6 @@ export const PullRequestPage: React.FC = () => {
                     }
                     setIsLoading(false);
                     setMatches(data);
-                    // Make table sortable
-                    makeSortable();
                     // Show tooltips
                     showTooltips();
                 },
@@ -121,6 +121,19 @@ export const PullRequestPage: React.FC = () => {
         )
     }
 
+
+    const columns: Column[] = [
+        { label: '', accessor:'', sortable: false},
+        { label: 'File', accessor: 'file', sortable: true },
+        { label: 'Function', accessor: 'name', sortable: true },
+        { label: 'Size', accessor: 'size', sortable: true },
+        { label: 'Owner', accessor: 'ownerName', sortable: true },
+        { label: 'Created', accessor: 'time_created', sortable: true },
+        { label: '', accessor:'', sortable: false}
+    ];
+
+    const [tableData, handleSorting] = useSortableTable(matches);
+
     if (url != null) {
         return (
             <Container>
@@ -130,6 +143,7 @@ export const PullRequestPage: React.FC = () => {
         )
     }
 
+
     return (
         <Container>
             <h1 className="mt-4">{isLoading ? "Creating Pull Request..." : "Create Pull Request"}</h1>
@@ -138,17 +152,15 @@ export const PullRequestPage: React.FC = () => {
                 ?
                 <>
                     <p className="mt-4">Select Matching Functions for Pull Request</p>
-                    <table className="sortable-theme-slick" data-sortable>
-                        <thead>
-                            <tr><th data-sortable="false"></th><th>File</th><th>Function</th><th>Size</th><th>Owner</th><th>Created</th><th data-sortable="false"></th></tr>
-                        </thead>
+                    <table className="sortable">
+                        <TableHead columns={columns} handleSorting={handleSorting}></TableHead>
                         <tbody>
                             {
                                 isLoading
                                     ? <tr><td colSpan={7}><LoadingIndicator /></td></tr>
                                     : matches.length === 0
                                         ? <tr><td colSpan={7}>No matching functions yet</td></tr>
-                                        : matches.map((match) => (
+                                        : tableData().map((match: Match) => (
                                             <tr key={match.submission}>
                                                 <td>
                                                     <input type="checkbox" defaultChecked={selected.includes(match.submission)}

@@ -1,14 +1,16 @@
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Link, RouteComponentProps } from "react-router-dom";
 import { get, post } from "../api";
 import { Container } from "../components/Container"
 import { ErrorAlert } from "../components/ErrorAlert";
 import { LoadingIndicator } from "../components/LoadingIndicator";
+import { Column, TableHead } from "../components/TableHead";
 import { API_URL, DECOMP_ME_FRONTEND } from "../constants";
 import { isFileLocked } from "../repositories/trello";
 import { getCurrentUser, getUser } from "../repositories/user";
 import { Func, User } from "../types"
-import { makeSortable, showTooltips, useLocalStorage, useTitle } from "../utils";
+import { showTooltips, useLocalStorage, useTitle } from "../utils";
+import { useSortableTable } from "../utils/sortableTable";
 
 export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -17,6 +19,9 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [hiddenFunctions, setHiddenFunctions] = useLocalStorage('hiddenFunctions', []);
 
+    const [filterNonmatch, setFilterNonmatch] = useState('none');
+    const [filterEquivalent, setFilterEquivalent] = useState('none');
+
     const titles = {
         0: 'NONMATCH Functions',
         1: 'ASM_FUNC Functions',
@@ -24,7 +29,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
         3: 'Functions without code',
         4: 'Equivalent Functions',
         5: 'Non-Equivalent Functions',
-        6: 'All Functions'
+        6: 'Functions'
     };
 
     enum Content {
@@ -38,13 +43,13 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
     };
 
     const content = {
-        '/': Content.NONMATCH,
+        '/nonmatch': Content.NONMATCH,
         '/asm_funcs': Content.ASM_FUNC,
         '/with_code': Content.WITH_CODE,
         '/without_code': Content.WITHOUT_CODE,
         '/equivalent': Content.EQUIVALENT,
         '/non_equivalent': Content.NON_EQUIVALENT,
-        '/all': Content.ALL
+        '/': Content.ALL
     }[location.pathname] || Content.NONMATCH;
 
     useTitle(titles[content]);
@@ -86,8 +91,6 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                     }
                 }
                 setFunctions(data);
-                // Make table sortable
-                makeSortable();
                 // Show tooltips
                 showTooltips();
             },
@@ -101,7 +104,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
     useEffect(() => {
         getCurrentUser().then((user) => {
             setCurrentUser(user);
-        });
+        }, (error) => {});
         fetchFunctions(true);
         // eslint-disable-next-line
     }, [location.pathname, content, Content.NONMATCH]);
@@ -110,21 +113,79 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
         setHiddenFunctions([...hiddenFunctions,id]);
     };
 
+    const columns: Column[] = [
+        { label: 'File', accessor: 'file', sortable: true },
+        { label: 'Function', accessor: 'name', sortable: true },
+        { label: 'Size', accessor: 'size', sortable: true },
+        { label: 'Best Score', accessor: 'best_score', sortable: true },
+        { label: 'NONMATCH', accessor: 'is_asm_func', sortable: true },
+        { label: 'Equivalent', accessor: 'has_equivalent_try', sortable: true },
+        { label: '', accessor:'', sortable: false}
+    ];
+
+    const filteredFunctions = useCallback(()=> {
+        return functions.filter(func =>
+            (
+                filterNonmatch === 'none' ||
+                (filterNonmatch === 'asm_func') === func.is_asm_func
+            ) &&
+            (
+                filterEquivalent === 'none' ||
+                (filterEquivalent === 'yes') === func.has_equivalent_try
+            )
+        );
+    }, [functions, filterNonmatch, filterEquivalent]);
+
+    const [tableData, handleSorting] = useSortableTable(filteredFunctions());
+    //console.log(tableData, functions);
+
     return (<Container centered>
         <ErrorAlert error={error}></ErrorAlert>
         <h1 className="mt-4 mb-2">{
             titles[content]
         }</h1>
-        <table className="sortable-theme-slick" data-sortable>
-            <thead>
-                <tr><th>File</th><th>Function</th><th>Size</th><th>Best Score</th><th data-sortable="false"></th></tr>
-            </thead>
+        <p style={{width: "100%", textAlign:"right"}}>
+        <i className="fa fa-filter me-2" style={{color:"#777"}}/>
+        <select className="form-select me-2 form-select-sm" style={{width:"160px", display:"inline-block"}} value={filterNonmatch} onChange={(e) => setFilterNonmatch(e.target.value)}>
+            <option value="none">Filter NONMATCH</option>
+            <option value="nonmatch">Only NONMATCH</option>
+            <option value="asm_func">Only ASM_FUNC</option>
+        </select>
+
+        <select className="form-select form-select-sm" style={{width:"180px", display:"inline-block"}} value={filterEquivalent} onChange={(e) => setFilterEquivalent(e.target.value)}>
+            <option value="none">Filter Equivalent</option>
+            <option value="yes">Only Equivalent</option>
+            <option value="no">Only Non-Equivalent</option>
+        </select>
+        </p>
+
+        <table className="sortable">
+            <TableHead columns={columns} handleSorting={handleSorting}></TableHead>
+            { /* <thead>
+                <tr>
+                    <th>File</th>
+                    <th>Function</th>
+                    <th>Size</th>
+                    <th>Best Score</th>
+                    
+                    <th>NONMATCH <a id="navbarDropdownFunctions"  data-bs-toggle="dropdown" aria-expanded="false">
+                        <i className="fa fa-filter" />
+                    </a>
+                    <ul className="dropdown-menu dropdown-menu-start" aria-labelledby="navbarDropdownFunctions">
+                        <li className="dropdown-item">NONMATCH</li>
+                        <li className="dropdown-item">ASM_FUNC</li>
+                        <li className="dropdown-item">Clear</li>
+                    </ul></th>
+                    <th>Equivalent</th>
+                    <th data-sortable="false"></th>
+                </tr>
+    </thead> */}
             <tbody>
                 {isLoading
                     ? <tr><td colSpan={5}><LoadingIndicator /></td></tr>
                     :
                     
-                    functions.filter((func) => !hiddenFunctions.includes(func.id)).map((func) => (
+                    tableData().filter((func: Func) => !hiddenFunctions.includes(func.id)).map((func: Func) => (
                         <tr key={func.id}>
                             <td>
                                 {func.locked
@@ -147,6 +208,8 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                             </td>
                             <td>{func.size}</td>
                             <td onContextMenu={(e) => {e.preventDefault();hideFunction(func.id)}}>{func.best_score}</td>
+                            <td>{func.is_asm_func ? 'ASM_FUNC' : 'NONMATCH'}</td>
+                            <td>{func.has_equivalent_try ? 'Yes' : 'No'}</td>
                             <td>
                                 <Link className="btn btn-outline-primary btn-sm" to={"/functions/" + func.id}>
                                     Edit
@@ -169,7 +232,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
         </table>
         {
             !isLoading && <div className="mt-3 mb-4 text-secondary">
-                Found {functions.length} Functions
+                Found {filteredFunctions().length} Functions
             </div>
         }
     </Container>)

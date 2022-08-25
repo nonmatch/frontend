@@ -45,8 +45,6 @@ export const LatestPage: React.FC = () => {
                     }
                     setIsLoading(false);
                     setSubmissions(data);
-                    // Make table sortable
-                    (window as any).Sortable.init();
                 },
                 (error) => {
                     setIsLoading(false);

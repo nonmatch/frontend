@@ -5,11 +5,13 @@ import { get } from "../api";
 import { Container } from "../components/Container"
 import { ErrorAlert } from "../components/ErrorAlert";
 import { LoadingIndicator } from "../components/LoadingIndicator";
+import { Column, TableHead } from "../components/TableHead";
 import { API_URL } from "../constants";
 import { getFunction } from "../repositories/function";
 import { getUser } from "../repositories/user";
 import { Func, Submission } from "../types"
-import { makeSortable, showTooltips, useTitle } from "../utils";
+import { showTooltips, useTitle } from "../utils";
+import { useSortableTable } from "../utils/sortableTable";
 interface Params {
     function: string
 }
@@ -59,8 +61,6 @@ export const SubmissionsPage: React.FC<RouteComponentProps<Params>> = ({ match }
                     // TODO only one submission? -> redirect
                     setIsLoading(false);
                     setSubmissions(data);
-                    // Make table sortable
-                    makeSortable();
                     // Show tooltips
                     showTooltips();
                 },
@@ -73,22 +73,30 @@ export const SubmissionsPage: React.FC<RouteComponentProps<Params>> = ({ match }
         }
         fetchSubmissions()
     }, [match.params.function]);
+
+    const columns: Column[] = [
+        { label: 'Owner', accessor: 'ownerName', sortable: true },
+        { label: 'Score', accessor: 'score', sortable: true },
+        { label: 'Created', accessor: 'time_created', sortable: true },
+        { label: '', accessor:'', sortable: false}
+    ];
+
+    const [tableData, handleSorting] = useSortableTable(submissions);
+
     return (<Container centered>
         <ErrorAlert error={error}></ErrorAlert>
         <h1 className="mt-4 mb-2">Select Submission{
             func ? ' for Function ' + func.name
                 : ''
         } </h1>
-        <table className="sortable-theme-slick" data-sortable>
-            <thead>
-                <tr><th>Owner</th><th>Score</th><th>Created</th><th data-sortable="false"></th></tr>
-            </thead>
+        <table className="sortable">
+            <TableHead columns={columns} handleSorting={handleSorting}></TableHead>
             <tbody>
                 {
                     isLoading
                         ? <tr><td colSpan={4}><LoadingIndicator /></td></tr>
                         :
-                        submissions.map((submission) => (
+                        tableData().map((submission: Submission) => (
                             <tr key={submission.id}>
                                 <td>{submission.ownerName}</td>
                                 <td>{submission.score} {submission.is_equivalent && <span data-bs-toggle="tooltip" data-bs-placement="right" title={'This submission is marked as functionally equivalent. This code should behave the same way as the original asm code.'}><span className="badge rounded-pill bg-success ms-1">equivalent</span></span>}</td>

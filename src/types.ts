@@ -14,8 +14,10 @@ export interface Func {
     lockedByName?: string,
     locked?: TrelloUser,
     decomp_me_scratch?: string,
-    decomp_me_matched: boolean
-    compile_flags?: string
+    decomp_me_matched: boolean,
+    compile_flags?: string,
+    is_asm_func: boolean,
+    has_equivalent_try: boolean
 }
 
 export interface User {
