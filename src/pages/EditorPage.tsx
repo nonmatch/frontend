@@ -23,6 +23,7 @@ import { getCompileURL, getCatURL, openInNewTab, useLocalStorage, useTitle, getF
 import { useBeforeunload } from "react-beforeunload";
 
 import './EditorPage.css'
+import { DiffScore } from "../components/DiffScore";
 
 interface Params {
     function: string,
@@ -518,9 +519,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                         </ul>
                         <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={true} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm} viewSubmissions={viewSubmissions} isLoggedIn={isLoggedIn} isEquivalent={isEquivalent} toggleEquivalent={toggleEquivalent} hasUnsubmittedChanged={hasUnsubmittedChanges} isOwnedByUser={isOwnedByUser} deleteSubmission={deleteSubmission}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>
-                        <span style={{ padding: "0 8px" }}>
-                            Diff Score: {score}
-                        </span>
+                        <DiffScore score={score}></DiffScore>
                         {
                             !isCustom && (
                                 isCompiling || isSubmitting
@@ -577,9 +576,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                     <div className="container" style={{ display: "flex", padding: "4px", alignItems: "center" }}>
                         <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={false} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm} viewSubmissions={viewSubmissions} isLoggedIn={isLoggedIn} isEquivalent={isEquivalent} toggleEquivalent={toggleEquivalent} hasUnsubmittedChanged={hasUnsubmittedChanges} isOwnedByUser={isOwnedByUser} deleteSubmission={deleteSubmission}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>
-                        <span style={{ padding: "0 8px" }}>
-                            Diff Score: {score}
-                        </span>
+                        <DiffScore score={score}></DiffScore>
                         {
                             !isCustom && (
                                 isCompiling || isSubmitting

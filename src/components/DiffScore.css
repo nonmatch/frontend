@@ -1,0 +1,36 @@
+span.score {
+    padding: 0px 8px;
+    position: relative;
+}
+
+.score-history {
+    position: absolute;
+    bottom: 32px;
+    left: 0px;
+    background: #f8f9fa;
+    border: 1px solid #eee;
+    border-bottom: none;
+    padding: 8px;
+    border-radius: 4px 4px 0px 0px;
+    display: none;
+}
+
+span.score:hover .score-history{
+    display: block;
+}
+
+.score-history ul {
+    padding: 0px;
+    margin: 0px;
+    list-style-type: none;
+}
+
+.score-history li {
+    padding: 0px;
+    margin: 0px;
+    font-size: 12px;
+}
+
+.score-history li.best {
+    color: #198754;
+}

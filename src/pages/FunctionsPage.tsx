@@ -137,7 +137,6 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
     }, [functions, filterNonmatch, filterEquivalent]);
 
     const [tableData, handleSorting] = useSortableTable(filteredFunctions());
-    //console.log(tableData, functions);
 
     return (<Container centered>
         <ErrorAlert error={error}></ErrorAlert>
@@ -161,30 +160,10 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
 
         <table className="sortable">
             <TableHead columns={columns} handleSorting={handleSorting}></TableHead>
-            { /* <thead>
-                <tr>
-                    <th>File</th>
-                    <th>Function</th>
-                    <th>Size</th>
-                    <th>Best Score</th>
-                    
-                    <th>NONMATCH <a id="navbarDropdownFunctions"  data-bs-toggle="dropdown" aria-expanded="false">
-                        <i className="fa fa-filter" />
-                    </a>
-                    <ul className="dropdown-menu dropdown-menu-start" aria-labelledby="navbarDropdownFunctions">
-                        <li className="dropdown-item">NONMATCH</li>
-                        <li className="dropdown-item">ASM_FUNC</li>
-                        <li className="dropdown-item">Clear</li>
-                    </ul></th>
-                    <th>Equivalent</th>
-                    <th data-sortable="false"></th>
-                </tr>
-    </thead> */}
             <tbody>
                 {isLoading
                     ? <tr><td colSpan={5}><LoadingIndicator /></td></tr>
                     :
-                    
                     tableData().filter((func: Func) => !hiddenFunctions.includes(func.id)).map((func: Func) => (
                         <tr key={func.id}>
                             <td>

@@ -4,10 +4,12 @@ import { Link } from "react-router-dom";
 import { get } from "../api";
 import { Container } from "../components/Container";
 import { LoadingIndicator } from "../components/LoadingIndicator";
+import { Column, TableHead } from "../components/TableHead";
 import { API_URL } from "../constants";
 import { getFunction } from "../repositories/function";
 import { getUser } from "../repositories/user";
 import { Submission } from "../types";
+import { useSortableTable } from "../utils/sortableTable";
 
 interface LatestSubmission extends Submission {
     functionName: string,
@@ -55,18 +57,27 @@ export const LatestPage: React.FC = () => {
         fetchSubmissions()
     }, []);
 
+    const columns: Column[] = [
+        { label: 'Function', accessor: 'functionName', sortable: true },
+        { label: 'Size', accessor: 'functionSize', sortable: true },
+        { label: 'Score', accessor: 'score', sortable: true },
+        { label: 'Owner', accessor: 'ownerName', sortable: true },
+        { label: 'Created', accessor: 'time_created', sortable: true },
+        { label: '', accessor:'', sortable: false}
+    ];
+
+    const [tableData, handleSorting] = useSortableTable(submissions);
+
     return (<Container centered>
         <h1 className="mt-4 mb-2">Latest Submissions</h1>
-        <table className="sortable-theme-slick" data-sortable>
-            <thead>
-                <tr><th>Function</th><th>Size</th><th>Score</th><th>Owner</th><th>Created</th><th data-sortable="false"></th></tr>
-            </thead>
+        <table className="sortable">
+        <TableHead columns={columns} handleSorting={handleSorting}></TableHead>
             <tbody>
                 {
                     isLoading
                         ? <tr><td colSpan={6}><LoadingIndicator /></td></tr>
                         :
-                        submissions.map((submission) => (
+                        tableData().map((submission: LatestSubmission) => (
                             <tr key={submission.id}>
                                 <td>{submission.functionName}</td>
                                 <td>{submission.functionSize}</td>
