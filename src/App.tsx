@@ -19,6 +19,7 @@ import './App.css'
 import { CExplorePage } from './pages/CExplorePage';
 import { getStatusFromTrello } from './repositories/trello';
 import { LatestPage } from './pages/LatestPage';
+import { SearchPage } from './pages/SearchPage';
 
 const App: React.FC = () => {
 
@@ -89,6 +90,7 @@ const App: React.FC = () => {
                 <Route path="/latest" component={LatestPage} />
                 <Route path="/stats" component={StatsPage} />
                 <Route path="/settings" component={SettingsPage} />
+                <Route path="/search" component={SearchPage} />
                 <Route path="/logout" component={LogoutPage} />
                 <Route component={NotFoundPage} />
             </Switch>
