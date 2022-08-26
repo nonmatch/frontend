@@ -42,7 +42,7 @@ export const CExplorePage: React.FC = () => {
                 fetch(getCatURL(), {
                     "method": "POST",
                     "body": data.sessions[1].source
-                }).then(data=>data.text()).then((asmCode) => {
+                }).then(data => data.text()).then((asmCode) => {
                     setCustomCCode(cCode);
                     setCustomAsmCode(asmCode.trim());
                     history.push('/custom');

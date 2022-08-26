@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { API_URL } from "../constants";
 import { get } from "../api";
-import {Func} from "../types";
+import { Func } from "../types";
 import { useHistory } from "react-router";
 import { useTitle } from "../utils";
 
@@ -15,7 +15,7 @@ export const StatsPage: React.FC = () => {
     const [chartDataFiles, setChartDataFiles] = useState([]);
     const [chartDataFunctions, setChartDataFunctions] = useState([]);
     const [chartDataGeneral, setChartDataGeneral] = useState([]);
-    const [generalStats, setGeneralStats] = useState({count:0, size:0, percent:0});
+    const [generalStats, setGeneralStats] = useState({ count: 0, size: 0, percent: 0 });
 
     const TOTAL_BYTES = 649372;
 
@@ -142,115 +142,115 @@ export const StatsPage: React.FC = () => {
         {isLoading ?
             <LoadingIndicator /> :
             <>
-            <p>There are {generalStats.count} functions left with a size of {generalStats.size} bytes accounting for {percentFormatter.format(generalStats.percent)}.</p>
-            <div style={
-                {
-                    display: 'flex',
-                    justifyContent: 'center',
-                    gap: '25px',
-                    flexWrap: 'wrap'
-                }
-            }>
-                <PieChart width={250} height={280} >
-                    <text x={120} y={25} fill="black" textAnchor="middle">
-                        Total Progress
-                    </text>
-                    <Pie
-                        dataKey="value"
-                        cx={120}
-                        cy={150}
-                        outerRadius={120}
-                        innerRadius={40}
-                        startAngle={450}
-                        endAngle={90}
-                        isAnimationActive={false}
-                        legendType='line'
-                        data={chartDataGeneral}
-                    >
-                        {chartDataGeneral.map((entry: any, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                        ))}
-                    </Pie>
-                    <Tooltip isAnimationActive={false} formatter={(value: number) => {
-                        return `${value} (${percentFormatter.format(value/TOTAL_BYTES)})`;
-                    }}/>
-                </PieChart>
+                <p>There are {generalStats.count} functions left with a size of {generalStats.size} bytes accounting for {percentFormatter.format(generalStats.percent)}.</p>
+                <div style={
+                    {
+                        display: 'flex',
+                        justifyContent: 'center',
+                        gap: '25px',
+                        flexWrap: 'wrap'
+                    }
+                }>
+                    <PieChart width={250} height={280} >
+                        <text x={120} y={25} fill="black" textAnchor="middle">
+                            Total Progress
+                        </text>
+                        <Pie
+                            dataKey="value"
+                            cx={120}
+                            cy={150}
+                            outerRadius={120}
+                            innerRadius={40}
+                            startAngle={450}
+                            endAngle={90}
+                            isAnimationActive={false}
+                            legendType='line'
+                            data={chartDataGeneral}
+                        >
+                            {chartDataGeneral.map((entry: any, index) => (
+                                <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                        </Pie>
+                        <Tooltip isAnimationActive={false} formatter={(value: number) => {
+                            return `${value} (${percentFormatter.format(value / TOTAL_BYTES)})`;
+                        }} />
+                    </PieChart>
 
-                <PieChart width={250} height={280} >
-                    <text x={120} y={25} fill="black" textAnchor="middle">
-                        Open Functions by Size
-                    </text>
-                    <Pie
-                        dataKey="value"
-                        data={chartData}
-                        cx={120}
-                        cy={150}
-                        outerRadius={120}
-                        innerRadius={40}
-                        startAngle={450}
-                        endAngle={90}
-                        isAnimationActive={false}
-                        legendType='line'
-                        onDoubleClick={onFunctionClick}
-                    >
-                        {chartData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                    </Pie>
+                    <PieChart width={250} height={280} >
+                        <text x={120} y={25} fill="black" textAnchor="middle">
+                            Open Functions by Size
+                        </text>
+                        <Pie
+                            dataKey="value"
+                            data={chartData}
+                            cx={120}
+                            cy={150}
+                            outerRadius={120}
+                            innerRadius={40}
+                            startAngle={450}
+                            endAngle={90}
+                            isAnimationActive={false}
+                            legendType='line'
+                            onDoubleClick={onFunctionClick}
+                        >
+                            {chartData.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                        </Pie>
 
-                    <Tooltip isAnimationActive={false} formatter={(value: number) => {
-                        return `${value} (${percentFormatter.format(value/TOTAL_BYTES)})`;
-                    }}/>
-                </PieChart>
-                <PieChart width={250} height={280} >
+                        <Tooltip isAnimationActive={false} formatter={(value: number) => {
+                            return `${value} (${percentFormatter.format(value / TOTAL_BYTES)})`;
+                        }} />
+                    </PieChart>
+                    <PieChart width={250} height={280} >
 
-                    <text x={120} y={15} fill="black" textAnchor="middle">
-                        Open Files by Size
-                    </text>
-                    <text x={120} y={30} fill="gray" textAnchor="middle" fontSize={10}>
-                        Outer Ring: Functions in that File
-                    </text>
-                    <Pie
-                        dataKey="value"
-                        cx={120}
-                        cy={150}
-                        outerRadius={90}
-                        innerRadius={40}
-                        startAngle={450}
-                        endAngle={90}
-                        isAnimationActive={false}
-                        legendType='line'
-                        data={chartDataFiles}
-                    >
-                        {chartDataFiles.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                        ))}
-                    </Pie>
+                        <text x={120} y={15} fill="black" textAnchor="middle">
+                            Open Files by Size
+                        </text>
+                        <text x={120} y={30} fill="gray" textAnchor="middle" fontSize={10}>
+                            Outer Ring: Functions in that File
+                        </text>
+                        <Pie
+                            dataKey="value"
+                            cx={120}
+                            cy={150}
+                            outerRadius={90}
+                            innerRadius={40}
+                            startAngle={450}
+                            endAngle={90}
+                            isAnimationActive={false}
+                            legendType='line'
+                            data={chartDataFiles}
+                        >
+                            {chartDataFiles.map((entry, index) => (
+                                <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                            ))}
+                        </Pie>
 
-                    <Pie
-                        dataKey="value"
-                        cx={120}
-                        cy={150}
-                        outerRadius={120}
-                        innerRadius={90}
-                        startAngle={450}
-                        endAngle={90}
-                        isAnimationActive={false}
-                        legendType='line'
-                        data={chartDataFunctions}
-                        onDoubleClick={onFunctionClick}
-                    >
-                        {chartDataFunctions.map((entry: any, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[entry.colorIndex % COLORS.length]} />
-                        ))}
-                    </Pie>
+                        <Pie
+                            dataKey="value"
+                            cx={120}
+                            cy={150}
+                            outerRadius={120}
+                            innerRadius={90}
+                            startAngle={450}
+                            endAngle={90}
+                            isAnimationActive={false}
+                            legendType='line'
+                            data={chartDataFunctions}
+                            onDoubleClick={onFunctionClick}
+                        >
+                            {chartDataFunctions.map((entry: any, index) => (
+                                <Cell key={`cell-${index}`} fill={COLORS[entry.colorIndex % COLORS.length]} />
+                            ))}
+                        </Pie>
 
-                    <Tooltip isAnimationActive={false} formatter={(value: number) => {
-                        return `${value} (${percentFormatter.format(value/TOTAL_BYTES)})`;
-                    }}/>
-                </PieChart>
-            </div>
-            <p style={{color: "#777"}}>Double click on pie chart sections to go to that function.</p>
+                        <Tooltip isAnimationActive={false} formatter={(value: number) => {
+                            return `${value} (${percentFormatter.format(value / TOTAL_BYTES)})`;
+                        }} />
+                    </PieChart>
+                </div>
+                <p style={{ color: "#777" }}>Double click on pie chart sections to go to that function.</p>
             </>
         }
     </Container>);

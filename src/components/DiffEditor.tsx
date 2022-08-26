@@ -91,13 +91,13 @@ export const DiffEditor: React.FC<DiffEditorProps> = ({ compiledAsm, originalAsm
             if (newText !== null) {
                 if (found) {
                     if (newText !== '') {
-                        setComments(comments => comments.map((comment) => comment.line === line ? {line, text: newText}: comment));
+                        setComments(comments => comments.map((comment) => comment.line === line ? { line, text: newText } : comment));
                     } else {
                         setComments(comments => comments.filter((comment) => comment.line !== line));
                     }
                 } else {
                     if (newText !== '') {
-                        setComments(comments => [...comments, {line, text: newText}]);
+                        setComments(comments => [...comments, { line, text: newText }]);
                     }
                 }
             }
@@ -141,7 +141,7 @@ export const DiffEditor: React.FC<DiffEditorProps> = ({ compiledAsm, originalAsm
 
     useEffect(() => {
         const updateComments = () => {
-            if (!editor) {return;}
+            if (!editor) { return; }
             let decorations =
                 comments.map((comment) => {
                     return {

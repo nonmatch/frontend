@@ -63,7 +63,7 @@ export const LatestPage: React.FC = () => {
         { label: 'Score', accessor: 'score', sortable: true },
         { label: 'Owner', accessor: 'ownerName', sortable: true },
         { label: 'Created', accessor: 'time_created', sortable: true },
-        { label: '', accessor:'', sortable: false}
+        { label: '', accessor: '', sortable: false }
     ];
 
     const [tableData, handleSorting] = useSortableTable(submissions);
@@ -71,7 +71,7 @@ export const LatestPage: React.FC = () => {
     return (<Container centered>
         <h1 className="mt-4 mb-2">Latest Submissions</h1>
         <table className="sortable">
-        <TableHead columns={columns} handleSorting={handleSorting}></TableHead>
+            <TableHead columns={columns} handleSorting={handleSorting}></TableHead>
             <tbody>
                 {
                     isLoading

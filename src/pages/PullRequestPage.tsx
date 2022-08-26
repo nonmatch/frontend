@@ -123,13 +123,13 @@ export const PullRequestPage: React.FC = () => {
 
 
     const columns: Column[] = [
-        { label: '', accessor:'', sortable: false},
+        { label: '', accessor: '', sortable: false },
         { label: 'File', accessor: 'file', sortable: true },
         { label: 'Function', accessor: 'name', sortable: true },
         { label: 'Size', accessor: 'size', sortable: true },
         { label: 'Owner', accessor: 'ownerName', sortable: true },
         { label: 'Created', accessor: 'time_created', sortable: true },
-        { label: '', accessor:'', sortable: false}
+        { label: '', accessor: '', sortable: false }
     ];
 
     const [tableData, handleSorting] = useSortableTable(matches);

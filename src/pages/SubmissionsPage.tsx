@@ -78,7 +78,7 @@ export const SubmissionsPage: React.FC<RouteComponentProps<Params>> = ({ match }
         { label: 'Owner', accessor: 'ownerName', sortable: true },
         { label: 'Score', accessor: 'score', sortable: true },
         { label: 'Created', accessor: 'time_created', sortable: true },
-        { label: '', accessor:'', sortable: false}
+        { label: '', accessor: '', sortable: false }
     ];
 
     const [tableData, handleSorting] = useSortableTable(submissions);

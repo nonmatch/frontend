@@ -29,7 +29,7 @@ export const SubmitDialog: React.FC<SubmitDialogProps> = ({ score, isEquivalent,
                                     {
                                         (!isLoggedIn) && <div>
                                             <div>Login to claim or add yourself as the author of this commit?<br /><small>(Make sure to copy your code as you will be redirected and the code will not be saved)</small></div>
-                                            <Link className="btn btn-secondary btn-sm mb-4 mt-2" to="/login" onClick={() => {window.location.href="/login"}} data-bs-dismiss="modal">
+                                            <Link className="btn btn-secondary btn-sm mb-4 mt-2" to="/login" onClick={() => { window.location.href = "/login" }} data-bs-dismiss="modal">
                                                 <i className="fa fa-github fa-fw"></i>
                                                 <span>Login with GitHub</span>
                                             </Link>

@@ -18,12 +18,12 @@ import './asm-mode.js';
 });*/
 
 ReactDOM.render(
-  // React strict mode does not work with react-simple-resizer
-  /*  <React.StrictMode>
-    <App />
-  </React.StrictMode>*/
-  <App />,
-  document.getElementById('root')
+    // React strict mode does not work with react-simple-resizer
+    /*  <React.StrictMode>
+      <App />
+    </React.StrictMode>*/
+    <App />,
+    document.getElementById('root')
 );
 
 // If you want to start measuring performance in your app, pass a function

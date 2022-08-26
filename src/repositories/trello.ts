@@ -20,7 +20,7 @@ export const isFileLocked = async (file: string) => {
                     }
                 }
             }
-        } catch(error) {
+        } catch (error) {
             console.error(error);
         }
     }

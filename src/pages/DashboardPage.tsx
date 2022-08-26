@@ -56,7 +56,7 @@ export const DashboardPage: React.FC = () => {
         { label: 'Size', accessor: 'functionSize', sortable: true },
         { label: 'Score', accessor: 'score', sortable: true },
         { label: 'Created', accessor: 'time_created', sortable: true },
-        { label: '', accessor:'', sortable: false}
+        { label: '', accessor: '', sortable: false }
     ];
 
     const [tableData, handleSorting] = useSortableTable(submissions);

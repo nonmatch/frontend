@@ -13,7 +13,7 @@ import { FuncNameMenu } from "../components/FuncNameMenu";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { SubmitDialog } from "../components/SubmitDialog";
 import { SuccessToast } from "../components/SuccessToast";
-import { API_URL, COMPILE_DEBOUNCE_TIME, DECOMP_ME_FRONTEND} from "../constants";
+import { API_URL, COMPILE_DEBOUNCE_TIME, DECOMP_ME_FRONTEND } from "../constants";
 import { generateDecompMeURL } from "../decompme";
 import eventBus from "../eventBus";
 import { getFunction } from "../repositories/function";
@@ -218,9 +218,9 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         generateDecompMeURL(func?.name ?? 'Untitled', cCode, originalAsm).then((slug) => {
             if (func != null) {
                 // Save slug to database
-                post(API_URL + '/functions/' + func.id + '/decompMe', {'slug': slug});
+                post(API_URL + '/functions/' + func.id + '/decompMe', { 'slug': slug });
             }
-            openInNewTab(DECOMP_ME_FRONTEND + '/scratch/' +slug);
+            openInNewTab(DECOMP_ME_FRONTEND + '/scratch/' + slug);
         }, setError);
     }
 
@@ -230,7 +230,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     };
 
     const viewSubmissions = () => {
-        if (func)  {
+        if (func) {
             history.push('/functions/' + func.id);
         }
     };
@@ -243,7 +243,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             )) {
                 const equiv = !isEquivalent
                 setIsEquivalent(equiv);
-                post(API_URL + '/submissions/' +submission.id + '/equivalent' , {'is_equivalent': equiv ? 'true': 'false'});
+                post(API_URL + '/submissions/' + submission.id + '/equivalent', { 'is_equivalent': equiv ? 'true' : 'false' });
             }
         }
     };
@@ -251,7 +251,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const deleteSubmission = () => {
         if (submission) {
             if (window.confirm('Do you really want to delete this submission?')) {
-                sendDelete(API_URL +'/submissions/' + submission.id, {});
+                sendDelete(API_URL + '/submissions/' + submission.id, {});
                 history.goBack();
             }
         }
@@ -265,7 +265,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             setUsername(user?.username ?? '');
             setEmail(user?.email ?? '');
             setUserId(user?.id ?? -1);
-        }, (error) => {});
+        }, (error) => { });
         const loadFunction = async (func: string, submission: string) => {
             const funcId = parseInt(func);
             // Fetch asm code from function
@@ -279,7 +279,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 }
 
                 if (parseInt(submission) === 0) {
-                    get(API_URL+'/functions/' + func + '/headers').then((data) => {
+                    get(API_URL + '/functions/' + func + '/headers').then((data) => {
                         setCCode(data.code);
                     }, setError);
                     setIsEquivalent(false);
@@ -295,7 +295,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
                         const lines = (asmCode.match(/\n/g) || '').length + 1;
                         const percent = 1 - (data.score / lines);
-                        setDescription('Score: ' + data.score + ' (' + percent.toLocaleString(undefined,{style: 'percent', minimumFractionDigits:1}) + ')');
+                        setDescription('Score: ' + data.score + ' (' + percent.toLocaleString(undefined, { style: 'percent', minimumFractionDigits: 1 }) + ')');
 
                         setSubmission(data);
                         // Fetch c code from submission
@@ -432,12 +432,12 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         }, setError);
     };
 
-    useBeforeunload ((event) => {
+    useBeforeunload((event) => {
         if (hasUnsubmittedChanges) {
-          event.preventDefault();
-          return 'You have unsubmitted changes, are you sure you want to leave?';
+            event.preventDefault();
+            return 'You have unsubmitted changes, are you sure you want to leave?';
         }
-      });
+    });
 
     const showOneColumn = () => {
         return window.innerWidth < 800;
@@ -459,8 +459,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             ></SubmitDialog>
             <SuccessToast score={score} isLoggedIn={isLoggedIn} copyLink={copyLink}></SuccessToast>
             <Prompt when={hasUnsubmittedChanges} message="You have unsubmitted changes, are you sure you want to leave?"></Prompt>
-            {func && func.best_score === 0 && submission && submission.score !== 0 && <div style={{backgroundColor: '#bbed9c', padding:8, display:'flex', alignItems:'center', justifyContent:'center', gap:'20px'}}>This function has already been matched. <a href={'/functions/' + func.id} className='btn btn-success ml-8'>Go to submissions for this function</a></div>}
-            {func && func.best_score !== 0 && func.decomp_me_matched && <div style={{backgroundColor: '#951fd9', color:'white', padding:8, display:'flex', alignItems:'center', justifyContent:'center', gap:'20px'}}>This function has been matched over on decomp.me. <a href={DECOMP_ME_FRONTEND + '/scratch/' + func.decomp_me_scratch} className='btn btn-outline-light ml-8'>Go to decomp.me</a></div>}
+            {func && func.best_score === 0 && submission && submission.score !== 0 && <div style={{ backgroundColor: '#bbed9c', padding: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px' }}>This function has already been matched. <a href={'/functions/' + func.id} className='btn btn-success ml-8'>Go to submissions for this function</a></div>}
+            {func && func.best_score !== 0 && func.decomp_me_matched && <div style={{ backgroundColor: '#951fd9', color: 'white', padding: 8, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '20px' }}>This function has been matched over on decomp.me. <a href={DECOMP_ME_FRONTEND + '/scratch/' + func.decomp_me_scratch} className='btn btn-outline-light ml-8'>Go to decomp.me</a></div>}
         </>
     );
 
@@ -473,7 +473,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 <div className="tab-content" id="myTabContent" style={{ flex: 1, display: "flex" }}>
                     <div className="tab-pane fade show active" id="code" role="tabpanel" aria-labelledby="code-tab" style={{ flex: 1, overflow: "hidden" }}>
                         {usesTextarea
-                            ? <textarea onChange={(e) => {onCodeChange(e.target.value)}} value={cCode} style={
+                            ? <textarea onChange={(e) => { onCodeChange(e.target.value) }} value={cCode} style={
                                 {
                                     border: 'none',
                                     width: '100%',

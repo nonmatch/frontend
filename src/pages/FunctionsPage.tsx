@@ -55,18 +55,18 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
     useTitle(titles[content]);
 
     const lockFunction = (id: number) => {
-        post(API_URL+'/functions/' + id+'/lock', {}).then(() => {
+        post(API_URL + '/functions/' + id + '/lock', {}).then(() => {
             fetchFunctions(false);
         }, setError);
     }
 
     const unlockFunction = (id: number) => {
-        post(API_URL+'/functions/' + id+'/unlock', {}).then(() => {
+        post(API_URL + '/functions/' + id + '/unlock', {}).then(() => {
             fetchFunctions(false);
         }, setError);
     }
 
-    const fetchFunctions = async (indicateLoading:boolean) => {
+    const fetchFunctions = async (indicateLoading: boolean) => {
         if (indicateLoading) {
             setIsLoading(true);
         }
@@ -104,13 +104,13 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
     useEffect(() => {
         getCurrentUser().then((user) => {
             setCurrentUser(user);
-        }, (error) => {});
+        }, (error) => { });
         fetchFunctions(true);
         // eslint-disable-next-line
     }, [location.pathname, content, Content.NONMATCH]);
 
     const hideFunction = (id: number) => {
-        setHiddenFunctions([...hiddenFunctions,id]);
+        setHiddenFunctions([...hiddenFunctions, id]);
     };
 
     const columns: Column[] = [
@@ -120,10 +120,10 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
         { label: 'Best Score', accessor: 'best_score', sortable: true },
         { label: 'NONMATCH', accessor: 'is_asm_func', sortable: true },
         { label: 'Equivalent', accessor: 'has_equivalent_try', sortable: true },
-        { label: '', accessor:'', sortable: false}
+        { label: '', accessor: '', sortable: false }
     ];
 
-    const filteredFunctions = useCallback(()=> {
+    const filteredFunctions = useCallback(() => {
         return functions.filter(func =>
             (
                 filterNonmatch === 'none' ||
@@ -143,19 +143,19 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
         <h1 className="mt-4 mb-2">{
             titles[content]
         }</h1>
-        <p style={{width: "100%", textAlign:"right"}}>
-        <i className="fa fa-filter me-2" style={{color:"#777"}}/>
-        <select className="form-select me-2 form-select-sm" style={{width:"160px", display:"inline-block"}} value={filterNonmatch} onChange={(e) => setFilterNonmatch(e.target.value)}>
-            <option value="none">Filter NONMATCH</option>
-            <option value="nonmatch">Only NONMATCH</option>
-            <option value="asm_func">Only ASM_FUNC</option>
-        </select>
+        <p style={{ width: "100%", textAlign: "right" }}>
+            <i className="fa fa-filter me-2" style={{ color: "#777" }} />
+            <select className="form-select me-2 form-select-sm" style={{ width: "160px", display: "inline-block" }} value={filterNonmatch} onChange={(e) => setFilterNonmatch(e.target.value)}>
+                <option value="none">Filter NONMATCH</option>
+                <option value="nonmatch">Only NONMATCH</option>
+                <option value="asm_func">Only ASM_FUNC</option>
+            </select>
 
-        <select className="form-select form-select-sm" style={{width:"180px", display:"inline-block"}} value={filterEquivalent} onChange={(e) => setFilterEquivalent(e.target.value)}>
-            <option value="none">Filter Equivalent</option>
-            <option value="yes">Only Equivalent</option>
-            <option value="no">Only Non-Equivalent</option>
-        </select>
+            <select className="form-select form-select-sm" style={{ width: "180px", display: "inline-block" }} value={filterEquivalent} onChange={(e) => setFilterEquivalent(e.target.value)}>
+                <option value="none">Filter Equivalent</option>
+                <option value="yes">Only Equivalent</option>
+                <option value="no">Only Non-Equivalent</option>
+            </select>
         </p>
 
         <table className="sortable">
@@ -180,13 +180,13 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                                     ? <a href={DECOMP_ME_FRONTEND + '/scratch/' + func.decomp_me_scratch} className="decompMe" data-bs-toggle="tooltip" data-bs-placement="right" title={'This function has been matched over on decomp.me.'}><i className="fa fa-check-circle fa-fw"></i>{func.name}</a>
                                     : (
                                         func.lockedByName
-                                        ? <span data-bs-toggle="tooltip" data-bs-placement="right" title={func.lockedByName + ' is currently working on this function.'} style={{ cursor: 'not-allowed' }}><i className="fa fa-lock fa-lg fa-fw"></i>{func.name}</span>
-                                        : func.name
+                                            ? <span data-bs-toggle="tooltip" data-bs-placement="right" title={func.lockedByName + ' is currently working on this function.'} style={{ cursor: 'not-allowed' }}><i className="fa fa-lock fa-lg fa-fw"></i>{func.name}</span>
+                                            : func.name
                                     )
                                 }
                             </td>
                             <td>{func.size}</td>
-                            <td onContextMenu={(e) => {e.preventDefault();hideFunction(func.id)}}>{func.best_score}</td>
+                            <td onContextMenu={(e) => { e.preventDefault(); hideFunction(func.id) }}>{func.best_score}</td>
                             <td>{func.is_asm_func ? 'ASM_FUNC' : 'NONMATCH'}</td>
                             <td>{func.has_equivalent_try ? 'Yes' : 'No'}</td>
                             <td>
@@ -194,14 +194,14 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                                     Edit
                                 </Link>
                                 {currentUser != null && func.locked == null && func.lockedByName == null && !func.decomp_me_matched &&
-                                <button className="btn btn-outline-secondary btn-sm ms-2" onClick={() => lockFunction(func.id)}>
-                                    Lock
-                                </button>
+                                    <button className="btn btn-outline-secondary btn-sm ms-2" onClick={() => lockFunction(func.id)}>
+                                        Lock
+                                    </button>
                                 }
                                 {currentUser != null && func.lockedByName === currentUser.username &&
-                                <button className="btn btn-outline-secondary btn-sm ms-2" onClick={() => unlockFunction(func.id)}>
-                                    Unlock
-                                </button>
+                                    <button className="btn btn-outline-secondary btn-sm ms-2" onClick={() => unlockFunction(func.id)}>
+                                        Unlock
+                                    </button>
                                 }
                             </td>
                         </tr>
