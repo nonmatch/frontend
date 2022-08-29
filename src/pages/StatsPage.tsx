@@ -15,7 +15,7 @@ export const StatsPage: React.FC = () => {
     const [chartDataFiles, setChartDataFiles] = useState([]);
     const [chartDataFunctions, setChartDataFunctions] = useState([]);
     const [chartDataGeneral, setChartDataGeneral] = useState([]);
-    const [generalStats, setGeneralStats] = useState({ count: 0, size: 0, percent: 0 });
+    const [generalStats, setGeneralStats] = useState({ count: 0, size: 0, percent: 0, remainingScore: 0 });
 
     const TOTAL_BYTES = 649372;
 
@@ -106,15 +106,18 @@ export const StatsPage: React.FC = () => {
                 // Calculate general stats.
                 let count = 0;
                 let size = 0;
+                let remainingScore = 0;
                 for (const func of remainingData) {
                     count++;
                     size += func.size;
+                    remainingScore += func.best_score;
                 }
                 let percent = size / TOTAL_BYTES;
                 setGeneralStats({
                     count,
                     size,
-                    percent
+                    percent,
+                    remainingScore
                 });
             }
         );
@@ -142,7 +145,7 @@ export const StatsPage: React.FC = () => {
         {isLoading ?
             <LoadingIndicator /> :
             <>
-                <p>There are {generalStats.count} functions left with a size of {generalStats.size} bytes accounting for {percentFormatter.format(generalStats.percent)}.</p>
+                <p>There are {generalStats.count} functions left with a size of {generalStats.size} bytes accounting for {percentFormatter.format(generalStats.percent)}. (Remaining score: {generalStats.remainingScore})</p>
                 <div style={
                     {
                         display: 'flex',

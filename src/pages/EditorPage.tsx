@@ -261,10 +261,14 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
     useEffect(() => {
         getCurrentUser().then((user) => {
-            setIsLoggedIn(true);
-            setUsername(user?.username ?? '');
-            setEmail(user?.email ?? '');
-            setUserId(user?.id ?? -1);
+            if (user) {
+                setIsLoggedIn(true);
+                setUsername(user?.username ?? '');
+                setEmail(user?.email ?? '');
+                setUserId(user?.id ?? -1);
+            } else {
+                setIsLoggedIn(false);
+            }
         }, (error) => { });
         const loadFunction = async (func: string, submission: string) => {
             const funcId = parseInt(func);
