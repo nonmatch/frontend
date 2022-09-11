@@ -81,8 +81,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
         }[content];
         get(API_URL + path).then(
             async (data) => {
-                setIsLoading(false);
-
+                
                 for (let i = 0; i < data.length; i++) {
                     data[i].locked = await isFileLocked(data[i].file);
                     if (data[i].locked_by) {
@@ -93,6 +92,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                 setFunctions(data);
                 // Show tooltips
                 showTooltips();
+                setIsLoading(false);
             },
             (error) => {
                 setIsLoading(false);
@@ -162,7 +162,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
             <TableHead columns={columns} handleSorting={handleSorting}></TableHead>
             <tbody>
                 {isLoading
-                    ? <tr><td colSpan={5}><LoadingIndicator /></td></tr>
+                    ? <tr><td colSpan={7}><LoadingIndicator /></td></tr>
                     :
                     tableData().filter((func: Func) => !hiddenFunctions.includes(func.id)).map((func: Func) => (
                         <tr key={func.id}>
