@@ -1,5 +1,5 @@
 import debounce from "lodash.debounce";
-import { useRef } from "react";
+import { useMemo, useRef } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { Prompt, RouteComponentProps, useHistory, useLocation } from "react-router";
 import { Bar, Container, Section } from "react-simple-resizer";
@@ -39,7 +39,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const [cCode, setCCode] = useState(
         '// Type your c code here...'
     )
-
+    const [isDirty, setIsDirty] = useState(false);
     const [isCompiling, setIsCompiling] = useState(true);
     const [compiled, setCompiled] = useState<{
         asm: string,
@@ -90,18 +90,17 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const funcRef = useRef<Func | null>();
     funcRef.current = func;
 
+    const isDirtyRef = useRef<boolean>();
+    isDirtyRef.current = isDirty;
+
+    const isCustomRef = useRef<boolean>();
+    isCustomRef.current = isCustom;
+
+
     const location = useLocation();
 
-    const debouncedCompile =
-        // eslint-disable-next-line
-        useCallback(
-            debounce(nextValue => compile(nextValue), COMPILE_DEBOUNCE_TIME), []);
 
-    const onCodeChange = (newValue: any) => {
-        setHasUnsubmittedChanges(true);
-        setCCode(newValue)
-        debouncedCompile(newValue);
-    }
+
 
     const onScoreChange = (score: number) => {
         setScore(score);
@@ -117,14 +116,17 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             data: data
         })
     }
-    const compile = async (nextValue: any) => {
-        if (isCustom) {
+    const compile = async () => {
+        if (!isDirtyRef.current) {
+            return;
+        }
+        setIsDirty(false);
+        if (isCustomRef.current) {
             // save the c code in local storage
             setCustomCCode(cCodeRef.current);
         }
 
         setIsCompiling(true);
-        //        console.log('compiling', nextValue);
         try {
             let compileFlags = '-O2';
             if (funcRef.current?.compile_flags) {
@@ -140,7 +142,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 },
                 'body':
                     JSON.stringify({
-                        source: nextValue,
+                        source: cCodeRef.current,
                         compiler: 'agbcc',
                         options: {
                             userArguments: compileFlags, // TODO allow the user to specify this?
@@ -172,12 +174,9 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                     }),
 
                 "method": "POST",
-                //"mode": "cors",
-                //"credentials": "omit"
             });
 
             const data = await res.json();
-            //        console.log(data);
 
             const compileTime = performance.now() - startTime;
             console.log('Compiling took ' + compileTime.toFixed(2) + ' ms.');
@@ -193,6 +192,18 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 data: {}
             })
         }
+    }
+
+
+    const debouncedCompile =
+        // eslint-disable-next-line
+        useMemo(() => debounce(compile, COMPILE_DEBOUNCE_TIME), []);
+
+    const onCodeChange = (newValue: any) => {
+        setHasUnsubmittedChanges(true);
+        setCCode(newValue)
+        setIsDirty(true);
+        debouncedCompile();
     }
 
     const copyLink = () => {
@@ -333,7 +344,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             setIsCustom(true);
             setOriginalAsm(customAsmCode);
             setCCode(customCCode);
-            debouncedCompile(customCCode);
+            setIsDirty(true);
+            debouncedCompile();
             //setIsCompiling(false);
         } else {
             // Load the submission defined via the URL
@@ -342,7 +354,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
         const onCCode = (data: string) => {
             setCCode(data);
-            debouncedCompile(data);
+            setIsDirty(true);
+            debouncedCompile();
         };
         const onAsmCode = (data: string) => {
             // TODO change url to /custom if it is no longer the same function?
@@ -360,7 +373,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         const onAddCCode = (data: string) => {
             const code = cCodeRef.current + data;
             setCCode(code);
-            debouncedCompile(code);
+            setIsDirty(true);
+            debouncedCompile();
         };
         const onRequestCCode = () => {
             console.log('request');
@@ -443,6 +457,16 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         }
     });
 
+    // Debounce on every keypress.
+    const handleUserKeyPress = useCallback(event => {
+        debouncedCompile();
+    }, [debouncedCompile]);
+    useEffect(() => {
+        window.addEventListener("keydown", handleUserKeyPress, true);
+        return () => {
+            window.removeEventListener("keydown", handleUserKeyPress, true);
+        };
+    }, [handleUserKeyPress]);
     const showOneColumn = () => {
         return window.innerWidth < 800;
     };
