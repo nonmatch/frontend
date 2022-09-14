@@ -152,9 +152,6 @@ nav li a:hover {
   color: #ccc;
 }
 */
-td {
-    padding: 8px;
-}
 
 .overflowY {
     overflow-y: auto;

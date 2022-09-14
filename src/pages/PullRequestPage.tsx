@@ -1,6 +1,6 @@
 import { DateTime } from "luxon";
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useHistory } from "react-router-dom";
 import { get, post } from "../api";
 import { Container } from "../components/Container";
 import { ErrorAlert } from "../components/ErrorAlert";
@@ -12,6 +12,7 @@ import { getUser } from "../repositories/user";
 import { TrelloUser } from "../types";
 import { showTooltips, useTitle } from "../utils";
 import { useSortableTable } from "../utils/sortableTable";
+
 
 export const PullRequestPage: React.FC = () => {
 
@@ -35,7 +36,8 @@ export const PullRequestPage: React.FC = () => {
     const [title, setTitle] = useState('');
     const [text, setText] = useState('');
     const [error, setError] = useState<Error | null>(null);
-    const [url, setUrl] = useState<string | null>(null);
+
+    const history = useHistory();
 
     useTitle('Create Pull Request');
 
@@ -100,9 +102,12 @@ export const PullRequestPage: React.FC = () => {
         setIsSecondPage(true);
     };
 
+
+
     const createPr = () => {
         setIsLoading(true);
         setError(null);
+
 
         post(API_URL + '/pr', {
             title: title,
@@ -111,7 +116,7 @@ export const PullRequestPage: React.FC = () => {
         }).then(
             (data) => {
                 setIsLoading(false);
-                setUrl(data['url']);
+                history.push('/pr/' + data['id']);
             },
             (error) => {
                 setIsLoading(false);
@@ -123,35 +128,25 @@ export const PullRequestPage: React.FC = () => {
 
 
     const columns: Column[] = [
-        { label: '', accessor: '', sortable: false },
+        { label: '', accessor: '_1', sortable: false },
         { label: 'File', accessor: 'file', sortable: true },
         { label: 'Function', accessor: 'name', sortable: true },
         { label: 'Size', accessor: 'size', sortable: true },
         { label: 'Owner', accessor: 'ownerName', sortable: true },
         { label: 'Created', accessor: 'time_created', sortable: true },
-        { label: '', accessor: '', sortable: false }
+        { label: '', accessor: '_2', sortable: false }
     ];
 
     const [tableData, handleSorting] = useSortableTable(matches);
 
-    if (url != null) {
-        return (
-            <Container>
-                <h1 className="mt-4">Created Pull Request</h1>
-                <a href={url} className="btn btn-success mt-2">View Pull Request</a>
-            </Container>
-        )
-    }
-
-
     return (
         <Container>
-            <h1 className="mt-4">{isLoading ? "Creating Pull Request..." : "Create Pull Request"}</h1>
+            <h1 className="mt-4">Create Pull Request</h1>
             <ErrorAlert error={error}></ErrorAlert>
             {!isSecondPage
                 ?
                 <>
-                    <p className="mt-4">Select Matching Functions for Pull Request</p>
+                    <p className="mt-4">Select Matching Functions for Pull Request.</p>
                     <table className="sortable">
                         <TableHead columns={columns} handleSorting={handleSorting}></TableHead>
                         <tbody>
@@ -212,19 +207,21 @@ export const PullRequestPage: React.FC = () => {
                     }
                 </>
                 :
-                isLoading ? <LoadingIndicator></LoadingIndicator>
-                    : <>
-                        <p className="mt-3">Enter Title and Text for the Pull Request</p>
+                    <>
 
-                        <input type="text" placeholder="Title" className="form-control mt-3"
-                            value={title}
-                            onChange={(e) => setTitle(e.target.value)}
-                        />
-                        <textarea placeholder="Text" className="form-control mt-2"
-                            rows={10}
-                            value={text}
-                            onChange={(e) => setText(e.target.value)} />
-                        <button className="btn btn-primary mt-3" onClick={createPr}>Create Pull Request</button>
+                        <div>
+                            <p className="mt-3">Enter Title and Text for the Pull Request</p>
+
+                            <input type="text" placeholder="Title" className="form-control mt-3"
+                                value={title}
+                                onChange={(e) => setTitle(e.target.value)}
+                            />
+                            <textarea placeholder="Text" className="form-control mt-2"
+                                rows={10}
+                                value={text}
+                                onChange={(e) => setText(e.target.value)} />
+                            <button className="btn btn-primary mt-3" onClick={createPr}>Create Pull Request</button>
+                        </div>
                     </>
                 /*
                 First select all matching or equivalent submissions that you want to add to the pr

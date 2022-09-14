@@ -66,3 +66,17 @@ export interface Comment {
     line: number,
     text: string
 }
+
+export interface Pr {
+    id: number,
+    title: string,
+    text: string,
+    functions: string,
+    creator: number,
+    time_created: string,
+    time_updated: string,
+    url?: string,
+    is_submitted: boolean,
+    is_error: boolean,
+    error?: string
+}

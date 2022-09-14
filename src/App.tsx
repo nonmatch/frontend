@@ -20,6 +20,7 @@ import { CExplorePage } from './pages/CExplorePage';
 import { getStatusFromTrello } from './repositories/trello';
 import { LatestPage } from './pages/LatestPage';
 import { SearchPage } from './pages/SearchPage';
+import { PullRequestStatusPage } from './pages/PullRequestStatusPage';
 
 const App: React.FC = () => {
 
@@ -85,6 +86,7 @@ const App: React.FC = () => {
                 <Redirect from="/z/:function/:submission" to="/functions/:function/submissions/:submission" />
                 <Route path="/custom" component={EditorPage} />
                 <Route path="/functions/:function" component={SubmissionsPage} />
+                <Route path="/pr/:id" component={PullRequestStatusPage} />
                 <Route path="/pr" component={PullRequestPage} />
                 <Route path="/cexplore" component={CExplorePage} />
                 <Route path="/latest" component={LatestPage} />
