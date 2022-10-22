@@ -55,6 +55,9 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ code, stderr, onCodeChan
                 )
             ],
 
+            // Add to the top of the context menu.
+            contextMenuGroupId: 'navigation',
+
             run() {
                 formatDocument();
             }
