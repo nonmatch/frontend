@@ -2,7 +2,7 @@ import { throttle } from "lodash";
 import { useEffect } from "react";
 import MonacoEditor, { monaco } from "react-monaco-editor";
 import eventBus from "../eventBus";
-import { ErrorLine } from "../types";
+import { ErrorLine, Sources } from "../types";
 
 interface CodeEditorProps {
     code: string,
@@ -28,7 +28,8 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ code, stderr, onCodeChan
         if (e !== null && e.target !== null && e.target.position !== null) {
             eventBus.dispatch('panesLinkLine', {
                 line: e.target.position.lineNumber,
-                reveal: e.event.ctrlKey
+                reveal: e.event.ctrlKey,
+                source: Sources.FromCode
             });
             //          tryPanesLinkLine(e.target.position.lineNumber, false);
         }

@@ -1,7 +1,7 @@
 // Hook
 
 import { useEffect, useState } from "react";
-import { COMPILE_PATH, LOCAL_CEXPLORE_HOST, CAT_PATH, REMOTE_CEXPLORE_HOST, FORMATTER_HOST, FORMATTER_PATH } from "./constants";
+import { COMPILE_PATH, LOCAL_CEXPLORE_HOST, CAT_PATH, REMOTE_CEXPLORE_HOST, FORMATTER_HOST, FORMATTER_PATH, LINKER_URL, LINKER_PATH } from "./constants";
 
 // https://usehooks.com/useLocalStorage/
 export function useLocalStorage(key: string, initialValue: any) {
@@ -70,6 +70,9 @@ export const getFormatterURL = () => {
     return FORMATTER_HOST + FORMATTER_PATH;
 }
 
+export const getLinkerURL = () => {
+    return LINKER_URL + LINKER_PATH;
+}
 
 // https://stackoverflow.com/a/64352116
 export function useTitle(title: string) {

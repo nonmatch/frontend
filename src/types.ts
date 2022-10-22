@@ -80,3 +80,14 @@ export interface Pr {
     is_error: boolean,
     error?: string
 }
+
+export interface Stage {
+    name: string;
+    path: string;
+}
+
+export enum Sources {
+    FromCode,
+    FromAsm,
+    FromDump
+}

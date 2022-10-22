@@ -1,9 +1,10 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Container } from "../components/Container";
 import eventBus from "../eventBus";
 import { getCurrentUser, saveCurrentUser } from "../repositories/user";
 import { User } from "../types";
 import { useLocalStorage, useTitle } from "../utils";
+import { SettingsContext } from "../utils/settingsContext";
 
 export const SettingsPage: React.FC = () => {
 
@@ -13,6 +14,8 @@ export const SettingsPage: React.FC = () => {
     const [email, setEmail] = useState('');
     const [showTlhBridge, setShowTlhBridge] = useLocalStorage('showTlhBridge', false);
     const [useLocalCExplore, setUseLocalCExplore] = useLocalStorage('useLocalCExplore', false);
+
+    const settings = useContext(SettingsContext);
 
     const loadCurrentUser = async () => {
         getCurrentUser().then((user) => {
@@ -81,6 +84,11 @@ export const SettingsPage: React.FC = () => {
         <div className="form-check">
             <input type="checkbox" id="useLocalCExplore" className="form-check-input" checked={useLocalCExplore} onChange={e => setUseLocalCExplore(e.target.checked)} />
             <label className="form-check-label" htmlFor="useLocalCExplore" title="Use the CExplore instance at http://localhost:10240">Use Local CExplore Instance</label>
+        </div>
+
+        <div className="form-check">
+            <input type="checkbox" id="compileDumps" className="form-check-input" checked={settings.compileDumps} onChange={e => settings.setCompileDumps(e.target.checked)} />
+            <label className="form-check-label" htmlFor="compileDumps">Create compiler dumps</label>
         </div>
 
     </Container>);

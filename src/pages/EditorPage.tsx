@@ -1,5 +1,5 @@
 import debounce from "lodash.debounce";
-import { useMemo, useRef } from "react";
+import { useContext, useMemo, useRef } from "react";
 import { useCallback, useEffect, useState } from "react";
 import { Prompt, RouteComponentProps, useHistory, useLocation } from "react-router";
 import { Bar, Container, Section } from "react-simple-resizer";
@@ -18,12 +18,14 @@ import { generateDecompMeURL } from "../decompme";
 import eventBus from "../eventBus";
 import { getFunction } from "../repositories/function";
 import { getCurrentUser } from "../repositories/user";
-import { AsmLine, Comment, ErrorLine, Func, Submission } from "../types";
-import { getCompileURL, getCatURL, openInNewTab, useLocalStorage, useTitle, getFormatterURL, setDescription } from "../utils";
+import { AsmLine, Comment, ErrorLine, Func, Stage, Submission } from "../types";
+import { getCompileURL, getCatURL, openInNewTab, useLocalStorage, useTitle, getFormatterURL, setDescription, getLinkerURL } from "../utils";
 import { useBeforeunload } from "react-beforeunload";
 
 import './EditorPage.css'
 import { DiffScore } from "../components/DiffScore";
+import { CompilerDump } from "../components/CompilerDump";
+import { SettingsContext } from "../utils/settingsContext";
 
 interface Params {
     function: string,
@@ -101,6 +103,14 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
 
 
+    // Compiler Dumps
+    const [stages, setStages] = useState<Stage[]>([]);
+
+    const [showCode, setShowCode] = useState(true);
+    const [showDumps, setShowDumps] = useState(false);
+    const [showAsm, setShowAsm] = useState(true);
+    const settings = useContext(SettingsContext);
+
 
     const onScoreChange = (score: number) => {
         setScore(score);
@@ -124,6 +134,10 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         if (isCustomRef.current) {
             // save the c code in local storage
             setCustomCCode(cCodeRef.current);
+        }
+
+        if (settings.compileDumps) {
+            dumpCompile();
         }
 
         setIsCompiling(true);
@@ -191,6 +205,20 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                 stderr: [{ text: 'ERROR: ' + e.message }],
                 data: {}
             })
+        }
+    }
+
+    const dumpCompile = async () => {
+        try {
+            const res = await fetch(getLinkerURL(), {
+                'method': 'POST',
+                'body': cCodeRef.current
+            });
+
+            const data = await res.json();
+            setStages(data.dumps);
+        } catch (e: any) {
+            console.error(e)
         }
     }
 
@@ -569,18 +597,39 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         return (
             <>
                 {common}
+
+                {settings.compileDumps && <div style={{ position: "absolute", bottom: "8px", left:"0px", right:"0px", display: "flex",margin: "auto", gap: "16px", width:"224px" }}>
+                    <div className="form-check">
+                        <input type="checkbox" id="showCode" className="form-check-input" checked={showCode} onChange={e => setShowCode(e.target.checked)} />
+                        <label className="form-check-label" htmlFor="showCode">Code</label>
+                    </div>
+                    <div className="form-check">
+                        <input type="checkbox" id="showDumps" className="form-check-input" checked={showDumps} onChange={e => setShowDumps(e.target.checked)} />
+                        <label className="form-check-label" htmlFor="showDumps">Dumps</label>
+                    </div>
+                    <div className="form-check">
+                        <input type="checkbox" id="showAsm" className="form-check-input" checked={showAsm} onChange={e => setShowAsm(e.target.checked)} />
+                        <label className="form-check-label" htmlFor="showAsm">Asm</label>
+                    </div>
+                </div>}
+
                 <Container style={{ overflow: "hidden", flex: 1 }}>
-                    <Section minSize={100}>
+                    {showCode && <Section>
                         <CodeEditor
                             code={cCode}
                             stderr={compiled.stderr}
                             onCodeChange={onCodeChange}
                             formatDocument={formatDocument}
                         />
-                    </Section>
-                    <Bar size={1} style={{ background: '#eee', cursor: 'col-resize' }}
-                        expandInteractiveArea={{ left: 2, right: 2 }} />
-                    <Section minSize={100} style={{ display: "flex" }}>
+                    </Section>}
+                    {showCode && <Bar size={1} style={{ background: '#eee', cursor: 'col-resize' }}
+                        expandInteractiveArea={{ left: 2, right: 2 }} />}
+                    {showDumps && <Section style={{ display: "flex" }}>
+                        <CompilerDump stages={stages}></CompilerDump>
+                    </Section>}
+                    {showDumps && <Bar size={1} style={{ background: '#eee', cursor: 'col-resize' }}
+                        expandInteractiveArea={{ left: 2, right: 2 }} />}
+                    {showAsm && <Section style={{ display: "flex" }}>
                         <Container vertical style={{ overflow: "hidden", flex: 1, display: "flex" }}>
                             <Section minSize={100}>
                                 <DiffEditor
@@ -598,7 +647,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                                 <ErrorLog stderr={compiled.stderr} isCompiling={isCompiling}></ErrorLog>
                             </Section>
                         </Container>
-                    </Section>
+                    </Section>}
                 </Container>
                 <div style={{ borderTop: "1px solid #eee", backgroundColor: score === 0 ? "#bbed9c" : "#f8f9fa", fontSize: "14px" }}>
                     <div className="container" style={{ display: "flex", padding: "4px", alignItems: "center" }}>

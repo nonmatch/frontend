@@ -21,12 +21,15 @@ import { getStatusFromTrello } from './repositories/trello';
 import { LatestPage } from './pages/LatestPage';
 import { SearchPage } from './pages/SearchPage';
 import { PullRequestStatusPage } from './pages/PullRequestStatusPage';
+import { SettingsContext } from './utils/settingsContext';
+import { useLocalStorage } from './utils';
 
 const App: React.FC = () => {
 
     const [currentUser, setCurrentUser] = useState<User | null>(null);
     const [error, setError] = useState<Error | null>(null);
     const [errorMessage, setErrorMessage] = useState('');
+    const [compileDumps, setCompileDumps] = useLocalStorage('compileDumps', false);
 
     const loadCurrentUser = async () => {
         getCurrentUser().then(setCurrentUser, (error) => {
@@ -64,40 +67,41 @@ const App: React.FC = () => {
         );
     }
     return (
+        <SettingsContext.Provider value={{ compileDumps, setCompileDumps }}>
+            <Router><div
+                className="App" style={{
+                    display: "flex",
+                    flexDirection: "column"
+                }}>
+                <Navbar currentUser={currentUser} />
 
-        <Router><div
-            className="App" style={{
-                display: "flex",
-                flexDirection: "column"
-            }}>
-            <Navbar currentUser={currentUser} />
-
-            <Switch>
-                <Route path="/" exact component={FunctionsPage} />
-                <Route path="/asm_funcs" component={FunctionsPage} />
-                <Route path="/with_code" component={FunctionsPage} />
-                <Route path="/without_code" component={FunctionsPage} />
-                <Route path="/equivalent" component={FunctionsPage} />
-                <Route path="/non_equivalent" component={FunctionsPage} />
-                <Route path="/all" component={FunctionsPage} />
-                <Route path="/login" component={LoginPage} />
-                <Route path="/dashboard" component={DashboardPage} />
-                <Route path="/functions/:function/submissions/:submission" component={EditorPage} />
-                <Redirect from="/z/:function/:submission" to="/functions/:function/submissions/:submission" />
-                <Route path="/custom" component={EditorPage} />
-                <Route path="/functions/:function" component={SubmissionsPage} />
-                <Route path="/pr/:id" component={PullRequestStatusPage} />
-                <Route path="/pr" component={PullRequestPage} />
-                <Route path="/cexplore" component={CExplorePage} />
-                <Route path="/latest" component={LatestPage} />
-                <Route path="/stats" component={StatsPage} />
-                <Route path="/settings" component={SettingsPage} />
-                <Route path="/search" component={SearchPage} />
-                <Route path="/logout" component={LogoutPage} />
-                <Route component={NotFoundPage} />
-            </Switch>
-        </div>
-        </Router>
+                <Switch>
+                    <Route path="/" exact component={FunctionsPage} />
+                    <Route path="/asm_funcs" component={FunctionsPage} />
+                    <Route path="/with_code" component={FunctionsPage} />
+                    <Route path="/without_code" component={FunctionsPage} />
+                    <Route path="/equivalent" component={FunctionsPage} />
+                    <Route path="/non_equivalent" component={FunctionsPage} />
+                    <Route path="/all" component={FunctionsPage} />
+                    <Route path="/login" component={LoginPage} />
+                    <Route path="/dashboard" component={DashboardPage} />
+                    <Route path="/functions/:function/submissions/:submission" component={EditorPage} />
+                    <Redirect from="/z/:function/:submission" to="/functions/:function/submissions/:submission" />
+                    <Route path="/custom" component={EditorPage} />
+                    <Route path="/functions/:function" component={SubmissionsPage} />
+                    <Route path="/pr/:id" component={PullRequestStatusPage} />
+                    <Route path="/pr" component={PullRequestPage} />
+                    <Route path="/cexplore" component={CExplorePage} />
+                    <Route path="/latest" component={LatestPage} />
+                    <Route path="/stats" component={StatsPage} />
+                    <Route path="/settings" component={SettingsPage} />
+                    <Route path="/search" component={SearchPage} />
+                    <Route path="/logout" component={LogoutPage} />
+                    <Route component={NotFoundPage} />
+                </Switch>
+            </div>
+            </Router>
+        </SettingsContext.Provider>
     );
 
 }
