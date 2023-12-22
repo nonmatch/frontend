@@ -3,10 +3,11 @@
 import './DiffScore.css';
 
 interface DiffScoreProps {
-    score: number
+    score: number,
+    fakenessScore: number
 }
 
-export const DiffScore: React.FC<DiffScoreProps> = ({ score }) => {
+export const DiffScore: React.FC<DiffScoreProps> = ({ score, fakenessScore }) => {
 /*
     const [scores, setScores] = useState<number[]>([]);
 
@@ -33,6 +34,6 @@ export const DiffScore: React.FC<DiffScoreProps> = ({ score }) => {
     );
     */
    return (
-    <span className="score">Diff Score: {score}</span>
+    <span className="score">Diff Score: {score} &nbsp;Fakeness Score: {fakenessScore}</span>
    );
 }
