@@ -7,7 +7,7 @@ const fakenessScoringRules = [
     {
         'regex': /FORCE_REGISTER/g,
         'score': 5,
-        'description': 'ORCE_REGISTER to force register allocation'
+        'description': 'FORCE_REGISTER to force register allocation'
     },
     {
         'regex': /MEMORY_BARRIER/g,
@@ -33,7 +33,7 @@ export const calculateFakenessScore = (code: string) => {
         const matches = code.match(rule.regex);
         if (matches) {
             fakenessScore += rule.score * matches.length;
-            descriptions.push(matches.length.toString() + 'x ' + rule.description);
+            descriptions.push(matches.length.toString() + 'x ' + rule.description + ' [' + rule.score.toString() + ']');
         }
     }
     return {

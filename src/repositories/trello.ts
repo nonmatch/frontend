@@ -6,6 +6,7 @@ let locked: { [id: string]: TrelloUser } = {};
 let loaded = false;
 
 export const isFileLocked = async (file: string) => {
+    return undefined;
     if (!loaded) {
         loaded = true;
         try {

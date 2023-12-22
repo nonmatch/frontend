@@ -46,7 +46,11 @@ export const SubmitDialog: React.FC<SubmitDialogProps> = ({ score, isEquivalent,
                                         onChange={(e) => { setEmail(e.target.value) }}
                                     />
                                 </div>
-                                : <div>
+                                : 
+                                score === 0 ? 
+                                <div><p>This submission matches, but some fakeness still remains.</p></div>
+                                :
+                                <div>
                                     <p>While this code is not yet matching, is it at least functionally equivalent?</p>
                                     <input type="checkbox" checked={isEquivalent} onChange={(event) => { setIsEquivalent(event.target.checked) }} /> Is functionally equivalent
                                 </div>

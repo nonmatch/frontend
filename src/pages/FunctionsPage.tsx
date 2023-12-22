@@ -82,6 +82,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
         get(API_URL + path).then(
             async (data) => {
 
+                /*
                 for (let i = 0; i < data.length; i++) {
                     data[i].locked = await isFileLocked(data[i].file);
                     if (data[i].locked_by) {
@@ -89,6 +90,8 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                         data[i].lockedByName = user.username;
                     }
                 }
+                */
+
                 setFunctions(data);
                 // Show tooltips
                 showTooltips();
@@ -177,13 +180,10 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                                 }
                             </td>
                             <td>
-                                {func.decomp_me_matched
-                                    ? <a href={DECOMP_ME_FRONTEND + '/scratch/' + func.decomp_me_scratch} className="decompMe" data-bs-toggle="tooltip" data-bs-placement="right" title={'This function has been matched over on decomp.me.'}><i className="fa fa-check-circle fa-fw"></i>{func.name}</a>
-                                    : (
-                                        func.lockedByName
-                                            ? <span data-bs-toggle="tooltip" data-bs-placement="right" title={func.lockedByName + ' is currently working on this function.'} style={{ cursor: 'not-allowed' }}><i className="fa fa-lock fa-lg fa-fw"></i>{func.name}</span>
-                                            : func.name
-                                    )
+                                {
+                                    func.lockedByName
+                                        ? <span data-bs-toggle="tooltip" data-bs-placement="right" title={func.lockedByName + ' is currently working on this function.'} style={{ cursor: 'not-allowed' }}><i className="fa fa-lock fa-lg fa-fw"></i>{func.name}</span>
+                                        : func.name
                                 }
                             </td>
                             <td>{func.size}</td>
@@ -192,6 +192,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                                 <Link className="btn btn-outline-primary btn-sm" to={"/functions/" + func.id}>
                                     Edit
                                 </Link>
+                                {/*
                                 {currentUser != null && func.locked == null && func.lockedByName == null && !func.decomp_me_matched &&
                                     <button className="btn btn-outline-secondary btn-sm ms-2" onClick={() => lockFunction(func.id)}>
                                         Lock
@@ -202,6 +203,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                                         Unlock
                                     </button>
                                 }
+                                */}
                             </td>
                         </tr>
                     ))
