@@ -1,14 +1,12 @@
 import { useCallback, useEffect, useState } from "react"
 import { Link, RouteComponentProps } from "react-router-dom";
-import { get, post } from "../api";
+import { get } from "../api";
 import { Container } from "../components/Container"
 import { ErrorAlert } from "../components/ErrorAlert";
 import { LoadingIndicator } from "../components/LoadingIndicator";
 import { Column, TableHead } from "../components/TableHead";
-import { API_URL, DECOMP_ME_FRONTEND } from "../constants";
-import { isFileLocked } from "../repositories/trello";
-import { getCurrentUser, getUser } from "../repositories/user";
-import { Func, User } from "../types"
+import { API_URL } from "../constants";
+import { Func } from "../types"
 import { showTooltips, useLocalStorage, useTitle } from "../utils";
 import { useSortableTable } from "../utils/sortableTable";
 
@@ -16,11 +14,11 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
     const [isLoading, setIsLoading] = useState(false);
     const [functions, setFunctions] = useState<Func[]>([]);
     const [error, setError] = useState<Error | null>(null);
-    const [currentUser, setCurrentUser] = useState<User | null>(null);
+    //const [_currentUser, setCurrentUser] = useState<User | null>(null);
     const [hiddenFunctions, setHiddenFunctions] = useLocalStorage('hiddenFunctions', []);
 
-    const [filterNonmatch, setFilterNonmatch] = useState('none');
-    const [filterEquivalent, setFilterEquivalent] = useState('none');
+    //const [filterNonmatch, _setFilterNonmatch] = useState('none');
+    //const [filterEquivalent, _setFilterEquivalent] = useState('none');
 
     const titles = {
         0: 'NONMATCH Functions',
@@ -54,6 +52,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
 
     useTitle(titles[content]);
 
+    /*
     const lockFunction = (id: number) => {
         post(API_URL + '/functions/' + id + '/lock', {}).then(() => {
             fetchFunctions(false);
@@ -65,6 +64,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
             fetchFunctions(false);
         }, setError);
     }
+    */
 
     const fetchFunctions = async (indicateLoading: boolean) => {
         if (indicateLoading) {
@@ -105,9 +105,9 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
     }
 
     useEffect(() => {
-        getCurrentUser().then((user) => {
+        /*getCurrentUser().then((user) => {
             setCurrentUser(user);
-        }, (error) => { });
+        }, (error) => { });*/
         fetchFunctions(true);
         // eslint-disable-next-line
     }, [location.pathname, content, Content.NONMATCH]);
@@ -124,7 +124,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
         { label: '', accessor: '', sortable: false }
     ];
 
-    const filteredFunctions = useCallback(() => {
+    /*const filteredFunctions = useCallback(() => {
         return functions.filter(func =>
             (
                 filterNonmatch === 'none' ||
@@ -135,7 +135,8 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                 (filterEquivalent === 'yes') === func.has_equivalent_try
             )
         );
-    }, [functions, filterNonmatch, filterEquivalent]);
+    }, [functions, filterNonmatch, filterEquivalent]);*/
+    const filteredFunctions = useCallback(() => functions, [functions]);
 
     const [tableData, handleSorting] = useSortableTable(filteredFunctions());
 

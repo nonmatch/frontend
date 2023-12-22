@@ -1,5 +1,4 @@
-import { TRELLO_STATUS_URL, TRELLO_URL } from "../constants";
-import { TrelloUser } from "../types";
+import { TRELLO_STATUS_URL } from "../constants";
 
 
 //let locked: { [id: string]: TrelloUser } = {};
