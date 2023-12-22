@@ -18,6 +18,8 @@ export interface Func {
     compile_flags?: string,
     is_asm_func: boolean,
     has_equivalent_try: boolean
+    is_fakematch: boolean
+    best_fakeness_score: number
 }
 
 export interface User {
@@ -36,7 +38,8 @@ export interface Submission {
     score: number,
     is_equivalent: boolean,
     parent: number,
-    time_created: string
+    time_created: string,
+    fakeness_score: number,
 }
 
 export interface ErrorLine {

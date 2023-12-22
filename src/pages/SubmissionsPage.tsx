@@ -77,6 +77,7 @@ export const SubmissionsPage: React.FC<RouteComponentProps<Params>> = ({ match }
     const columns: Column[] = [
         { label: 'Owner', accessor: 'ownerName', sortable: true },
         { label: 'Score', accessor: 'score', sortable: true },
+        { label: 'Fakeness Score', accessor: 'fakeness_score', sortable: true },
         { label: 'Created', accessor: 'time_created', sortable: true },
         { label: '', accessor: '', sortable: false }
     ];
@@ -100,6 +101,7 @@ export const SubmissionsPage: React.FC<RouteComponentProps<Params>> = ({ match }
                             <tr key={submission.id}>
                                 <td>{submission.ownerName}</td>
                                 <td>{submission.score} {submission.is_equivalent && <span data-bs-toggle="tooltip" data-bs-placement="right" title={'This submission is marked as functionally equivalent. This code should behave the same way as the original asm code.'}><span className="badge rounded-pill bg-success ms-1">equivalent</span></span>}</td>
+                                <td>{submission.fakeness_score}</td>
                                 <td>{submission.time_created}</td>{/*Format to users timezone*/}
                                 <td>
                                     <Link className="btn btn-outline-primary btn-sm" to={"/functions/" + submission.function + "/submissions/" + submission.id}>

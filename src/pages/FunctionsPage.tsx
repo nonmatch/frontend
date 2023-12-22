@@ -81,7 +81,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
         }[content];
         get(API_URL + path).then(
             async (data) => {
-                
+
                 for (let i = 0; i < data.length; i++) {
                     data[i].locked = await isFileLocked(data[i].file);
                     if (data[i].locked_by) {
@@ -117,9 +117,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
         { label: 'File', accessor: 'file', sortable: true },
         { label: 'Function', accessor: 'name', sortable: true },
         { label: 'Size', accessor: 'size', sortable: true },
-        { label: 'Best Score', accessor: 'best_score', sortable: true },
-        { label: 'NONMATCH', accessor: 'is_asm_func', sortable: true },
-        { label: 'Equivalent', accessor: 'has_equivalent_try', sortable: true },
+        { label: 'Best Fakeness Score', accessor: 'best_fakeness_score', sortable: true },
         { label: '', accessor: '', sortable: false }
     ];
 
@@ -143,6 +141,8 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
         <h1 className="mt-4 mb-2">{
             titles[content]
         }</h1>
+
+        {/*
         <p style={{ width: "100%", textAlign: "right" }}>
             <i className="fa fa-filter me-2" style={{ color: "#777" }} />
             <select className="form-select me-2 form-select-sm" style={{ width: "160px", display: "inline-block" }} value={filterNonmatch} onChange={(e) => setFilterNonmatch(e.target.value)}>
@@ -157,12 +157,13 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                 <option value="no">Only Non-Equivalent</option>
             </select>
         </p>
+         */}
 
         <table className="sortable">
             <TableHead columns={columns} handleSorting={handleSorting}></TableHead>
             <tbody>
                 {isLoading
-                    ? <tr><td colSpan={7}><LoadingIndicator /></td></tr>
+                    ? <tr><td colSpan={5}><LoadingIndicator /></td></tr>
                     :
                     tableData().filter((func: Func) => !hiddenFunctions.includes(func.id)).map((func: Func) => (
                         <tr key={func.id}>
@@ -186,9 +187,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                                 }
                             </td>
                             <td>{func.size}</td>
-                            <td onContextMenu={(e) => { e.preventDefault(); hideFunction(func.id) }}>{func.best_score}</td>
-                            <td>{func.is_asm_func ? 'ASM_FUNC' : 'NONMATCH'}</td>
-                            <td>{func.has_equivalent_try ? 'Yes' : 'No'}</td>
+                            <td onContextMenu={(e) => { e.preventDefault(); hideFunction(func.id) }}>{func.best_fakeness_score}</td>
                             <td>
                                 <Link className="btn btn-outline-primary btn-sm" to={"/functions/" + func.id}>
                                     Edit
