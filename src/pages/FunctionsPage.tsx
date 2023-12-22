@@ -117,7 +117,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
         { label: 'File', accessor: 'file', sortable: true },
         { label: 'Function', accessor: 'name', sortable: true },
         { label: 'Size', accessor: 'size', sortable: true },
-        { label: 'Best Fakeness Score', accessor: 'best_fakeness_score', sortable: true },
+        { label: 'Best Matching Fakeness Score', accessor: 'best_fakeness_score', sortable: true },
         { label: '', accessor: '', sortable: false }
     ];
 
