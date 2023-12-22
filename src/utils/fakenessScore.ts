@@ -28,11 +28,16 @@ const fakenessScoringRules = [
 
 export const calculateFakenessScore = (code: string) => {
     let fakenessScore = 0
+    let descriptions = []
     for (const rule of fakenessScoringRules) {
         const matches = code.match(rule.regex);
         if (matches) {
             fakenessScore += rule.score * matches.length;
+            descriptions.push(matches.length.toString() + 'x ' + rule.description);
         }
     }
-    return fakenessScore;
+    return {
+        score: fakenessScore,
+        descriptions: descriptions
+    };
 }

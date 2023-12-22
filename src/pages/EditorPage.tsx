@@ -70,6 +70,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
     const [score, setScore] = useState(-1);
     const [fakenessScore, setFakenessScore] = useState(-1);
+    const [fakenessDescriptions, setFakenessDescriptions] = useState([]);
 
     const [error, setError] = useState<Error | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -114,7 +115,9 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const settings = useContext(SettingsContext);
 
     const recalculateFakenessScore = () => {
-        setFakenessScore(calculateFakenessScore(cCodeRef.current));
+        const fakeness = calculateFakenessScore(cCodeRef.current);
+        setFakenessScore(fakeness.score);
+        setFakenessDescriptions(fakeness.descriptions);
     };
 
     const onScoreChange = (score: number) => {
@@ -329,7 +332,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
                 if (parseInt(submission) === 0) {
                     get(API_URL + '/functions/' + func + '/headers').then((data) => {
-                        setCCode    (data.code);
+                        setCCode(data.code);
                     }, setError);
                     setIsEquivalent(false);
                     setIsCompiling(false);
@@ -581,13 +584,13 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                         </ul>
                         <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={true} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm} viewSubmissions={viewSubmissions} isLoggedIn={isLoggedIn} isEquivalent={isEquivalent} toggleEquivalent={toggleEquivalent} hasUnsubmittedChanged={hasUnsubmittedChanges} isOwnedByUser={isOwnedByUser} deleteSubmission={deleteSubmission}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>
-                        <DiffScore score={score} fakenessScore={fakenessScore}></DiffScore>
+                        <DiffScore score={score} fakenessScore={fakenessScore} fakenessDescriptions={fakenessDescriptions}></DiffScore>
                         {
                             !isCustom && (
                                 isCompiling || isSubmitting
                                     ? <LoadingIndicator small />
                                     : <button className={
-                                        "btn btn-sm" + (score === 0 && fakenessScore===0
+                                        "btn btn-sm" + (score === 0 && fakenessScore === 0
                                             ? " btn-success"
                                             : " btn-outline-success")
                                     } onClick={showSubmitDialog}>Submit</button>
@@ -604,7 +607,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             <>
                 {common}
 
-                {settings.compileDumps && <div style={{ position: "absolute", bottom: "8px", left:"0px", right:"0px", display: "flex",margin: "auto", gap: "16px", width:"224px" }}>
+                {settings.compileDumps && <div style={{ position: "absolute", bottom: "8px", left: "0px", right: "0px", display: "flex", margin: "auto", gap: "16px", width: "224px" }}>
                     <div className="form-check">
                         <input type="checkbox" id="showCode" className="form-check-input" checked={showCode} onChange={e => setShowCode(e.target.checked)} />
                         <label className="form-check-label" htmlFor="showCode">Code</label>
@@ -655,11 +658,11 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                         </Container>
                     </Section>}
                 </Container>
-                <div style={{ borderTop: "1px solid #eee", backgroundColor: score === 0 && fakenessScore===0 ? "#bbed9c" : "#f8f9fa", fontSize: "14px" }}>
+                <div style={{ borderTop: "1px solid #eee", backgroundColor: score === 0 ? ( fakenessScore === 0 ? "#bbed9c" : "#ffedb5") : "#f8f9fa", fontSize: "14px" }}>
                     <div className="container" style={{ display: "flex", padding: "4px", alignItems: "center" }}>
                         <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={false} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm} viewSubmissions={viewSubmissions} isLoggedIn={isLoggedIn} isEquivalent={isEquivalent} toggleEquivalent={toggleEquivalent} hasUnsubmittedChanged={hasUnsubmittedChanges} isOwnedByUser={isOwnedByUser} deleteSubmission={deleteSubmission}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>
-                        <DiffScore score={score} fakenessScore={fakenessScore}></DiffScore>
+                        <DiffScore score={score} fakenessScore={fakenessScore} fakenessDescriptions={fakenessDescriptions}></DiffScore>
                         {
                             !isCustom && (
                                 isCompiling || isSubmitting

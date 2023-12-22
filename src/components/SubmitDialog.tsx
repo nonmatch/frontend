@@ -9,9 +9,10 @@ interface SubmitDialogProps {
     username: string,
     setUsername: (value: string) => void,
     email: string,
-    setEmail: (value: string) => void
+    setEmail: (value: string) => void,
+    fakenessScore: number
 }
-export const SubmitDialog: React.FC<SubmitDialogProps> = ({ score, isEquivalent, setIsEquivalent, submit, isLoggedIn, username, setUsername, email, setEmail }) => {
+export const SubmitDialog: React.FC<SubmitDialogProps> = ({ score, isEquivalent, setIsEquivalent, submit, isLoggedIn, username, setUsername, email, setEmail, fakenessScore }) => {
     return (
         <div className="modal fade" id="submitDialog" tabIndex={-1} role="dialog">
             <div className="modal-dialog modal-dialog-centered" role="document">
@@ -24,7 +25,7 @@ export const SubmitDialog: React.FC<SubmitDialogProps> = ({ score, isEquivalent,
                     </div>
                     <div className="modal-body">
                         {
-                            score === 0
+                            score === 0 && fakenessScore === 0
                                 ? <div>
                                     {
                                         (!isLoggedIn) && <div>

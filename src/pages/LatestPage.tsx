@@ -61,6 +61,7 @@ export const LatestPage: React.FC = () => {
         { label: 'Function', accessor: 'functionName', sortable: true },
         { label: 'Size', accessor: 'functionSize', sortable: true },
         { label: 'Score', accessor: 'score', sortable: true },
+        { label: 'Fakeness Score', accessor: 'fakeness_score', sortable: true },
         { label: 'Owner', accessor: 'ownerName', sortable: true },
         { label: 'Created', accessor: 'time_created', sortable: true },
         { label: '', accessor: '', sortable: false }
@@ -82,6 +83,7 @@ export const LatestPage: React.FC = () => {
                                 <td>{submission.functionName}</td>
                                 <td>{submission.functionSize}</td>
                                 <td>{submission.score}</td>
+                                <td>{submission.fakeness_score}</td>
                                 <td>{submission.ownerName}</td>
                                 <td>{submission.time_created}</td>{/*Format to users timezone*/}
                                 <td>

@@ -1,12 +1,13 @@
 span.score {
     padding: 0px 8px;
     position: relative;
+    cursor: default;
 }
 
 .score-history {
     position: absolute;
     bottom: 32px;
-    left: 0px;
+    right: 0px;
     background: #f8f9fa;
     border: 1px solid #eee;
     border-bottom: none;

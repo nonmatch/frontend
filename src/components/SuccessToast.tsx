@@ -3,10 +3,11 @@ import { Link } from "react-router-dom";
 interface SuccessToastProps {
     score: number;
     isLoggedIn: boolean,
-    copyLink: () => void
+    copyLink: () => void,
+    fakenessScore: number
 }
 
-export const SuccessToast: React.FC<SuccessToastProps> = ({ score, isLoggedIn, copyLink }) => {
+export const SuccessToast: React.FC<SuccessToastProps> = ({ copyLink }) => {
 
 
     return (
@@ -16,7 +17,6 @@ export const SuccessToast: React.FC<SuccessToastProps> = ({ score, isLoggedIn, c
                     <div className="toast-body">Successfully submitted code
                     </div>
                     <button className="btn btn-outline-light btn-sm me-2 m-auto" onClick={copyLink}>Copy Link</button>
-                    {score === 0 && isLoggedIn && <Link className="btn btn-outline-light btn-sm me-2 m-auto" to="/pr">Create PR</Link>}
                     <button type="button" className="btn-close btn-close-white me-2" data-bs-dismiss="toast" aria-label="Close"></button>
                 </div>
             </div>
