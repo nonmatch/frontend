@@ -2,11 +2,11 @@ import { TRELLO_STATUS_URL, TRELLO_URL } from "../constants";
 import { TrelloUser } from "../types";
 
 
-let locked: { [id: string]: TrelloUser } = {};
-let loaded = false;
+//let locked: { [id: string]: TrelloUser } = {};
+//let loaded = false;
 
 export const isFileLocked = async (file: string) => {
-    return undefined;
+    /*
     if (!loaded) {
         loaded = true;
         try {
@@ -29,6 +29,7 @@ export const isFileLocked = async (file: string) => {
     if (locked[file] !== undefined) {
         return locked[file];
     }
+    */
     return undefined;
 }
 

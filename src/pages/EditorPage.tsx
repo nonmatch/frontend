@@ -70,7 +70,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
     const [score, setScore] = useState(-1);
     const [fakenessScore, setFakenessScore] = useState(-1);
-    const [fakenessDescriptions, setFakenessDescriptions] = useState([]);
+    const [fakenessDescriptions, setFakenessDescriptions] = useState<string[]>([]);
 
     const [error, setError] = useState<Error | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -115,9 +115,12 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const settings = useContext(SettingsContext);
 
     const recalculateFakenessScore = () => {
-        const fakeness = calculateFakenessScore(cCodeRef.current);
-        setFakenessScore(fakeness.score);
-        setFakenessDescriptions(fakeness.descriptions);
+        var code = cCodeRef.current;
+        if (code) {
+            const fakeness = calculateFakenessScore(code);
+            setFakenessScore(fakeness.score);
+            setFakenessDescriptions(fakeness.descriptions);
+        }
     };
 
     const onScoreChange = (score: number) => {
@@ -658,7 +661,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                         </Container>
                     </Section>}
                 </Container>
-                <div style={{ borderTop: "1px solid #eee", backgroundColor: score === 0 ? ( fakenessScore === 0 ? "#bbed9c" : "#e4feff") : "#f8f9fa", fontSize: "14px" }}>
+                <div style={{ borderTop: "1px solid #eee", backgroundColor: score === 0 ? (fakenessScore === 0 ? "#bbed9c" : "#e4feff") : "#f8f9fa", fontSize: "14px" }}>
                     <div className="container" style={{ display: "flex", padding: "4px", alignItems: "center" }}>
                         <FuncNameMenu copyLink={copyLink} name={func?.name} isCustom={isCustom} exportCExplore={exportCExplore} exportDecompMe={exportDecompMe} showOneColumn={false} usesTextarea={usesTextarea} setUseTextarea={setUseTextarea} enterAsm={enterAsm} viewSubmissions={viewSubmissions} isLoggedIn={isLoggedIn} isEquivalent={isEquivalent} toggleEquivalent={toggleEquivalent} hasUnsubmittedChanged={hasUnsubmittedChanges} isOwnedByUser={isOwnedByUser} deleteSubmission={deleteSubmission}></FuncNameMenu>
                         <span style={{ flex: 1 }}></span>
