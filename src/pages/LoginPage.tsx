@@ -1,5 +1,5 @@
 import { Container } from "../components/Container";
-import { API_URL/*, isProd*/ } from "../constants";
+import { API_URL, isProd } from "../constants";
 import { useTitle } from "../utils";
 
 export const LoginPage: React.FC = () => {
@@ -26,7 +26,7 @@ export const LoginPage: React.FC = () => {
         </button>
 
         {
-            /*!isProd && */<button className="btn btn-warning ms-4" onClick={mockLogin}>
+            !isProd && <button className="btn btn-warning ms-4" onClick={mockLogin}>
                 Mock Login
             </button>
         }
