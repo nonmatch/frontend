@@ -26,7 +26,7 @@ export const LoginPage: React.FC = () => {
         </button>
 
         {
-            !isProd && <button className="btn btn-warning ms-4" onClick={mockLogin}>
+            /*!isProd && */<button className="btn btn-warning ms-4" onClick={mockLogin}>
                 Mock Login
             </button>
         }
