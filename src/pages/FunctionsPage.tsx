@@ -169,31 +169,46 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                 {isLoading
                     ? <tr><td colSpan={5}><LoadingIndicator /></td></tr>
                     :
-                    tableData().filter((func: Func) => !hiddenFunctions.includes(func.id)).map((func: Func) => (
-                        <tr key={func.id}>
-                            <td>
-                                {func.locked
-                                    ?
-                                    func.locked.username === 'wip'
-                                        ? <span data-bs-toggle="tooltip" data-bs-placement="right" title={'This file is marked as WIP in Trello.'} style={{ cursor: 'text' }}><i className="fa fa-pencil fa-fw"></i>{func.file}</span>
-                                        : <span data-bs-toggle="tooltip" data-bs-placement="right" title={func.locked.username + ' is currently working on this file.'} style={{ cursor: 'not-allowed' }}><i className="fa fa-lock fa-lg fa-fw"></i>{func.file}</span>
-                                    : func.file
-                                }
-                            </td>
-                            <td>
-                                {
-                                    func.lockedByName
-                                        ? <span data-bs-toggle="tooltip" data-bs-placement="right" title={func.lockedByName + ' is currently working on this function.'} style={{ cursor: 'not-allowed' }}><i className="fa fa-lock fa-lg fa-fw"></i>{func.name}</span>
-                                        : func.name
-                                }
-                            </td>
-                            <td>{func.size}</td>
-                            <td onContextMenu={(e) => { e.preventDefault(); hideFunction(func.id) }}>{func.best_fakeness_score}</td>
-                            <td>
-                                <Link className="btn btn-outline-primary btn-sm" to={"/functions/" + func.id}>
-                                    Edit
-                                </Link>
-                                {/*
+                    tableData().filter((func: Func) => !hiddenFunctions.includes(func.id)).map((func: Func) => {
+                        const isFakematch = func.best_fakeness_score > 0;
+                        return (
+                            <tr key={func.id}>
+                                <td>
+                                    {func.locked
+                                        ?
+                                        func.locked.username === 'wip'
+                                            ? <span data-bs-toggle="tooltip" data-bs-placement="right" title={'This file is marked as WIP in Trello.'} style={{ cursor: 'text' }}><i className="fa fa-pencil fa-fw"></i>{func.file}</span>
+                                            : <span data-bs-toggle="tooltip" data-bs-placement="right" title={func.locked.username + ' is currently working on this file.'} style={{ cursor: 'not-allowed' }}><i className="fa fa-lock fa-lg fa-fw"></i>{func.file}</span>
+                                        : <span className={isFakematch ? "" : "text-secondary"}>{func.file}</span>
+                                    }
+                                </td>
+                                <td>
+                                    {
+                                        func.lockedByName
+                                            ? <span data-bs-toggle="tooltip" data-bs-placement="right" title={func.lockedByName + ' is currently working on this function.'} style={{ cursor: 'not-allowed' }}><i className="fa fa-lock fa-lg fa-fw"></i>{func.name}</span>
+                                            : <span className={isFakematch ? "" : "text-secondary"}>{func.name}</span>
+                                    }
+                                </td>
+                                <td onContextMenu={(e) => { e.preventDefault(); hideFunction(func.id) }}>
+                                    <span className={isFakematch ? "" : "text-secondary"}>
+                                        {func.size}
+                                    </span>
+                                </td>
+                                <td>
+                                    {
+                                        isFakematch
+                                            ? func.best_fakeness_score
+                                            : <span className="link-success" data-bs-toggle="tooltip" data-bs-placement="right" title={'This function is no longer a fake match.'}><i className="fa fa-check-circle fa-fw"></i>{func.best_fakeness_score}</span>
+                                    }
+
+
+                                </td>
+
+                                <td>
+                                    <Link className={"btn btn-sm" + (isFakematch ? " btn-outline-primary" : " btn-outline-secondary")} to={"/functions/" + func.id}>
+                                        Edit
+                                    </Link>
+                                    {/*
                                 {currentUser != null && func.locked == null && func.lockedByName == null && !func.decomp_me_matched &&
                                     <button className="btn btn-outline-secondary btn-sm ms-2" onClick={() => lockFunction(func.id)}>
                                         Lock
@@ -205,9 +220,10 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                                     </button>
                                 }
                                 */}
-                            </td>
-                        </tr>
-                    ))
+                                </td>
+                            </tr>
+                        )
+                    })
                 }
             </tbody>
         </table>
