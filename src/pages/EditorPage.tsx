@@ -367,6 +367,8 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                             setComments(JSON.parse(data.comments));
                         }
 
+                        recalculateFakenessScore();
+
                         // If this was just submitted, show the success toast
                         if (justSubmitted === parseInt(submission)) {
                             justSubmitted = -1;
