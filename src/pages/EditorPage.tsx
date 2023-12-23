@@ -125,7 +125,6 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
 
     const onScoreChange = (score: number) => {
         setScore(score);
-        recalculateFakenessScore();
     };
 
     const parseCompileData = (data: any) => {
@@ -153,6 +152,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
         }
 
         setIsCompiling(true);
+        recalculateFakenessScore();
         try {
             let compileFlags = '-O2';
             if (funcRef.current?.compile_flags) {
