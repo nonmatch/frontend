@@ -100,7 +100,11 @@ export const SubmissionsPage: React.FC<RouteComponentProps<Params>> = ({ match }
                         tableData().map((submission: Submission) => (
                             <tr key={submission.id}>
                                 <td>{submission.ownerName}</td>
-                                <td>{submission.score} {submission.is_equivalent && <span data-bs-toggle="tooltip" data-bs-placement="right" title={'This submission is marked as functionally equivalent. This code should behave the same way as the original asm code.'}><span className="badge rounded-pill bg-success ms-1">equivalent</span></span>}</td>
+                                <td>{submission.score} {
+                                    submission.score === 0
+                                    ?   <span data-bs-toggle="tooltip" data-bs-placement="right" title={'This submission generates matching asm code.'}><span className="badge rounded-pill bg-success ms-1">matching</span></span>
+                                    : submission.is_equivalent && <span data-bs-toggle="tooltip" data-bs-placement="right" title={'This submission is marked as functionally equivalent. This code should behave the same way as the original asm code.'}><span className="badge rounded-pill bg-primary ms-1">equivalent</span></span>
+                                }</td>
                                 <td>{submission.fakeness_score}</td>
                                 <td>{submission.time_created}</td>{/*Format to users timezone*/}
                                 <td>

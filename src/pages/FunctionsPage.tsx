@@ -94,7 +94,7 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
 
                 setFunctions(data);
                 // Show tooltips
-                showTooltips();
+                setTimeout(showTooltips, 100);
                 setIsLoading(false);
             },
             (error) => {
