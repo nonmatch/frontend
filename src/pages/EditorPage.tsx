@@ -18,7 +18,7 @@ import { generateDecompMeURL } from "../decompme";
 import eventBus from "../eventBus";
 import { getFunction } from "../repositories/function";
 import { getCurrentUser } from "../repositories/user";
-import { AsmLine, Comment, ErrorLine, Func, Stage, Submission } from "../types";
+import { AsmLine, Comment, ErrorLine, FakenessLine, Func, Stage, Submission } from "../types";
 import { getCompileURL, getCatURL, openInNewTab, useLocalStorage, useTitle, getFormatterURL, setDescription, getLinkerURL } from "../utils";
 import { useBeforeunload } from "react-beforeunload";
 
@@ -71,6 +71,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
     const [score, setScore] = useState(-1);
     const [fakenessScore, setFakenessScore] = useState(-1);
     const [fakenessDescriptions, setFakenessDescriptions] = useState<string[]>([]);
+    const [fakenessLines, setFakenessLines] = useState<FakenessLine[]>([]);
 
     const [error, setError] = useState<Error | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -120,6 +121,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
             const fakeness = calculateFakenessScore(code);
             setFakenessScore(fakeness.score);
             setFakenessDescriptions(fakeness.descriptions);
+            setFakenessLines(fakeness.fakenessLines);
         }
     };
 
@@ -559,6 +561,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                                 stderr={compiled.stderr}
                                 onCodeChange={onCodeChange}
                                 formatDocument={formatDocument}
+                                fakenessLines={fakenessLines}
                             />
                         }
                     </div>
@@ -634,6 +637,7 @@ const EditorPage: React.FC<RouteComponentProps<Params>> = ({ match }) => {
                             stderr={compiled.stderr}
                             onCodeChange={onCodeChange}
                             formatDocument={formatDocument}
+                            fakenessLines={fakenessLines}
                         />
                     </Section>}
                     {showCode && <Bar size={1} style={{ background: '#eee', cursor: 'col-resize' }}

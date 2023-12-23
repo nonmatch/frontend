@@ -2,11 +2,12 @@ import { throttle } from "lodash";
 import { useEffect } from "react";
 import MonacoEditor, { monaco } from "react-monaco-editor";
 import eventBus from "../eventBus";
-import { ErrorLine, Sources } from "../types";
+import { ErrorLine, FakenessLine, Sources } from "../types";
 
 interface CodeEditorProps {
     code: string,
     stderr: ErrorLine[],
+    fakenessLines: FakenessLine[],
     onCodeChange: (text: string) => void,
     formatDocument: () => void,
 }
@@ -14,7 +15,7 @@ let editor: any;
 let prevDecorations: any = [];
 let fadeTimeoutId: any = -1;
 
-export const CodeEditor: React.FC<CodeEditorProps> = ({ code, stderr, onCodeChange, formatDocument }) => {
+export const CodeEditor: React.FC<CodeEditorProps> = ({ code, stderr, onCodeChange, formatDocument, fakenessLines }) => {
     const options = {
         automaticLayout: true,
         minimap: {
@@ -86,8 +87,20 @@ export const CodeEditor: React.FC<CodeEditorProps> = ({ code, stderr, onCodeChan
                 endColumn: obj.tag.column ? -1 : Infinity,
             };
         });
+
+        for (const fakenessLine of fakenessLines) {
+            widgets.push({
+                severity: 4,
+                message: fakenessLine.text,
+                startLineNumber: fakenessLine.line,
+                endLineNumber: fakenessLine.line,
+                startColumn: 0,
+                endColumn: Infinity
+            });
+        }
+
         monaco.editor.setModelMarkers(editor.getModel(), 'stderr', widgets);
-    }, [stderr]);
+    }, [stderr, fakenessLines]);
 
     const clearLinkedLine = () => {
         prevDecorations = editor.deltaDecorations(prevDecorations, []);

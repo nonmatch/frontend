@@ -94,3 +94,8 @@ export enum Sources {
     FromAsm,
     FromDump
 }
+
+export interface FakenessLine {
+    text: string;
+    line: number;
+}

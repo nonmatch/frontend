@@ -1,4 +1,7 @@
+import { FakenessLine } from "../types";
+
 interface Rule {
+    id?: number;
     code: string;
     score: number;
     description: string;
@@ -34,19 +37,38 @@ const fakenessScoringRules: Rule[] = [
 
 let firstChars: { [id: string]: Rule } = {}
 
-for (const rule of fakenessScoringRules) {
+fakenessScoringRules.forEach((rule, id) => {
     firstChars[rule.code.charAt(0)] = rule;
-}
+    rule.id = id;
+});
 
 export const calculateFakenessScore = (code: string) => {
-    let descriptions: string[] = []
     const scorer = new FakenessScorer(code);
-    const {score, ruleBreaks } = scorer.calculateFakenessScore();
+    const { score, ruleBreaks } = scorer.calculateFakenessScore();
+    
+    let fakenessLines: FakenessLine[] = [];
+    let breaks = Array(fakenessScoringRules.length).fill(0);
+    for (const ruleBreak of ruleBreaks) {
+        breaks[ruleBreak.ruleId]++;
+        fakenessLines.push({
+            text: fakenessScoringRules[ruleBreak.ruleId].description,
+            line: ruleBreak.line
+        });
+    }
+
+    let descriptions: string[] = [];
+    for (let i = 0; i < fakenessScoringRules.length; i++) {
+        const amount = breaks[i];
+        if (amount > 0) {
+            const rule = fakenessScoringRules[i];
+            descriptions.push(amount + 'x ' + rule.description + ' [' + rule.score.toString() + ']');
+        }
+    }
 
     return {
         score: score,
         descriptions: descriptions,
-        lines: [1, 2, 3]
+        fakenessLines: fakenessLines
     };
 }
 
@@ -103,6 +125,7 @@ class FakenessScorer {
                     if (this.code.substring(this.cursor, this.cursor + rule.code.length) === rule.code) {
                         this.fakenessScore += rule.score;
                         this.cursor += rule.code.length;
+                        this.ruleBreaks.push({ ruleId: rule.id!, line: this.line });
                     } else {
                         this.incCursor();
                     }
@@ -115,7 +138,7 @@ class FakenessScorer {
 
     parseBlockComment() {
         while (this.cursor < this.code.length) {
-            if (this.code.charAt(this.cursor) === '*' && this.code.charAt(this.cursor+1) === '/') {
+            if (this.code.charAt(this.cursor) === '*' && this.code.charAt(this.cursor + 1) === '/') {
                 this.cursor += 2;
                 return;
             }
@@ -135,10 +158,10 @@ class FakenessScorer {
     }
 
     incCursor() {
-        this.cursor++;
         const char = this.code[this.cursor];
         if (char === '\n') {
             this.line++;
         }
+        this.cursor++;
     }
 }
