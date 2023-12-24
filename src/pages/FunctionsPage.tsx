@@ -136,7 +136,14 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
             )
         );
     }, [functions, filterNonmatch, filterEquivalent]);*/
-    const filteredFunctions = useCallback(() => functions, [functions]);
+    const filteredFunctions = useCallback(() => functions.sort(
+        (a, b) =>
+        (
+            (a.best_fakeness_score !== 0 ? 0 : 1)
+            -
+            (b.best_fakeness_score !== 0 ? 0 : 1)
+        )
+    ), [functions]);
 
     const [tableData, handleSorting] = useSortableTable(filteredFunctions());
 
