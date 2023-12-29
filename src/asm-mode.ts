@@ -22,9 +22,12 @@
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
 
-var monaco = require('monaco-editor');
+// https://github.com/compiler-explorer/compiler-explorer/blob/main/static/modes/asm-mode.ts
+// modified to allow for comments starting with @
 
-function definition() {
+import * as monaco from 'monaco-editor';
+
+function definition(): monaco.languages.IMonarchLanguage {
     return {
         // Set defaultToken to invalid to see what you do not tokenize yet
         defaultToken: 'invalid',
@@ -113,15 +116,15 @@ function definition() {
                 [/[ \t\r\n]+/, 'white'],
                 [/\/\*/, 'comment', '@comment'],
                 [/\/\/.*$/, 'comment'],
-                [/@.*$/, 'comment'],
+                [/@.*$/, 'comment'], // comments starting with @
                 [/[#;\\@].*$/, 'comment'],
             ],
         },
     };
 }
 
-var def = definition();
+const def = definition();
 monaco.languages.register({id: 'asm'});
 monaco.languages.setMonarchTokensProvider('asm', def);
 
-module.exports = def;
+export default def;

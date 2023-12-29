@@ -4,6 +4,8 @@ import eventBus from "../eventBus";
 import { AsmLine, Comment } from "../types";
 import { throttle } from "lodash";
 
+// Use asm syntax highlighting from Compiler Explorer
+import '../asm-mode';
 
 interface DiffEditorProps {
     compiledAsm: string,
