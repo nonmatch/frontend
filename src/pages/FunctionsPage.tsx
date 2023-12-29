@@ -79,6 +79,9 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
             5: '/non_equivalent',
             6: '/all_functions'
         }[content];
+
+        const comments = await get(API_URL + '/short_comments');
+
         get(API_URL + path).then(
             async (data) => {
 
@@ -91,6 +94,13 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                     }
                 }
                 */
+
+
+                for (let i = 0; i < data.length; i++) {
+                    if (data[i].id in comments) {
+                        data[i].comments = comments[data[i].id];
+                    }
+                }
 
                 setFunctions(data);
                 // Show tooltips
@@ -202,13 +212,23 @@ export const FunctionsPage: React.FC<RouteComponentProps> = ({ location }) => {
                                     </span>
                                 </td>
                                 <td>
-                                    {
-                                        isFakematch
-                                            ? func.best_fakeness_score
-                                            : <span className="link-success" data-bs-toggle="tooltip" data-bs-placement="right" title={'This function is no longer a fake match.'}><i className="fa fa-check-circle fa-fw"></i>{func.best_fakeness_score}</span>
-                                    }
+                                    <div className="flex">
+                                        {
+                                            isFakematch
+                                                ? func.best_fakeness_score
+                                                : <span className="link-success" data-bs-toggle="tooltip" data-bs-placement="right" title={'This function is no longer a fake match.'}><i className="fa fa-check-circle fa-fw"></i>{func.best_fakeness_score}</span>
+                                        }
+                                        {
+                                            (func.comments?.length ?? 0 > 0) &&
+                                            <>
+                                                <div className="spacer"></div>
+                                                <span data-bs-toggle="tooltip" data-bs-placement="left" title={func.comments?.join('\n\n')}>
+                                                    <i className="fa fa-comments fa-fw" />{func.comments?.length}
+                                                </span>
+                                            </>
 
-
+                                        }
+                                    </div>
                                 </td>
 
                                 <td>

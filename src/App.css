@@ -225,3 +225,17 @@ a.decompMe {
 .recharts-tooltip-wrapper {
     z-index: 1000;
 }
+
+.flex {
+  display:flex;
+  height: 100%;
+}
+
+.spacer {
+  flex-grow: 1;
+}
+
+.tooltip-inner {
+  white-space: pre-line;
+  text-align: left;
+}

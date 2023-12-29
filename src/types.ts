@@ -20,6 +20,7 @@ export interface Func {
     has_equivalent_try: boolean
     is_fakematch: boolean
     best_fakeness_score: number
+    comments?: string[]
 }
 
 export interface User {
@@ -98,4 +99,12 @@ export enum Sources {
 export interface FakenessLine {
     text: string;
     line: number;
+}
+
+export interface FunctionComment {
+    id: number,
+    text: string,
+    user: number,
+    userName?: string,
+    function: number,
 }
