@@ -10,7 +10,7 @@ export const API_URL = isProd
 //export const REMOTE_CEXPLORE_HOST = 'https://d42f-2a02-8070-18e-cc80-1e81-9393-1e36-c692.eu.ngrok.io';
 //export const REMOTE_CEXPLORE_HOST = 'http://127.0.0.1:5000';
 //export const REMOTE_CEXPLORE_HOST = 'http://192.168.0.3:5000';
-export const REMOTE_CEXPLORE_HOST = 'https://nonmatch.uk.to';
+export const REMOTE_CEXPLORE_HOST = 'https://nonmatch.1337.cx';
 export const LOCAL_CEXPLORE_HOST = 'http://127.0.0.1:10240';
 
 export const DECOMP_ME_FRONTEND = 'https://decomp.me';
@@ -39,5 +39,5 @@ export const TLH_URL = 'http://localhost:10241';
 export const TRELLO_URL = 'https://api.trello.com/1/lists/5ee43e55e7c2e03e4541ff79/cards?members=true';
 export const TRELLO_STATUS_URL = 'https://api.trello.com/1/lists/61fcda0676b887856607e705/cards';
 
-export const LINKER_URL = 'https://linker.my.to'
+export const LINKER_URL = 'https://linker.1337.cx'
 export const LINKER_PATH = '/compile';
